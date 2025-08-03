@@ -1,0 +1,128 @@
+[
+  {
+    "id": "d1",
+    "name": "Biotechnology",
+    "shortName": "Biotech",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d20",
+    "name": "Business Administration",
+    "shortName": "BBA",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d2",
+    "name": "Chemistry",
+    "shortName": "Chemistry",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d6",
+    "name": "Computer Science",
+    "shortName": "CS",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d3",
+    "name": "Economics",
+    "shortName": "Economics",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d4",
+    "name": "Education",
+    "shortName": "Education",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d5",
+    "name": "English",
+    "shortName": "English",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d7",
+    "name": "Geography",
+    "shortName": "Geography",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d17",
+    "name": "History",
+    "shortName": "History",
+    "offersBSDegree": false
+  },
+  {
+    "id": "d18",
+    "name": "Islamic Studies",
+    "shortName": "Islamic Studies",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d8",
+    "name": "Mass Communication",
+    "shortName": "Mass Com",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d9",
+    "name": "Mathematics",
+    "shortName": "Mathematics",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d1754228405483",
+    "name": "Persian",
+    "shortName": "Persian",
+    "offersBSDegree": false
+  },
+  {
+    "id": "d19",
+    "name": "Philosophy",
+    "shortName": "Philosophy",
+    "offersBSDegree": false
+  },
+  {
+    "id": "d10",
+    "name": "Physics",
+    "shortName": "Physics",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d11",
+    "name": "Political Science",
+    "shortName": "Pol Science",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d13",
+    "name": "Psychology",
+    "shortName": "Psychology",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d12",
+    "name": "Sociology",
+    "shortName": "Sociology",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d14",
+    "name": "Statistics",
+    "shortName": "Statistics",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d15",
+    "name": "Urdu",
+    "shortName": "Urdu",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d16",
+    "name": "Zoology",
+    "shortName": "Zoology",
+    "offersBSDegree": true
+  }
+]

@@ -3,13 +3,21 @@ export interface Department {
   id: string;
   name: string;
   shortName: string;
+  offersBSDegree: boolean; // Indicates if the department offers BS degree programs
 }
 
 export interface Teacher {
   id: string;
   name: string;
-  shortName: string;
+  shortName?: string;
   departmentId: string;
+  designation?: string;
+  contactNumber?: string;
+  email?: string;
+  dateOfBirth?: string;
+  seniority?: number;
+  cnic?: string;
+  personnelNumber?: string;
 }
 
 export interface Subject {
@@ -43,62 +51,226 @@ export interface TimetableEntry {
   day: string;
   room?: string;
   note?: string;
+  endTimeSlotId?: string; // For spanning multiple periods (e.g., labs)
+  isLab?: boolean; // Flag to identify lab sessions
 }
 
 // Sample data
 export const departments: Department[] = [
-  { id: 'd1', name: 'Biotechnology G1', shortName: 'BBA G1' },
-  { id: 'd1b', name: 'Biotechnology G2', shortName: 'BBA G2' },
-  { id: 'd2', name: 'Chemistry', shortName: 'Chemistry' },
-  { id: 'd3', name: 'Economics', shortName: 'Economics' },
-  { id: 'd4', name: 'Education', shortName: 'Education' },
-  { id: 'd5', name: 'English', shortName: 'English' },
-  { id: 'd6', name: 'Computer Science G1', shortName: 'CS G1' },
-  { id: 'd6b', name: 'Computer Science G2', shortName: 'CS G2' },
-  { id: 'd7', name: 'Geography', shortName: 'Geography' },
-  { id: 'd8', name: 'Mass Communication', shortName: 'Mass Com' },
-  { id: 'd9', name: 'Mathematics', shortName: 'Mathematics' },
-  { id: 'd10', name: 'Physics', shortName: 'Physics' },
-  { id: 'd11', name: 'Political Science', shortName: 'Pol Science' },
-  { id: 'd12', name: 'Sociology', shortName: 'Sociology' },
-  { id: 'd13', name: 'Psychology', shortName: 'Psychology' },
-  { id: 'd14', name: 'Statistics', shortName: 'Statistics' },
-  { id: 'd15', name: 'Urdu', shortName: 'Urdu' },
-  { id: 'd16', name: 'Zoology', shortName: 'Zoology' },
+  { id: 'd1', name: 'Biotechnology', shortName: 'Biotech', offersBSDegree: true },
+  { id: 'd20', name: 'Business Administration', shortName: 'BBA', offersBSDegree: true },
+  { id: 'd2', name: 'Chemistry', shortName: 'Chemistry', offersBSDegree: true },
+  { id: 'd6', name: 'Computer Science', shortName: 'CS', offersBSDegree: true },
+  { id: 'd3', name: 'Economics', shortName: 'Economics', offersBSDegree: true },
+  { id: 'd4', name: 'Education', shortName: 'Education', offersBSDegree: true },
+  { id: 'd5', name: 'English', shortName: 'English', offersBSDegree: true },
+  { id: 'd7', name: 'Geography', shortName: 'Geography', offersBSDegree: true },
+  { id: 'd17', name: 'History', shortName: 'History', offersBSDegree: false },
+  { id: 'd18', name: 'Islamic Studies', shortName: 'Islamic Studies', offersBSDegree: true },
+  { id: 'd8', name: 'Mass Communication', shortName: 'Mass Com', offersBSDegree: true },
+  { id: 'd9', name: 'Mathematics', shortName: 'Mathematics', offersBSDegree: true },
+  { id: 'd19', name: 'Philosophy', shortName: 'Philosophy', offersBSDegree: false },
+  { id: 'd10', name: 'Physics', shortName: 'Physics', offersBSDegree: true },
+  { id: 'd11', name: 'Political Science', shortName: 'Pol Science', offersBSDegree: true },
+  { id: 'd13', name: 'Psychology', shortName: 'Psychology', offersBSDegree: true },
+  { id: 'd12', name: 'Sociology', shortName: 'Sociology', offersBSDegree: true },
+  { id: 'd14', name: 'Statistics', shortName: 'Statistics', offersBSDegree: true },
+  { id: 'd15', name: 'Urdu', shortName: 'Urdu', offersBSDegree: true },
+  { id: 'd16', name: 'Zoology', shortName: 'Zoology', offersBSDegree: true },
 ];
 
 export const teachers: Teacher[] = [
-  { id: 't1', name: 'Dr. Mehfooz Bhatti', shortName: 'Dr. Mehfooz Bhatti', departmentId: 'd1' },
-  { id: 't1b', name: 'Dr. Farman Ali', shortName: 'Dr. Farman Ali', departmentId: 'd1b' },
-  { id: 't2', name: 'Dr. Junaid Shareef', shortName: 'Dr. Junaid Shareef', departmentId: 'd2' },
-  { id: 't3', name: 'Dr. Khalid', shortName: 'Dr. Khalid', departmentId: 'd6' },
-  { id: 't3b', name: 'Prof. Ahmad', shortName: 'Prof. Ahmad', departmentId: 'd6b' },
-  { id: 't4', name: 'Dr. M Tanveer', shortName: 'Dr. M Tanveer', departmentId: 'd9' },
-  { id: 't5', name: 'Dr. Zafar', shortName: 'Dr. Zafar', departmentId: 'd10' },
-  { id: 't6', name: 'Amjad Ali', shortName: 'Amjad Ali', departmentId: 'd5' },
-  { id: 't7', name: 'Nisar Rahman Usmani', shortName: 'Nisar Rahman Usmani', departmentId: 'd7' },
-  { id: 't8', name: 'Asim Khalid', shortName: 'Asim Khalid', departmentId: 'd11' },
-  { id: 't9', name: 'Tauq Rashid', shortName: 'Tauq Rashid', departmentId: 'd14' },
-  { id: 't10', name: 'Asif Warraich', shortName: 'Asif Warraich', departmentId: 'd4' },
-  { id: 't11', name: 'Rao M Tariq', shortName: 'Rao M Tariq', departmentId: 'd3' },
-  { id: 't12', name: 'M Sohaif Rana', shortName: 'M Sohaif Rana', departmentId: 'd15' },
-  { id: 't13', name: 'Nauman', shortName: 'Nauman', departmentId: 'd16' },
-  { id: 't14', name: 'CTI', shortName: 'CTI', departmentId: 'd12' },
-  { id: 't15', name: 'Qasim Malik', shortName: 'Qasim Malik', departmentId: 'd13' },
-  { id: 't16', name: 'Prof. Sarah', shortName: 'Prof. Sarah', departmentId: 'd8' },
+  // Computer Science Department (d6)
+  { id: 't1', name: 'Ejaz Ahmad', shortName: 'Ejaz Ahmad', departmentId: 'd6' },
+  { id: 't2', name: 'Sadaf Siddique', shortName: 'Sadaf Siddique', departmentId: 'd6' },
+  { id: 't3', name: 'Abdul Wahab', shortName: 'Abdul Wahab', departmentId: 'd6' },
+  { id: 't4', name: 'Muhammad Zeeshan', shortName: 'Muhammad Zeeshan', departmentId: 'd6' },
+  { id: 't5', name: 'Naureen', shortName: 'Naureen', departmentId: 'd6' },
+  
+  // Chemistry Department (d2) - Complete Faculty List
+  { id: 't6', name: 'Dr. Hafiz Muhammad Farooq', shortName: 'Dr. H.M. Farooq', departmentId: 'd2' },
+  { id: 't7', name: 'Dr. Qamar Subhani', shortName: 'Dr. Q. Subhani', departmentId: 'd2' },
+  { id: 't8', name: 'Dr. M. Monim ul Mahboob', shortName: 'Dr. M.M. Mahboob', departmentId: 'd2' },
+  { id: 't9', name: 'Aamir Niaz', shortName: 'Aamir Niaz', departmentId: 'd2' },
+  { id: 't10', name: 'Zahid Sharif', shortName: 'Zahid Sharif', departmentId: 'd2' },
+  { id: 't11', name: 'Muhammad Arshad Bhatti', shortName: 'M.A. Bhatti', departmentId: 'd2' },
+  { id: 't12', name: 'Asif Masaud Khurum', shortName: 'A.M. Khurum', departmentId: 'd2' },
+  { id: 't13', name: 'Iftikhar Ahmad', shortName: 'Iftikhar Ahmad', departmentId: 'd2' },
+  { id: 't14', name: 'Muhammad Zafarullah Bhatti', shortName: 'M.Z. Bhatti', departmentId: 'd2' },
+  { id: 't15', name: 'Anfas Ahmad', shortName: 'Anfas Ahmad', departmentId: 'd2' },
+  { id: 't16', name: 'Naveed Asalm Dogar', shortName: 'N.A. Dogar', departmentId: 'd2' },
+  { id: 't17', name: 'Dr. Tariq Mehmood', shortName: 'Dr. T. Mehmood', departmentId: 'd2' },
+  { id: 't18', name: 'Dr. Iftikhar Hussain', shortName: 'Dr. I. Hussain', departmentId: 'd2' },
+  { id: 't19', name: 'Dr. Abdul Rauf', shortName: 'Dr. A. Rauf', departmentId: 'd2' },
+  { id: 't20', name: 'Dr. Abida Hassan', shortName: 'Dr. A. Hassan', departmentId: 'd2' },
+  { id: 't21', name: 'Munawar Ali', shortName: 'Munawar Ali', departmentId: 'd2' },
+  { id: 't22', name: 'Dr. Muhammad Waheed Mushtaq', shortName: 'Dr. M.W. Mushtaq', departmentId: 'd2' },
+  { id: 't23', name: 'Dr. Adeel Ahmad Hassan', shortName: 'Dr. A.A. Hassan', departmentId: 'd2' },
+  { id: 't24', name: 'Sajjad Hussain', shortName: 'Sajjad Hussain', departmentId: 'd2' },
+  
+  // Economics Department (d3) - Complete Faculty List
+  { id: 't25', name: 'Dr. M. Khalid Rashid', shortName: 'Dr. M.K. Rashid', departmentId: 'd3' },
+  { id: 't26', name: 'Muhammad Tariq', shortName: 'Muhammad Tariq', departmentId: 'd3' },
+  { id: 't27', name: 'Iftikhar Ahmad', shortName: 'Iftikhar Ahmad', departmentId: 'd3' },
+  { id: 't28', name: 'Muhammad Tanveer', shortName: 'Muhammad Tanveer', departmentId: 'd3' },
+  { id: 't29', name: 'Atiq-ur-Rerhman', shortName: 'Atiq-ur-Rerhman', departmentId: 'd3' },
+  { id: 't30', name: 'Muhammad Rehan Hameed', shortName: 'M.R. Hameed', departmentId: 'd3' },
+  { id: 't31', name: 'Ghulam Farid', shortName: 'Ghulam Farid', departmentId: 'd3' },
+  { id: 't32', name: 'Fahim Abbas', shortName: 'Fahim Abbas', departmentId: 'd3' },
+  { id: 't33', name: 'Aneesa Razaq', shortName: 'Aneesa Razaq', departmentId: 'd3' },
+  { id: 't34', name: 'Naveed Munir', shortName: 'Naveed Munir', departmentId: 'd3' },
+  { id: 't35', name: 'Maaz Anis', shortName: 'Maaz Anis', departmentId: 'd3' },
+  { id: 't36', name: 'Naseem Akhtar', shortName: 'Naseem Akhtar', departmentId: 'd3' },
+  
+  // English Department (d5) - Complete Faculty List
+  { id: 't37', name: 'Ayub Munir', shortName: 'Ayub Munir', departmentId: 'd5' },
+  { id: 't38', name: 'Asif Shaheen', shortName: 'Asif Shaheen', departmentId: 'd5' },
+  { id: 't39', name: 'Nighat Iftekhar', shortName: 'Nighat Iftekhar', departmentId: 'd5' },
+  { id: 't40', name: 'Saleem Ahsan', shortName: 'Saleem Ahsan', departmentId: 'd5' },
+  { id: 't41', name: 'Rana Yousaf', shortName: 'Rana Yousaf', departmentId: 'd5' },
+  { id: 't42', name: 'Nosheen Jafar', shortName: 'Nosheen Jafar', departmentId: 'd5' },
+  { id: 't43', name: 'Dr. Nazir Ahmed', shortName: 'Dr. N. Ahmed', departmentId: 'd5' },
+  { id: 't44', name: 'Mubashir Sadiq', shortName: 'Mubashir Sadiq', departmentId: 'd5' },
+  { id: 't45', name: 'Imran Khan', shortName: 'Imran Khan', departmentId: 'd5' },
+  { id: 't46', name: 'M. Talha', shortName: 'M. Talha', departmentId: 'd5' },
+  { id: 't47', name: 'Shehryar', shortName: 'Shehryar', departmentId: 'd5' },
+  { id: 't48', name: 'Nabeel Minhas', shortName: 'Nabeel Minhas', departmentId: 'd5' },
+  { id: 't49', name: 'Hafsa Khan', shortName: 'Hafsa Khan', departmentId: 'd5' },
+  { id: 't50', name: 'Hamza Sultan', shortName: 'Hamza Sultan', departmentId: 'd5' },
+  
+  // Geography Department (d7) - Complete Faculty List
+  { id: 't51', name: 'Dr. Muhammad Ghous', shortName: 'Dr. M. Ghous', departmentId: 'd7' },
+  { id: 't52', name: 'Muhammad Sohail', shortName: 'Muhammad Sohail', departmentId: 'd7' },
+  { id: 't53', name: 'Kiran Hamayon', shortName: 'Kiran Hamayon', departmentId: 'd7' },
+  
+  // Biotechnology Department (d1)
+  { id: 't54', name: 'Dr. Mehfooz Bhatti', shortName: 'Dr. Mehfooz Bhatti', departmentId: 'd1' },
+  { id: 't55', name: 'Dr. Farman Ali', shortName: 'Dr. Farman Ali', departmentId: 'd1' },
+  { id: 't73', name: 'Dr. Zia Ur Rehman', shortName: 'Dr. Zia Ur Rehman', departmentId: 'd1' },
+  { id: 't74', name: 'Adnan Khalid', shortName: 'Adnan Khalid', departmentId: 'd1' },
+  { id: 't75', name: 'Atiqa Wajid', shortName: 'Atiqa Wajid', departmentId: 'd1' },
+  { id: 't76', name: 'Dr. Adil Abbas', shortName: 'Dr. Adil Abbas', departmentId: 'd1' },
+  
+  // Mathematics Department (d9)
+  { id: 't56', name: 'Dr. M Tanveer', shortName: 'Dr. M Tanveer', departmentId: 'd9' },
+  { id: 't85', name: 'Dr. Naveed Akhtar', shortName: 'Dr. Naveed Akhtar', departmentId: 'd9' },
+  { id: 't86', name: 'M. Arshed Rashed', shortName: 'M. Arshed Rashed', departmentId: 'd9' },
+  { id: 't87', name: 'Ahmad Saleem', shortName: 'Ahmad Saleem', departmentId: 'd9' },
+  { id: 't88', name: 'Dr. Qaisar Mehmood', shortName: 'Dr. Qaisar Mehmood', departmentId: 'd9' },
+  { id: 't89', name: 'Tariq Sharif', shortName: 'Tariq Sharif', departmentId: 'd9' },
+  { id: 't90', name: 'Muhammad Ikram', shortName: 'Muhammad Ikram', departmentId: 'd9' },
+  { id: 't91', name: 'Javed Ali', shortName: 'Javed Ali', departmentId: 'd9' },
+  { id: 't92', name: 'Dr. Imran Nadeem', shortName: 'Dr. Imran Nadeem', departmentId: 'd9' },
+  { id: 't93', name: 'Imama Zehra', shortName: 'Imama Zehra', departmentId: 'd9' },
+  { id: 't94', name: 'Malka Shahbano', shortName: 'Malka Shahbano', departmentId: 'd9' },
+  { id: 't95', name: 'Abdul Aziz', shortName: 'Abdul Aziz', departmentId: 'd9' },
+  { id: 't96', name: 'Ayesha Liaqat', shortName: 'Ayesha Liaqat', departmentId: 'd9' },
+  
+  // Physics Department (d10)
+  { id: 't57', name: 'Dr. Zafar', shortName: 'Dr. Zafar', departmentId: 'd10' },
+  { id: 't97', name: 'Dr. Muhammad Saleem', shortName: 'Dr. Muhammad Saleem', departmentId: 'd10' },
+  { id: 't98', name: 'Dr. Abdul Rashid', shortName: 'Dr. Abdul Rashid', departmentId: 'd10' },
+  { id: 't99', name: 'Ms. Noreen Azam', shortName: 'Ms. Noreen Azam', departmentId: 'd10' },
+  { id: 't100', name: 'M. Tariq Shaikh', shortName: 'M. Tariq Shaikh', departmentId: 'd10' },
+  { id: 't101', name: 'Ms. Majida Ch.', shortName: 'Ms. Majida Ch.', departmentId: 'd10' },
+  { id: 't102', name: 'Jamil Ahmad', shortName: 'Jamil Ahmad', departmentId: 'd10' },
+  { id: 't103', name: 'Dr. Muhammad Zubair', shortName: 'Dr. Muhammad Zubair', departmentId: 'd10' },
+  { id: 't104', name: 'Dr. Jamil Sadique', shortName: 'Dr. Jamil Sadique', departmentId: 'd10' },
+  { id: 't105', name: 'M. Attiqus Salam', shortName: 'M. Attiqus Salam', departmentId: 'd10' },
+  { id: 't106', name: 'Saeed Ahmad Pal', shortName: 'Saeed Ahmad Pal', departmentId: 'd10' },
+  { id: 't107', name: 'Nadeem Ahmad', shortName: 'Nadeem Ahmad', departmentId: 'd10' },
+  { id: 't108', name: 'Dr. Waris Ali', shortName: 'Dr. Waris Ali', departmentId: 'd10' },
+  { id: 't109', name: 'Zahid Niazi', shortName: 'Zahid Niazi', departmentId: 'd10' },
+  { id: 't110', name: 'Abid Hussain', shortName: 'Abid Hussain', departmentId: 'd10' },
+  { id: 't111', name: 'Muhammad Asghar', shortName: 'Muhammad Asghar', departmentId: 'd10' },
+  { id: 't112', name: 'M. Salman Azhar', shortName: 'M. Salman Azhar', departmentId: 'd10', designation: 'Lecturer' },
+  { id: 't113', name: 'Muhammad Ismail', shortName: 'Muhammad Ismail', departmentId: 'd10', designation: 'Lecturer' },
+  { id: 't114', name: 'Dr. Saba Masood', shortName: 'Dr. Saba Masood', departmentId: 'd10', designation: 'Lecturer' },
+  { id: 't115', name: 'Rabia Mehboob', shortName: 'Rabia Mehboob', departmentId: 'd10', designation: 'Lecturer' },
+  { id: 't116', name: 'Bilal Bhatti', shortName: 'Bilal Bhatti', departmentId: 'd10', designation: 'Lecturer' },
+  
+  // Political Science Department (d11)
+  { id: 't125', name: 'Dr. Rehman Gul Khan', shortName: 'Dr. Rehman Khan', departmentId: 'd11', designation: 'Associate Professor & HOD' },
+  { id: 't126', name: 'Mujeeb Ul Islam', shortName: 'Mujeeb Islam', departmentId: 'd11', designation: 'Associate Professor' },
+  { id: 't127', name: 'Dr. Muneera Sultana', shortName: 'Dr. Muneera', departmentId: 'd11', designation: 'Associate Professor' },
+  { id: 't128', name: 'Abdul Rasheed', shortName: 'Abdul Rasheed', departmentId: 'd11', designation: 'Assistant Professor' },
+  { id: 't129', name: 'Qamar Abbas', shortName: 'Qamar Abbas', departmentId: 'd11', designation: 'Assistant Professor' },
+  { id: 't130', name: 'Khushbakhat Bajwa', shortName: 'Khushbakhat', departmentId: 'd11', designation: 'Assistant Professor' },
+  { id: 't131', name: 'Qasim Ali', shortName: 'Qasim Ali', departmentId: 'd11', designation: 'Assistant Professor' },
+  { id: 't132', name: 'Dr. Raza Taimoor', shortName: 'Dr. Raza', departmentId: 'd11', designation: 'Professor' },
+  { id: 't133', name: 'Muneer Bhatti', shortName: 'Muneer Bhatti', departmentId: 'd11', designation: 'Assistant Professor' },
+  
+  // Statistics Department (d14)
+  { id: 't59', name: 'Tauq Rashid', shortName: 'Tauq Rashid', departmentId: 'd14' },
+  
+  // Education Department (d4)
+  { id: 't60', name: 'Asif Warraich', shortName: 'Asif Warraich', departmentId: 'd4' },
+  
+  // Urdu Department (d15)
+  { id: 't134', name: 'Dr. Muhammad Naeem', shortName: 'Dr. Muhammad Naeem', departmentId: 'd15', designation: 'Professor & HOD' },
+  { id: 't135', name: 'Talat Rashid', shortName: 'Talat Rashid', departmentId: 'd15', designation: 'Associate Professor' },
+  { id: 't136', name: 'Dr. Sohail Mumtaz', shortName: 'Dr. Sohail Mumtaz', departmentId: 'd15', designation: 'Associate Professor' },
+  { id: 't137', name: 'Dr. Taimoor Hassan', shortName: 'Dr. Taimoor Hassan', departmentId: 'd15', designation: 'Associate Professor' },
+  { id: 't138', name: 'Ghulam Sabir', shortName: 'Ghulam Sabir', departmentId: 'd15', designation: 'Associate Professor' },
+  { id: 't139', name: 'Muhammad Asif', shortName: 'Muhammad Asif', departmentId: 'd15', designation: 'Assistant Professor' },
+  { id: 't140', name: 'Muhammad Asif (2)', shortName: 'Muhammad Asif (2)', departmentId: 'd15', designation: 'Assistant Professor' },
+  { id: 't141', name: 'Muhammad Farooq', shortName: 'Muhammad Farooq', departmentId: 'd15', designation: 'Assistant Professor' },
+  
+  // Zoology Department (d16)
+  { id: 't142', name: 'Dr. Naveed Akhtar', shortName: 'Dr. Naveed Akhtar', departmentId: 'd16', designation: 'Professor' },
+  { id: 't143', name: 'Dr. Asma Karim', shortName: 'Dr. Asma Karim', departmentId: 'd16', designation: 'Professor' },
+  { id: 't144', name: 'Dr. Syed Shahid Imran Bokhari', shortName: 'Dr. S.S.I. Bokhari', departmentId: 'd16', designation: 'Assistant Professor' },
+  { id: 't145', name: 'Mariam Zaheer', shortName: 'Mariam Zaheer', departmentId: 'd16', designation: 'Assistant Professor' },
+  { id: 't146', name: 'Dr. Muhammad Tariq', shortName: 'Dr. Muhammad Tariq', departmentId: 'd16', designation: 'Assistant Professor' },
+  { id: 't147', name: 'Sabir Javed', shortName: 'Sabir Javed', departmentId: 'd16', designation: 'Assistant Professor' },
+  { id: 't148', name: 'Bushra Younas', shortName: 'Bushra Younas', departmentId: 'd16', designation: 'Lecturer' },
+  { id: 't149', name: 'Qurat-Ul-Ain', shortName: 'Qurat-Ul-Ain', departmentId: 'd16', designation: 'Lecturer' },
+  
+  // Sociology Department (d12)
+  { id: 't63', name: 'CTI', shortName: 'CTI', departmentId: 'd12' },
+  
+  // Psychology Department (d13)
+  { id: 't64', name: 'Qasim Malik', shortName: 'Qasim Malik', departmentId: 'd13' },
+  
+  // Mass Communication Department (d8)
+  { id: 't82', name: 'Dr. Shafayat Ali', shortName: 'Dr. Shafayat Ali', departmentId: 'd8' },
+  { id: 't83', name: 'Saiba Ali', shortName: 'Saiba Ali', departmentId: 'd8' },
+  { id: 't84', name: 'Nain Tara', shortName: 'Nain Tara', departmentId: 'd8' },
+  
+  // History Department (d17)
+  { id: 't66', name: 'Dr. Ahmed Khan', shortName: 'Dr. Ahmed Khan', departmentId: 'd17' },
+  { id: 't67', name: 'Prof. Malik Hassan', shortName: 'Prof. Malik Hassan', departmentId: 'd17' },
+  
+  // Islamic Studies Department (d18)
+  { id: 't68', name: 'Maulana Abdullah', shortName: 'Maulana Abdullah', departmentId: 'd18' },
+  
+  // Philosophy Department (d19)
+  { id: 't69', name: 'Dr. Fatima Ali', shortName: 'Dr. Fatima Ali', departmentId: 'd19' },
+  
+  // Business Administration Department (d20)
+  { id: 't70', name: 'Dr. Hassan Raza', shortName: 'Dr. Hassan Raza', departmentId: 'd20' },
+  { id: 't71', name: 'Ms. Ayesha Khan', shortName: 'Ms. Ayesha Khan', departmentId: 'd20' },
+  { id: 't72', name: 'Mr. Ali Ahmed', shortName: 'Mr. Ali Ahmed', departmentId: 'd20' },
+  { id: 't77', name: 'Shahzada Shahab Khan', shortName: 'Shahzada Shahab Khan', departmentId: 'd20' },
+  { id: 't78', name: 'Hifsa Farooq', shortName: 'Hifsa Farooq', departmentId: 'd20' },
+  { id: 't79', name: 'Asifa Sohail', shortName: 'Asifa Sohail', departmentId: 'd20' },
+  { id: 't80', name: 'Faisal Shehzad', shortName: 'Faisal Shehzad', departmentId: 'd20' },
+  { id: 't81', name: 'Sana Shahzad', shortName: 'Sana Shahzad', departmentId: 'd20' }
 ];
 
 export const subjects: Subject[] = [
   { id: 's1', name: 'Biology G1', shortName: 'BBA-101, G1, B21(1-3)', color: 'bg-blue-100', departmentId: 'd1' },
-  { id: 's1b', name: 'Biology G2', shortName: 'BBA-101, G2, B22(4-6)', color: 'bg-blue-200', departmentId: 'd1b' },
-  { id: 's2', name: 'Biotechnology G1', shortName: 'BBA-102, G1, B21(1-3)', color: 'bg-green-100', departmentId: 'd1' },
-  { id: 's2b', name: 'Biotechnology G2', shortName: 'BBA-102, G2, B22(4-6)', color: 'bg-green-200', departmentId: 'd1b' },
+  { id: 's1b', name: 'Biology G2', shortName: 'BBA-101, G2, B22(4-6)', color: 'bg-blue-200', departmentId: 'd1' },
+  { id: 's2', name: 'Biotechnology G1', shortName: 'BBA-102, G1, B23(1-3)', color: 'bg-green-100', departmentId: 'd1' },
+  { id: 's2b', name: 'Biotechnology G2', shortName: 'BBA-102, G2, B24(4-6)', color: 'bg-green-200', departmentId: 'd1' },
   { id: 's3', name: 'Chemistry', shortName: 'GISL-101, R3(1-2)', color: 'bg-yellow-100', departmentId: 'd2' },
+  { id: 's3b', name: 'Chemistry G2', shortName: 'GISL-102, G2, R5(4-6)', color: 'bg-yellow-200', departmentId: 'd2' },
   { id: 's4', name: 'Economics', shortName: 'ECON-104, R-105(1-3)', color: 'bg-purple-100', departmentId: 'd3' },
   { id: 's5', name: 'Education', shortName: 'GISL-101, B11(1-2)', color: 'bg-pink-100', departmentId: 'd4' },
   { id: 's6', name: 'English', shortName: 'ELL-102, R3(1-3)', color: 'bg-indigo-100', departmentId: 'd5' },
   { id: 's7', name: 'Computer Science G1', shortName: 'CS-169, G1, R-124(1-3)', color: 'bg-gray-100', departmentId: 'd6' },
-  { id: 's7b', name: 'Computer Science G2', shortName: 'CS-169, G2, R-125(4-6)', color: 'bg-gray-200', departmentId: 'd6b' },
+  { id: 's7b', name: 'Computer Science G2', shortName: 'CS-169, G2, R-125(4-6)', color: 'bg-gray-200', departmentId: 'd6' },
+  { id: 's7lab', name: 'CS Lab G1', shortName: 'CS-LAB, G1, Lab-1(8-10)', color: 'bg-slate-200', departmentId: 'd6' },
   { id: 's8', name: 'Geography', shortName: 'Geog-101 R-132(4-6)', color: 'bg-emerald-100', departmentId: 'd7' },
   { id: 's9', name: 'Mass Communication', shortName: 'BSCS-102, B17(4-6)', color: 'bg-orange-100', departmentId: 'd8' },
   { id: 's10', name: 'Mathematics', shortName: 'MATH-101 R-124(1-2)', color: 'bg-red-100', departmentId: 'd9' },
@@ -134,16 +306,19 @@ export const classes: Class[] = [
 ];
 
 export const timetableEntries: TimetableEntry[] = [
+  // Lab Session - CS G1 Lab (8:00-10:00) - Friday
+  { id: 'elab1', subjectId: 's7lab', teacherId: 't3', classId: 'c1', timeSlotId: 'ts1', endTimeSlotId: 'ts2', day: 'Friday', room: 'Lab-1', isLab: true },
+  
   // Period 1 (8:00-9:00) - ALL DEPARTMENTS
   // CS G1 - Monday to Wednesday
   { id: 'e1', subjectId: 's1', teacherId: 't1', classId: 'c1', timeSlotId: 'ts1', day: 'Monday', room: 'B21' },
-  { id: 'e2', subjectId: 's2', teacherId: 't2', classId: 'c1', timeSlotId: 'ts1', day: 'Tuesday', room: 'B21' },
-  { id: 'e3', subjectId: 's3', teacherId: 't3', classId: 'c1', timeSlotId: 'ts1', day: 'Wednesday', room: 'B21' },
+  { id: 'e2', subjectId: 's2', teacherId: 't2', classId: 'c1', timeSlotId: 'ts1', day: 'Tuesday', room: 'B23' },
+  { id: 'e3', subjectId: 's3', teacherId: 't3', classId: 'c1', timeSlotId: 'ts1', day: 'Wednesday', room: 'R3' },
   
   // CS G2 - Thursday to Saturday  
   { id: 'e4', subjectId: 's1b', teacherId: 't1b', classId: 'c3', timeSlotId: 'ts1', day: 'Thursday', room: 'B22' },
-  { id: 'e5', subjectId: 's2b', teacherId: 't2b', classId: 'c3', timeSlotId: 'ts1', day: 'Friday', room: 'B22' },
-  { id: 'e6', subjectId: 's3b', teacherId: 't3b', classId: 'c3', timeSlotId: 'ts1', day: 'Saturday', room: 'B22' },
+  { id: 'e5', subjectId: 's2b', teacherId: 't2b', classId: 'c3', timeSlotId: 'ts1', day: 'Friday', room: 'B24' },
+  { id: 'e6', subjectId: 's3b', teacherId: 't3b', classId: 'c3', timeSlotId: 'ts1', day: 'Saturday', room: 'R5' },
   
   // BBA G1 - Monday to Wednesday
   { id: 'e7', subjectId: 's7', teacherId: 't7', classId: 'c4', timeSlotId: 'ts1', day: 'Monday', room: 'R124' },

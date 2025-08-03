@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import React, { useState } from 'react';
 import TimetableAdmin from './TimetableAdmin';
 import TimetableNew from './TimetableNew';
@@ -29,9 +30,21 @@ const TimetableManager: React.FC = () => {
       <div className="max-w-full overflow-x-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
-            University Timetable Management
+            College Timetable Management
           </h1>
           <div className="space-x-2">
+            <Link
+              href="/manage-schedule"
+              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium inline-block"
+            >
+              Manage Schedule
+            </Link>
+            <Link
+              href="/manage-departments"
+              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium inline-block"
+            >
+              Manage Departments
+            </Link>
             <button
               onClick={() => setShowAdmin(!showAdmin)}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
