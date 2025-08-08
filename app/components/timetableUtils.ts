@@ -1,6 +1,6 @@
 // Additional timetable management functions and utilities
 
-import { Class, Subject, Teacher, TimeSlot, TimetableEntry } from './data';
+import { Subject, Teacher, TimeSlot, TimetableEntry } from './data';
 
 // Function to check for conflicts
 export const checkConflicts = (entries: TimetableEntry[]): string[] => {
@@ -69,7 +69,6 @@ export const exportToCSV = (entries: TimetableEntry[], teachers: Teacher[], subj
       entry.timeSlotId,
       subject?.name || '',
       teacher?.name || '',
-      entry.classId,
       entry.room || ''
     ].join(',');
   });
@@ -78,7 +77,7 @@ export const exportToCSV = (entries: TimetableEntry[], teachers: Teacher[], subj
 };
 
 // Function to validate timetable structure
-export const validateTimetable = (entries: TimetableEntry[], teachers: Teacher[], subjects: Subject[], classes: Class[], timeSlots: TimeSlot[]): string[] => {
+export const validateTimetable = (entries: TimetableEntry[], teachers: Teacher[], subjects: Subject[], timeSlots: TimeSlot[]): string[] => {
   const errors: string[] = [];
 
   entries.forEach(entry => {
@@ -90,11 +89,6 @@ export const validateTimetable = (entries: TimetableEntry[], teachers: Teacher[]
     // Check if subject exists
     if (!subjects.find(s => s.id === entry.subjectId)) {
       errors.push(`Entry ${entry.id}: Subject ${entry.subjectId} not found`);
-    }
-
-    // Check if class exists
-    if (!classes.find(c => c.id === entry.classId)) {
-      errors.push(`Entry ${entry.id}: Class ${entry.classId} not found`);
     }
 
     // Check if time slot exists

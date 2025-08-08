@@ -1,17 +1,46 @@
 'use client';
 
 import Link from 'next/link';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import ConflictViewer from './ConflictViewer';
 import TimetableAdmin from './TimetableAdmin';
 import TimetableNew from './TimetableNew';
 import { validateTimetable } from './conflictChecker';
 import { timetableEntries as initialEntries, TimetableEntry } from './data';
 import { generateStats } from './timetableUtils';
 
+const STORAGE_KEY = 'timetable-entries';
+
 const TimetableManager: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+  
+  // Load entries from localStorage or use initial data
   const [entries, setEntries] = useState<TimetableEntry[]>(initialEntries);
+  
   const [showAdmin, setShowAdmin] = useState(false);
   const [showStats, setShowStats] = useState(false);
+  const [showConflicts, setShowConflicts] = useState(false);
+
+  // Load from localStorage after component mounts (client-side only)
+  useEffect(() => {
+    setMounted(true);
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        const parsedEntries = JSON.parse(stored);
+        setEntries(parsedEntries);
+      } catch (error) {
+        console.error('Error parsing stored timetable entries:', error);
+      }
+    }
+  }, []);
+
+  // Save to localStorage whenever entries change
+  useEffect(() => {
+    if (mounted) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+    }
+  }, [entries, mounted]);
 
   const handleAddEntry = (newEntry: Omit<TimetableEntry, 'id'>) => {
     const entry: TimetableEntry = {
@@ -20,6 +49,18 @@ const TimetableManager: React.FC = () => {
     };
     
     setEntries(prev => [...prev, entry]);
+  };
+
+  const handleUpdateEntries = (updatedEntries: TimetableEntry[]) => {
+    setEntries(updatedEntries);
+  };
+
+  // For testing purposes - clear stored data
+  const handleClearStorage = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem(STORAGE_KEY);
+      setEntries(initialEntries);
+    }
   };
 
   const validation = validateTimetable();
@@ -56,6 +97,23 @@ const TimetableManager: React.FC = () => {
               className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
             >
               {showStats ? 'Hide' : 'Show'} Statistics
+            </button>
+            <button
+              onClick={() => setShowConflicts(!showConflicts)}
+              className={`px-4 py-2 rounded-md transition-colors text-sm font-medium text-white ${
+                validation.conflicts.length > 0 
+                  ? 'bg-red-600 hover:bg-red-700' 
+                  : 'bg-gray-400 hover:bg-gray-500'
+              }`}
+            >
+              {showConflicts ? 'Hide' : 'Show'} Conflicts ({validation.conflicts.length})
+            </button>
+            <button
+              onClick={handleClearStorage}
+              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm font-medium"
+              title="Clear stored data and reset to default"
+            >
+              Reset Data
             </button>
           </div>
         </div>
@@ -119,8 +177,13 @@ const TimetableManager: React.FC = () => {
           <TimetableAdmin onAddEntry={handleAddEntry} />
         )}
 
+        {/* Conflict Viewer */}
+        {showConflicts && (
+          <ConflictViewer />
+        )}
+
         {/* Main Timetable */}
-        <TimetableNew />
+        <TimetableNew entries={entries} onUpdateEntries={handleUpdateEntries} />
       </div>
     </div>
   );

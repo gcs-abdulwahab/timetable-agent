@@ -521,8 +521,101 @@ export const timeSlots: TimeSlot[] = [
   { id: 'ts6', start: '1:30', end: '2:30', period: 6 },
   { id: 'ts7', start: '2:30', end: '3:30', period: 7 },
 ];
+
+export const timetableEntries: TimetableEntry[] = [
   // Computer Science Department Classes
   // Semester 1 (Fall 2024)
+  { id: 'cs_sem1_1a', semesterId: 'sem1', departmentId: 'd6', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 30 },
+  { id: 'cs_sem1_1b', semesterId: 'sem1', departmentId: 'd6', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 30 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'cs_sem2_1a', semesterId: 'sem2', departmentId: 'd6', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 30 },
+  { id: 'cs_sem2_1b', semesterId: 'sem2', departmentId: 'd6', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 30 },
+
+  // Chemistry Department Classes
+  // Semester 1 (Fall 2024)
+  { id: 'chem_sem1_1a', semesterId: 'sem1', departmentId: 'd2', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 25 },
+  { id: 'chem_sem1_1b', semesterId: 'sem1', departmentId: 'd2', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 25 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'chem_sem2_1a', semesterId: 'sem2', departmentId: 'd2', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 25 },
+  { id: 'chem_sem2_1b', semesterId: 'sem2', departmentId: 'd2', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 25 },
+
+  // Economics Department Classes
+  // Semester 1 (Fall 2024)
+  { id: 'econ_sem1_1a', semesterId: 'sem1', departmentId: 'd3', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 35 },
+  { id: 'econ_sem1_1b', semesterId: 'sem1', departmentId: 'd3', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 35 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'econ_sem2_1a', semesterId: 'sem2', departmentId: 'd3', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 35 },
+  { id: 'econ_sem2_1b', semesterId: 'sem2', departmentId: 'd3', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 35 },
+
+  // English Department Classes
+  // Semester 1 (Fall 2024)
+  { id: 'eng_sem1_1a', semesterId: 'sem1', departmentId: 'd5', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 40 },
+  { id: 'eng_sem1_1b', semesterId: 'sem1', departmentId: 'd5', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 40 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'eng_sem2_1a', semesterId: 'sem2', departmentId: 'd5', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 40 },
+  { id: 'eng_sem2_1b', semesterId: 'sem2', departmentId: 'd5', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 40 },
+
+  // Mathematics Department Classes
+  // Semester 1 (Fall 2024)
+  { id: 'math_sem1_1a', semesterId: 'sem1', departmentId: 'd9', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 30 },
+  { id: 'math_sem1_1b', semesterId: 'sem1', departmentId: 'd9', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 30 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'math_sem2_1a', semesterId: 'sem2', departmentId: 'd9', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 30 },
+  { id: 'math_sem2_1b', semesterId: 'sem2', departmentId: 'd9', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 30 },
+
+  // Physics Department Classes
+  // Semester 1 (Fall 2024)
+  { id: 'phys_sem1_1a', semesterId: 'sem1', departmentId: 'd10', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 25 },
+  { id: 'phys_sem1_1b', semesterId: 'sem1', departmentId: 'd10', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 25 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'phys_sem2_1a', semesterId: 'sem2', departmentId: 'd10', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 25 },
+  { id: 'phys_sem2_1b', semesterId: 'sem2', departmentId: 'd10', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 25 },
+
+  // Business Administration Department Classes
+  // Semester 1 (Fall 2024)
+  { id: 'bba_sem1_1a', semesterId: 'sem1', departmentId: 'd20', year: 1, section: 'A', semesterLevel: 1, dayType: 'first-three', enrollmentCapacity: 40 },
+  { id: 'bba_sem1_1b', semesterId: 'sem1', departmentId: 'd20', year: 1, section: 'B', semesterLevel: 1, dayType: 'last-three', enrollmentCapacity: 40 },
+  
+  // Semester 2 (Spring 2025)
+  { id: 'bba_sem2_1a', semesterId: 'sem2', departmentId: 'd20', year: 1, section: 'A', semesterLevel: 2, dayType: 'first-three', enrollmentCapacity: 40 },
+  { id: 'bba_sem2_1b', semesterId: 'sem2', departmentId: 'd20', year: 1, section: 'B', semesterLevel: 2, dayType: 'last-three', enrollmentCapacity: 40 },
+
+  // Semester 5 Classes - Year 3 Students
+  // Computer Science Department - Semester 5
+  { id: 'cs_sem5_3a', semesterId: 'sem1', departmentId: 'd6', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 25 },
+  { id: 'cs_sem5_3b', semesterId: 'sem1', departmentId: 'd6', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 25 },
+
+  // Chemistry Department - Semester 5
+  { id: 'chem_sem5_3a', semesterId: 'sem1', departmentId: 'd2', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 20 },
+  { id: 'chem_sem5_3b', semesterId: 'sem1', departmentId: 'd2', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 20 },
+
+  // Economics Department - Semester 5
+  { id: 'econ_sem5_3a', semesterId: 'sem1', departmentId: 'd3', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 30 },
+  { id: 'econ_sem5_3b', semesterId: 'sem1', departmentId: 'd3', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 30 },
+
+  // English Department - Semester 5
+  { id: 'eng_sem5_3a', semesterId: 'sem1', departmentId: 'd5', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 35 },
+  { id: 'eng_sem5_3b', semesterId: 'sem1', departmentId: 'd5', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 35 },
+
+  // Mathematics Department - Semester 5
+  { id: 'math_sem5_3a', semesterId: 'sem1', departmentId: 'd9', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 25 },
+  { id: 'math_sem5_3b', semesterId: 'sem1', departmentId: 'd9', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 25 },
+
+  // Physics Department - Semester 5
+  { id: 'phys_sem5_3a', semesterId: 'sem1', departmentId: 'd10', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 20 },
+  { id: 'phys_sem5_3b', semesterId: 'sem1', departmentId: 'd10', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 20 },
+
+  // Business Administration Department - Semester 5
+  { id: 'bba_sem5_3a', semesterId: 'sem1', departmentId: 'd20', year: 3, section: 'A', semesterLevel: 5, dayType: 'first-three', enrollmentCapacity: 35 },
+  { id: 'bba_sem5_3b', semesterId: 'sem1', departmentId: 'd20', year: 3, section: 'B', semesterLevel: 5, dayType: 'last-three', enrollmentCapacity: 35 },
+];
+
 export const timetableEntries: TimetableEntry[] = [
   // ========= SEMESTER 1 COURSES - CREDIT HOUR BASED SCHEDULING =========
   
