@@ -31,11 +31,24 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   const idCounterRef = useRef(0);
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
   const [editingData, setEditingData] = useState<{ entries: TimetableEntry[], subject: Subject, teacher: Teacher } | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    subjectId: '',
+    teacherId: '',
+    room: '',
+    timeSlotId: '',
+    selectedDays: [] as string[]
+  });
   const [activeEntry, setActiveEntry] = useState<{ groupKey: string, entries: TimetableEntry[], subject: Subject, teacher: Teacher } | null>(null);
   const [localTimetableEntries, setLocalTimetableEntries] = useState<TimetableEntry[]>(entries || []);
   const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
   const [updateCounter, setUpdateCounter] = useState(0);
   const [showAddEntry, setShowAddEntry] = useState(false);
+  const [conflictTooltip, setConflictTooltip] = useState<{ show: boolean, content: string, x: number, y: number }>({
+    show: false,
+    content: '',
+    x: 0,
+    y: 0
+  });
   const [addEntryData, setAddEntryData] = useState({
     selectedSemester: '',
     selectedDepartment: '',
@@ -162,16 +175,22 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
       !entries.some(e => e.id === entry.id)
     ) : [];
 
-    let details = 'CONFLICTS:\n';
+    let details = '';
     if (teacherConflicts.length > 0) {
       const teacherName = getTeacher(teacher)?.name || teacher;
-      details += `• Teacher ${teacherName} has multiple classes at this time\n`;
+      const conflictingSubjects = teacherConflicts.map(c => getSubject(c.subjectId)?.name || c.subjectId).join(', ');
+      details += `⚠️ Teacher Conflict:\n${teacherName} is also teaching ${conflictingSubjects} at the same time\n\n`;
     }
     if (roomConflicts.length > 0) {
-      details += `• Room ${firstEntry.room} is double-booked\n`;
+      const conflictingSubjects = roomConflicts.map(c => {
+        const subject = getSubject(c.subjectId);
+        const conflictTeacher = getTeacher(c.teacherId);
+        return `${subject?.name || c.subjectId} (${conflictTeacher?.name || c.teacherId})`;
+      }).join(', ');
+      details += `🏫 Room Conflict:\nRoom ${firstEntry.room} is also booked for ${conflictingSubjects}`;
     }
     
-    return details;
+    return details.trim();
   };
 
   // Drag and drop handlers
@@ -368,8 +387,27 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
           {/* Conflict danger icon */}
           {isConflicted && (
             <div 
-              className="absolute -top-1 -left-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs z-20 animate-pulse border-2 border-white shadow-lg"
-              title={getConflictDetails(entries)}
+              className="absolute -top-1 -left-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs z-20 animate-pulse border-2 border-white shadow-lg cursor-pointer hover:bg-red-600"
+              onClick={(e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const rect = (e.target as HTMLElement).getBoundingClientRect();
+                setConflictTooltip({
+                  show: true,
+                  content: getConflictDetails(entries),
+                  x: rect.left + rect.width / 2,
+                  y: rect.top - 10
+                });
+                
+                // Auto-close tooltip after 5 seconds
+                setTimeout(() => {
+                  setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
+                }, 5000);
+              }}
+              onMouseDown={(e) => {
+                e.stopPropagation(); // Prevent drag from starting
+              }}
+              title="Click for conflict details"
             >
               <span className="text-white font-bold">!</span>
             </div>
@@ -400,6 +438,14 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
             if (subject && teacher) {
               setEditingData({ entries, subject, teacher });
               setEditingEntry(groupKey);
+              // Populate form data with current values
+              setEditFormData({
+                subjectId: subject.id,
+                teacherId: teacher.id,
+                room: entries[0]?.room || '',
+                timeSlotId: entries[0]?.timeSlotId || '',
+                selectedDays: entries.map(e => e.day)
+              });
               console.log('Modal should open now - editingEntry set to:', groupKey);
               console.log('Modal should open now - editingData set to:', { entries, subject, teacher });
             } else {
@@ -665,31 +711,87 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
-                <div className="text-sm text-gray-800">{editingData.subject.name}</div>
+                <select
+                  value={editFormData.subjectId}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, subjectId: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {subjects.map(subject => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher</label>
-                <div className="text-sm text-gray-800">{editingData.teacher.name}</div>
+                <select
+                  value={editFormData.teacherId}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, teacherId: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {teachers.map(teacher => (
+                    <option key={teacher.id} value={teacher.id}>
+                      {teacher.name}
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Room</label>
-                <div className="text-sm text-gray-800">{editingData.entries[0]?.room || 'No room assigned'}</div>
+                <input
+                  type="text"
+                  value={editFormData.room}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, room: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  placeholder="Enter room number"
+                />
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Days</label>
-                <div className="text-sm text-gray-800">
-                  {editingData.entries.map(e => e.day).join(', ')}
+                <div className="flex flex-wrap gap-2">
+                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
+                    <label key={day} className="flex items-center space-x-1">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.selectedDays.includes(day)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setEditFormData(prev => ({ 
+                              ...prev, 
+                              selectedDays: [...prev.selectedDays, day] 
+                            }));
+                          } else {
+                            setEditFormData(prev => ({ 
+                              ...prev, 
+                              selectedDays: prev.selectedDays.filter(d => d !== day) 
+                            }));
+                          }
+                        }}
+                        className="rounded"
+                      />
+                      <span className="text-xs">{day.slice(0, 3)}</span>
+                    </label>
+                  ))}
                 </div>
               </div>
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Time Slot</label>
-                <div className="text-sm text-gray-800">
-                  {timeSlots.find(ts => ts.id === editingData.entries[0]?.timeSlotId)?.start} - {timeSlots.find(ts => ts.id === editingData.entries[0]?.timeSlotId)?.end}
-                </div>
+                <select
+                  value={editFormData.timeSlotId}
+                  onChange={(e) => setEditFormData(prev => ({ ...prev, timeSlotId: e.target.value }))}
+                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  {timeSlots.map(timeSlot => (
+                    <option key={timeSlot.id} value={timeSlot.id}>
+                      Period {timeSlot.period} ({timeSlot.start} - {timeSlot.end})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             
@@ -697,10 +799,53 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
               <button 
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
                 onClick={() => {
-                  // TODO: Implement actual edit functionality
-                  console.log('Save Changes clicked, editingData:', editingData);
+                  if (!editingData) return;
+                  
+                  console.log('Save Changes clicked, editFormData:', editFormData);
+                  
+                  // Validate form data
+                  if (!editFormData.subjectId || !editFormData.teacherId || !editFormData.timeSlotId || editFormData.selectedDays.length === 0) {
+                    setNotification({ message: 'Please fill in all required fields', type: 'error' });
+                    setTimeout(() => setNotification(null), 3000);
+                    return;
+                  }
+
+                  // Remove old entries
+                  const entriesWithoutOld = localTimetableEntries.filter(entry => 
+                    !editingData.entries.some(oldEntry => oldEntry.id === entry.id)
+                  );
+
+                  // Create new entries with updated data
+                  const newEntries = editFormData.selectedDays.map((day, index) => ({
+                    id: `edited-${idCounterRef.current + index}`,
+                    subjectId: editFormData.subjectId,
+                    teacherId: editFormData.teacherId,
+                    timeSlotId: editFormData.timeSlotId,
+                    day: day,
+                    room: editFormData.room || undefined,
+                    semesterId: editingData.entries[0]?.semesterId || 'sem1'
+                  }));
+
+                  // Update counter for next use
+                  idCounterRef.current += editFormData.selectedDays.length;
+
+                  // Combine entries
+                  const updatedEntries = [...entriesWithoutOld, ...newEntries];
+                  
+                  updateEntries(updatedEntries);
+                  setNotification({ message: 'Entry updated successfully!', type: 'success' });
+                  setTimeout(() => setNotification(null), 3000);
+                  
+                  // Close modal
                   setEditingEntry(null);
                   setEditingData(null);
+                  setEditFormData({
+                    subjectId: '',
+                    teacherId: '',
+                    room: '',
+                    timeSlotId: '',
+                    selectedDays: []
+                  });
                 }}
               >
                 Save Changes
@@ -711,6 +856,13 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                   console.log('Cancel clicked');
                   setEditingEntry(null);
                   setEditingData(null);
+                  setEditFormData({
+                    subjectId: '',
+                    teacherId: '',
+                    room: '',
+                    timeSlotId: '',
+                    selectedDays: []
+                  });
                 }}
               >
                 Cancel
@@ -1003,6 +1155,46 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
           </div>
         </div>
       )}
+
+      {/* Custom Conflict Tooltip */}
+      {conflictTooltip.show && (
+        <>
+          {/* Overlay to close tooltip */}
+          <div 
+            className="fixed inset-0 z-[8000]"
+            onClick={() => setConflictTooltip({ show: false, content: '', x: 0, y: 0 })}
+          />
+          
+          {/* Tooltip content */}
+          <div 
+            className="fixed bg-red-600 text-white p-3 rounded-lg shadow-xl z-[9000] max-w-xs border border-red-700"
+            style={{ 
+              left: `${conflictTooltip.x}px`, 
+              top: `${conflictTooltip.y}px`,
+              transform: 'translate(-50%, -100%)'
+            }}
+          >
+            <div className="flex justify-between items-center mb-2">
+              <div className="text-sm font-semibold">⚠️ Conflict Details</div>
+              <button
+                className="text-white hover:text-red-200 text-lg leading-none"
+                onClick={() => setConflictTooltip({ show: false, content: '', x: 0, y: 0 })}
+              >
+                ×
+              </button>
+            </div>
+            <div className="text-xs whitespace-pre-line">
+              {conflictTooltip.content}
+            </div>
+            
+            {/* Arrow pointing down */}
+            <div 
+              className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-600"
+            />
+          </div>
+        </>
+      )}
+      
       </DndContext>
     </div>
   );
