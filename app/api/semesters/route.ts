@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import { promises as fs } from 'fs';
+import { NextResponse } from 'next/server';
 import path from 'path';
 
 const dataDir = path.join(process.cwd(), 'data');

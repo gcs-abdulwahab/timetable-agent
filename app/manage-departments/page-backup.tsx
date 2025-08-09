@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Department, Teacher, Subject, Semester } from '../components/data';
+import { Department, Semester, Subject, Teacher } from '../components/data';
 import AddDepartmentModal from '../components/ui/AddDepartmentModal';
 import AddTeacherModal from '../components/ui/AddTeacherModal';
 
