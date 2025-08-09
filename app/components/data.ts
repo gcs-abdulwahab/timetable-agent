@@ -49,6 +49,21 @@ export interface TimeSlot {
   period: number;
 }
 
+export interface Room {
+  id: string;
+  name: string; // Unique room name like "CS-Lab1", "R-101", etc.
+  capacity: number; // Number of students the room can accommodate
+  type?: 'Classroom' | 'Laboratory' | 'Auditorium' | 'Conference' | 'Other';
+  building?: string;
+  floor?: number;
+  hasProjector?: boolean;
+  hasAC?: boolean;
+  description?: string;
+  programTypes: ('Inter' | 'BS')[]; // Which programs can use this room
+  primaryDepartmentId?: string; // Primary department for BS rooms
+  availableForOtherDepartments?: boolean; // Can other departments use this room
+}
+
 export interface TimetableEntry {
   id: string;
   semesterId: string;
@@ -193,8 +208,6 @@ export const teachers: Teacher[] = [
   { id: 't53', name: 'Kiran Hamayon', shortName: 'Kiran Hamayon', departmentId: 'd7' },
   
   // Biotechnology Department (d1)
-  { id: 't54', name: 'Dr. Mehfooz Bhatti', shortName: 'Dr. Mehfooz Bhatti', departmentId: 'd1' },
-  { id: 't55', name: 'Dr. Farman Ali', shortName: 'Dr. Farman Ali', departmentId: 'd1' },
   { id: 't73', name: 'Dr. Zia Ur Rehman', shortName: 'Dr. Zia Ur Rehman', departmentId: 'd1' },
   { id: 't74', name: 'Adnan Khalid', shortName: 'Adnan Khalid', departmentId: 'd1' },
   { id: 't75', name: 'Atiqa Wajid', shortName: 'Atiqa Wajid', departmentId: 'd1' },
@@ -521,6 +534,53 @@ export const timeSlots: TimeSlot[] = [
   { id: 'ts6', start: '1:30', end: '2:30', period: 6 },
   { id: 'ts7', start: '2:30', end: '3:30', period: 7 },
 ];
+
+export const rooms: Room[] = [
+  // Computer Science Department Rooms
+  { id: 'cs-lab1', name: 'CS-Lab1', capacity: 40, type: 'Laboratory', building: 'Computer Science Block', floor: 1, hasProjector: true, hasAC: true, description: 'Programming Lab with latest computers', programTypes: ['BS'], primaryDepartmentId: 'd6', availableForOtherDepartments: false },
+  { id: 'cs-lab2', name: 'CS-Lab2', capacity: 35, type: 'Laboratory', building: 'Computer Science Block', floor: 1, hasProjector: true, hasAC: true, description: 'Advanced Programming Lab', programTypes: ['BS'], primaryDepartmentId: 'd6', availableForOtherDepartments: false },
+  { id: 'cs-lab3', name: 'CS-Lab3', capacity: 30, type: 'Laboratory', building: 'Computer Science Block', floor: 2, hasProjector: true, hasAC: false, description: 'Network Lab', programTypes: ['BS'], primaryDepartmentId: 'd6', availableForOtherDepartments: true },
+  
+  // General Classrooms - Available for both Inter and BS
+  { id: 'r-101', name: 'R-101', capacity: 60, type: 'Classroom', building: 'Main Academic Block', floor: 1, hasProjector: true, hasAC: true, description: 'Large classroom for lectures', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'r-102', name: 'R-102', capacity: 50, type: 'Classroom', building: 'Main Academic Block', floor: 1, hasProjector: true, hasAC: true, description: 'Medium-sized classroom', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'r-103', name: 'R-103', capacity: 40, type: 'Classroom', building: 'Main Academic Block', floor: 1, hasProjector: false, hasAC: false, description: 'Basic classroom', programTypes: ['Inter'], availableForOtherDepartments: true },
+  { id: 'r-201', name: 'R-201', capacity: 70, type: 'Classroom', building: 'Main Academic Block', floor: 2, hasProjector: true, hasAC: true, description: 'Large lecture hall', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'r-202', name: 'R-202', capacity: 45, type: 'Classroom', building: 'Main Academic Block', floor: 2, hasProjector: true, hasAC: false, description: 'Standard classroom', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'r-301', name: 'R-301', capacity: 55, type: 'Classroom', building: 'Main Academic Block', floor: 3, hasProjector: true, hasAC: true, description: 'Classroom with modern facilities', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'r-401', name: 'R-401', capacity: 35, type: 'Classroom', building: 'Main Academic Block', floor: 4, hasProjector: false, hasAC: false, description: 'Small classroom for seminars', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  
+  // Chemistry Department Rooms
+  { id: 'chem-301', name: 'Chem-301', capacity: 50, type: 'Classroom', building: 'Science Block', floor: 3, hasProjector: true, hasAC: true, description: 'Chemistry lecture hall', programTypes: ['BS'], primaryDepartmentId: 'd2', availableForOtherDepartments: true },
+  { id: 'chem-lab1', name: 'Chem-Lab1', capacity: 25, type: 'Laboratory', building: 'Science Block', floor: 3, hasProjector: false, hasAC: true, description: 'General Chemistry Lab with fume hoods', programTypes: ['BS'], primaryDepartmentId: 'd2', availableForOtherDepartments: false },
+  { id: 'chem-lab2', name: 'Chem-Lab2', capacity: 20, type: 'Laboratory', building: 'Science Block', floor: 3, hasProjector: false, hasAC: true, description: 'Organic Chemistry Lab', programTypes: ['BS'], primaryDepartmentId: 'd2', availableForOtherDepartments: false },
+  
+  // Physics Department Rooms
+  { id: 'phys-201', name: 'Phys-201', capacity: 60, type: 'Classroom', building: 'Science Block', floor: 2, hasProjector: true, hasAC: true, description: 'Physics lecture hall', programTypes: ['BS'], primaryDepartmentId: 'd10', availableForOtherDepartments: true },
+  { id: 'phys-lab1', name: 'Phys-Lab1', capacity: 30, type: 'Laboratory', building: 'Science Block', floor: 2, hasProjector: false, hasAC: false, description: 'General Physics Lab', programTypes: ['BS'], primaryDepartmentId: 'd10', availableForOtherDepartments: false },
+  
+  // Mathematics Department Rooms
+  { id: 'math-101', name: 'Math-101', capacity: 80, type: 'Classroom', building: 'Mathematics Block', floor: 1, hasProjector: true, hasAC: true, description: 'Large mathematics lecture hall', programTypes: ['Inter', 'BS'], primaryDepartmentId: 'd9', availableForOtherDepartments: true },
+  { id: 'math-201', name: 'Math-201', capacity: 50, type: 'Classroom', building: 'Mathematics Block', floor: 2, hasProjector: true, hasAC: false, description: 'Mathematics classroom', programTypes: ['Inter', 'BS'], primaryDepartmentId: 'd9', availableForOtherDepartments: true },
+  
+  // English Department Rooms
+  { id: 'eng-101', name: 'Eng-101', capacity: 40, type: 'Classroom', building: 'Humanities Block', floor: 1, hasProjector: true, hasAC: true, description: 'English language lab', programTypes: ['Inter', 'BS'], primaryDepartmentId: 'd5', availableForOtherDepartments: true },
+  { id: 'eng-201', name: 'Eng-201', capacity: 35, type: 'Classroom', building: 'Humanities Block', floor: 2, hasProjector: false, hasAC: false, description: 'Literature classroom', programTypes: ['Inter'], primaryDepartmentId: 'd5', availableForOtherDepartments: true },
+  
+  // Economics Department Rooms
+  { id: 'econ-301', name: 'Econ-301', capacity: 65, type: 'Classroom', building: 'Business Block', floor: 3, hasProjector: true, hasAC: true, description: 'Economics lecture hall', programTypes: ['BS'], primaryDepartmentId: 'd3', availableForOtherDepartments: true },
+  
+  // Inter-specific Rooms
+  { id: 'inter-hall1', name: 'Inter Hall 1', capacity: 120, type: 'Classroom', building: 'Intermediate Block', floor: 1, hasProjector: true, hasAC: true, description: 'Large hall for intermediate classes', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'inter-hall2', name: 'Inter Hall 2', capacity: 100, type: 'Classroom', building: 'Intermediate Block', floor: 1, hasProjector: true, hasAC: false, description: 'Inter examination hall', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'inter-lab1', name: 'Inter Lab 1', capacity: 40, type: 'Laboratory', building: 'Intermediate Block', floor: 2, hasProjector: false, hasAC: false, description: 'Basic computer lab for intermediate', programTypes: ['Inter'], availableForOtherDepartments: false },
+  
+  // Special Purpose Rooms
+  { id: 'auditorium', name: 'Main Auditorium', capacity: 200, type: 'Auditorium', building: 'Main Block', floor: 0, hasProjector: true, hasAC: true, description: 'Large auditorium for events and seminars', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'conf-room1', name: 'Conference Room 1', capacity: 20, type: 'Conference', building: 'Administrative Block', floor: 2, hasProjector: true, hasAC: true, description: 'Meeting room for faculty', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
+  { id: 'library-hall', name: 'Library Hall', capacity: 100, type: 'Other', building: 'Library Block', floor: 1, hasProjector: false, hasAC: true, description: 'Study hall in library', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true }
+];
+
   // Computer Science Department Classes
   // Semester 1 (Fall 2024)
 export const timetableEntries: TimetableEntry[] = [

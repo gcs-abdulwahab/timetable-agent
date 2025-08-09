@@ -86,6 +86,12 @@ const TimetableManager: React.FC = () => {
             >
               Manage Departments
             </Link>
+            <Link
+              href="/room-management"
+              className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors text-sm font-medium inline-block"
+            >
+              Room Management
+            </Link>
             <button
               onClick={() => setShowAdmin(!showAdmin)}
               className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"

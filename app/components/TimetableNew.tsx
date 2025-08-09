@@ -12,6 +12,7 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import {
   departments,
+  rooms,
   semesters,
   Subject,
   subjects,
@@ -481,15 +482,46 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   };
 
   // Droppable cell component
-  const DroppableCell = ({ departmentId, timeSlotId, children }: {
+  const DroppableCell = ({ departmentId, timeSlotId, children, isEmpty = false }: {
     departmentId: string;
     timeSlotId: string;
     children: React.ReactNode;
+    isEmpty?: boolean;
   }) => {
     const dropId = `${departmentId}|${timeSlotId}`;
     const { isOver, setNodeRef } = useDroppable({
       id: dropId,
     });
+
+    // Handle click on empty cell
+    const handleCellClick = (e: React.MouseEvent) => {
+      // Only handle click if the cell is empty and we're not dragging
+      if (isEmpty && !activeEntry && e.target === e.currentTarget) {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        // Find the department to get its name
+        const department = departments.find(dept => dept.id === departmentId);
+        const timeSlot = timeSlots.find(slot => slot.id === timeSlotId);
+        
+        if (department && timeSlot) {
+          // Get the first active semester as default
+          const defaultSemester = getActiveSemesters()[0];
+          
+          // Pre-fill the modal with department and time slot information
+          setAddEntryData(prev => ({
+            ...prev,
+            selectedSemester: defaultSemester?.name || '',
+            selectedDepartment: department.id, // Use department ID, not name
+            selectedTimeSlot: timeSlotId,
+            selectedDays: [] // Let user select days
+          }));
+          
+          // Open the add entry modal
+          setShowAddEntry(true);
+        }
+      }
+    };
 
     // Check for potential conflicts when hovering
     let hasConflict = false;
@@ -519,6 +551,11 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
 
     let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]`;
     
+    // Add hover effect for empty cells
+    if (isEmpty) {
+      cellClasses += ' hover:bg-blue-50 cursor-pointer';
+    }
+    
     if (isOver) {
       if (hasConflict) {
         cellClasses += ' bg-red-100 border-red-300';
@@ -532,9 +569,15 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         ref={setNodeRef}
         className={cellClasses}
         style={{ minHeight: '60px', verticalAlign: 'top' }}
-        title={hasConflict ? `${conflictType} Conflict - Cannot drop here` : ''}
+        title={isEmpty ? 'Click to add new entry' : hasConflict ? `${conflictType} Conflict - Cannot drop here` : ''}
+        onClick={handleCellClick}
       >
         {children}
+        {isEmpty && (
+          <div className="flex items-center justify-center h-full text-gray-400 text-xs opacity-0 hover:opacity-100 transition-opacity">
+            + Add Entry
+          </div>
+        )}
         {isOver && hasConflict && (
           <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded">
             ⚠️ Conflict
@@ -662,13 +705,16 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                   return groups;
                 }, {} as Record<string, typeof departmentEntries>);
                 
+                const hasEntries = Object.keys(groupedEntries).length > 0;
+                
                 return (
                   <DroppableCell 
                     key={`${department.id}-${timeSlot.id}`} 
                     departmentId={department.id}
                     timeSlotId={timeSlot.id}
+                    isEmpty={!hasEntries}
                   >
-                    {Object.keys(groupedEntries).length > 0 && (
+                    {hasEntries && (
                       <div className="space-y-1">
                         {Object.entries(groupedEntries).map(([groupKey, entries]) => {
                           const firstEntry = entries[0];
@@ -789,13 +835,18 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
               
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Room</label>
-                <input
-                  type="text"
+                <select
                   value={editFormData.room}
                   onChange={(e) => setEditFormData(prev => ({ ...prev, room: e.target.value }))}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Enter room number"
-                />
+                >
+                  <option value="">Select Room (Optional)</option>
+                  {rooms.map(room => (
+                    <option key={room.id} value={room.name}>
+                      {room.name} - Capacity: {room.capacity} ({room.type})
+                    </option>
+                  ))}
+                </select>
               </div>
               
               <div>
@@ -1117,8 +1168,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
               {/* Room */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Room (Optional)</label>
-                <input
-                  type="text"
+                <select
                   value={addEntryData.room}
                   onChange={(e) => {
                     setAddEntryData(prev => ({
@@ -1127,8 +1177,14 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                     }));
                   }}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                  placeholder="e.g. Room 101"
-                />
+                >
+                  <option value="">Select Room (Optional)</option>
+                  {rooms.map(room => (
+                    <option key={room.id} value={room.name}>
+                      {room.name} - Capacity: {room.capacity} ({room.type})
+                    </option>
+                  ))}
+                </select>
               </div>
             </div>
             

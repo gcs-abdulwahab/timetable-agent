@@ -1,0 +1,37 @@
+{
+  "workloadByDesignation": {
+    "Lecturer": {
+      "weeklyHours": 24,
+      "description": "Lecturers have the highest teaching workload"
+    },
+    "Assistant Professor": {
+      "weeklyHours": 24,
+      "description": "Assistant Professors have the same workload as Lecturers"
+    },
+    "Associate Professor": {
+      "weeklyHours": 18,
+      "description": "Associate Professors have reduced teaching load for research activities"
+    },
+    "Associate Professor & HOD": {
+      "weeklyHours": 18,
+      "description": "Associate Professors serving as HOD maintain the same research-focused workload"
+    },
+    "Professor": {
+      "weeklyHours": 12,
+      "description": "Professors have the lowest teaching workload to focus on research and supervision"
+    },
+    "Professor & HOD": {
+      "weeklyHours": 12,
+      "description": "Professors serving as HOD maintain the same research-focused workload"
+    }
+  },
+  "metadata": {
+    "description": "Weekly teaching workload hours by academic designation",
+    "lastUpdated": "2025-08-09",
+    "notes": [
+      "Workload is measured in weekly teaching hours",
+      "Higher academic ranks have reduced teaching loads to allow for research activities",
+      "HOD positions do not change the base workload for each rank"
+    ]
+  }
+}

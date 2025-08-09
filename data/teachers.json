@@ -3,49 +3,50 @@
     "id": "t1",
     "name": "Ejaz Ahmad",
     "shortName": "Ejaz Ahmad",
-    "departmentId": "d6"
+    "departmentId": "d6",
+    "designation": "Associate Professor & HOD"
   },
   {
     "id": "t2",
     "name": "Sadaf Siddique",
     "shortName": "Sadaf Siddique",
-    "departmentId": "d6"
+    "departmentId": "d6",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t3",
     "name": "Abdul Wahab",
     "shortName": "Abdul Wahab",
-    "departmentId": "d6"
+    "departmentId": "d6",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t4",
     "name": "Muhammad Zeeshan",
     "shortName": "Muhammad Zeeshan",
-    "departmentId": "d6"
+    "departmentId": "d6",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t5",
     "name": "Naureen",
     "shortName": "Naureen",
-    "departmentId": "d6"
-  },
-  {
-    "id": "t6",
-    "name": "Dr. Hafiz Muhammad Farooq",
-    "shortName": "Dr. H.M. Farooq",
-    "departmentId": "d2"
+    "departmentId": "d6",
+    "designation": "Lecturer"
   },
   {
     "id": "t7",
     "name": "Dr. Qamar Subhani",
     "shortName": "Dr. Q. Subhani",
-    "departmentId": "d2"
+    "departmentId": "d2",
+    "designation": "Professor"
   },
   {
     "id": "t8",
     "name": "Dr. M. Monim ul Mahboob",
     "shortName": "Dr. M.M. Mahboob",
-    "departmentId": "d2"
+    "departmentId": "d2",
+    "designation": "Professor"
   },
   {
     "id": "t9",
@@ -147,217 +148,246 @@
     "id": "t25",
     "name": "Dr. M. Khalid Rashid",
     "shortName": "Dr. M.K. Rashid",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Professor & HOD"
   },
   {
     "id": "t26",
     "name": "Muhammad Tariq",
     "shortName": "Muhammad Tariq",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Associate Professor"
   },
   {
     "id": "t27",
     "name": "Iftikhar Ahmad",
     "shortName": "Iftikhar Ahmad",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t28",
     "name": "Muhammad Tanveer",
     "shortName": "Muhammad Tanveer",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t29",
     "name": "Atiq-ur-Rerhman",
     "shortName": "Atiq-ur-Rerhman",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t30",
     "name": "Muhammad Rehan Hameed",
     "shortName": "M.R. Hameed",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t31",
     "name": "Ghulam Farid",
     "shortName": "Ghulam Farid",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t32",
     "name": "Fahim Abbas",
     "shortName": "Fahim Abbas",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t33",
     "name": "Aneesa Razaq",
     "shortName": "Aneesa Razaq",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Lecturer"
   },
   {
     "id": "t34",
     "name": "Naveed Munir",
     "shortName": "Naveed Munir",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Lecturer"
   },
   {
     "id": "t35",
     "name": "Maaz Anis",
     "shortName": "Maaz Anis",
-    "departmentId": "d3"
+    "departmentId": "d3",
+    "designation": "Lecturer"
   },
   {
     "id": "t36",
     "name": "Naseem Akhtar",
     "shortName": "Naseem Akhtar",
-    "departmentId": "d3"
-  },
-  {
-    "id": "t37",
-    "name": "Ayub Munir",
-    "shortName": "Ayub Munir",
-    "departmentId": "d5"
+    "departmentId": "d3",
+    "designation": "Lecturer"
   },
   {
     "id": "t38",
     "name": "Asif Shaheen",
     "shortName": "Asif Shaheen",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Associate Professor"
   },
   {
     "id": "t39",
     "name": "Nighat Iftekhar",
     "shortName": "Nighat Iftekhar",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Associate Professor"
   },
   {
     "id": "t40",
     "name": "Saleem Ahsan",
     "shortName": "Saleem Ahsan",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Associate Professor"
   },
   {
     "id": "t41",
     "name": "Rana Yousaf",
     "shortName": "Rana Yousaf",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t42",
     "name": "Nosheen Jafar",
     "shortName": "Nosheen Jafar",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t43",
     "name": "Dr. Nazir Ahmed",
     "shortName": "Dr. N. Ahmed",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t44",
     "name": "Mubashir Sadiq",
     "shortName": "Mubashir Sadiq",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t45",
     "name": "Imran Khan",
     "shortName": "Imran Khan",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t46",
     "name": "M. Talha",
     "shortName": "M. Talha",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Lecturer"
   },
   {
     "id": "t47",
     "name": "Shehryar",
     "shortName": "Shehryar",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Lecturer"
   },
   {
     "id": "t48",
     "name": "Nabeel Minhas",
     "shortName": "Nabeel Minhas",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Lecturer"
   },
   {
     "id": "t49",
     "name": "Hafsa Khan",
     "shortName": "Hafsa Khan",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Lecturer"
   },
   {
     "id": "t50",
     "name": "Hamza Sultan",
     "shortName": "Hamza Sultan",
-    "departmentId": "d5"
+    "departmentId": "d5",
+    "designation": "Lecturer"
   },
   {
     "id": "t51",
     "name": "Dr. Muhammad Ghous",
     "shortName": "Dr. M. Ghous",
-    "departmentId": "d7"
+    "departmentId": "d7",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t52",
     "name": "Muhammad Sohail",
     "shortName": "Muhammad Sohail",
-    "departmentId": "d7"
+    "departmentId": "d7",
+    "designation": "Lecturer"
   },
   {
     "id": "t53",
     "name": "Kiran Hamayon",
     "shortName": "Kiran Hamayon",
-    "departmentId": "d7"
+    "departmentId": "d7",
+    "designation": "Lecturer"
   },
   {
     "id": "t73",
     "name": "Dr. Zia Ur Rehman",
     "shortName": "Dr. Zia Ur Rehman",
-    "departmentId": "d1"
+    "departmentId": "d1",
+    "designation": "Professor"
   },
   {
     "id": "t74",
     "name": "Adnan Khalid",
     "shortName": "Adnan Khalid",
-    "departmentId": "d1"
+    "departmentId": "d1",
+    "designation": "Assistant Professor & HOD"
   },
   {
     "id": "t75",
     "name": "Atiqa Wajid",
     "shortName": "Atiqa Wajid",
-    "departmentId": "d1"
+    "departmentId": "d1",
+    "designation": "Lecturer"
   },
   {
     "id": "t76",
     "name": "Dr. Adil Abbas",
     "shortName": "Dr. Adil Abbas",
-    "departmentId": "d1"
+    "departmentId": "d1",
+    "designation": "Lecturer"
   },
   {
     "id": "t77",
     "name": "Shahzada Shahab Khan",
     "shortName": "Shahzada Shahab Khan",
-    "departmentId": "d20"
+    "departmentId": "d20",
+    "designation": "Associate Professor & HOD"
   },
   {
     "id": "t78",
     "name": "Hifsa Farooq",
     "shortName": "Hifsa Farooq",
-    "departmentId": "d20"
+    "departmentId": "d20",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t79",
     "name": "Asifa Sohail",
     "shortName": "Asifa Sohail",
-    "departmentId": "d20"
+    "departmentId": "d20",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t80",
@@ -375,181 +405,211 @@
     "id": "t82",
     "name": "Dr. Shafayat Ali",
     "shortName": "Dr. Shafayat Ali",
-    "departmentId": "d8"
+    "departmentId": "d8",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t83",
     "name": "Saiba Ali",
     "shortName": "Saiba Ali",
-    "departmentId": "d8"
+    "departmentId": "d8",
+    "designation": "Lecturer"
   },
   {
     "id": "t84",
     "name": "Nain Tara",
     "shortName": "Nain Tara",
-    "departmentId": "d8"
+    "departmentId": "d8",
+    "designation": "Lecturer"
   },
   {
     "id": "t85",
     "name": "Dr. Naveed Akhtar",
     "shortName": "Dr. Naveed Akhtar",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Associate Professor & HOD"
   },
   {
     "id": "t86",
     "name": "M. Arshed Rashed",
     "shortName": "M. Arshed Rashed",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Associate Professor"
   },
   {
     "id": "t87",
     "name": "Ahmad Saleem",
     "shortName": "Ahmad Saleem",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Associate Professor"
   },
   {
     "id": "t88",
     "name": "Dr. Qaisar Mehmood",
     "shortName": "Dr. Qaisar Mehmood",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t89",
     "name": "Tariq Sharif",
     "shortName": "Tariq Sharif",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t90",
     "name": "Muhammad Ikram",
     "shortName": "Muhammad Ikram",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t91",
     "name": "Javed Ali",
     "shortName": "Javed Ali",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t92",
     "name": "Dr. Imran Nadeem",
     "shortName": "Dr. Imran Nadeem",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t93",
     "name": "Imama Zehra",
     "shortName": "Imama Zehra",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t94",
     "name": "Malka Shahbano",
     "shortName": "Malka Shahbano",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t95",
     "name": "Abdul Aziz",
     "shortName": "Abdul Aziz",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Lecturer"
   },
   {
     "id": "t96",
     "name": "Ayesha Liaqat",
     "shortName": "Ayesha Liaqat",
-    "departmentId": "d9"
+    "departmentId": "d9",
+    "designation": "Lecturer"
   },
   {
     "id": "t97",
     "name": "Dr. Muhammad Saleem",
     "shortName": "Dr. Muhammad Saleem",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Professor & HOD"
   },
   {
     "id": "t98",
     "name": "Dr. Abdul Rashid",
     "shortName": "Dr. Abdul Rashid",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Professor"
   },
   {
     "id": "t99",
     "name": "Ms. Noreen Azam",
     "shortName": "Ms. Noreen Azam",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t100",
     "name": "M. Tariq Shaikh",
     "shortName": "M. Tariq Shaikh",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t101",
     "name": "Ms. Majida Ch.",
     "shortName": "Ms. Majida Ch.",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t102",
     "name": "Jamil Ahmad",
     "shortName": "Jamil Ahmad",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t103",
     "name": "Dr. Muhammad Zubair",
     "shortName": "Dr. Muhammad Zubair",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t104",
     "name": "Dr. Jamil Sadique",
     "shortName": "Dr. Jamil Sadique",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t105",
     "name": "M. Attiqus Salam",
     "shortName": "M. Attiqus Salam",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t106",
     "name": "Saeed Ahmad Pal",
     "shortName": "Saeed Ahmad Pal",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t107",
     "name": "Nadeem Ahmad",
     "shortName": "Nadeem Ahmad",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t108",
     "name": "Dr. Waris Ali",
     "shortName": "Dr. Waris Ali",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Associate Professor"
   },
   {
     "id": "t109",
     "name": "Zahid Niazi",
     "shortName": "Zahid Niazi",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t110",
     "name": "Abid Hussain",
     "shortName": "Abid Hussain",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t111",
     "name": "Muhammad Asghar",
     "shortName": "Muhammad Asghar",
-    "departmentId": "d10"
+    "departmentId": "d10",
+    "designation": "Assistant Professor"
   },
   {
     "id": "t112",
@@ -765,6 +825,350 @@
     "id": "t1754228459714",
     "name": "Dr Ahmad Khan",
     "shortName": "Ahmad Khan",
-    "departmentId": "d1754228405483"
+    "departmentId": "d1754228405483",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t150",
+    "name": "Dr. Rehman Gul Khan",
+    "shortName": "Dr. R.G. Khan",
+    "departmentId": "d11",
+    "designation": "Associate Professor & HOD"
+  },
+  {
+    "id": "t151",
+    "name": "Mujeeb Ul Islam",
+    "shortName": "M.U. Islam",
+    "departmentId": "d11",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t152",
+    "name": "Dr. Muneera Sultana",
+    "shortName": "Dr. M. Sultana",
+    "departmentId": "d11",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t153",
+    "name": "Abdul Rasheed",
+    "shortName": "A. Rasheed",
+    "departmentId": "d11",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t154",
+    "name": "Qamar Abbas",
+    "shortName": "Q. Abbas",
+    "departmentId": "d11",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t155",
+    "name": "Khushbakhat Bajwa",
+    "shortName": "K. Bajwa",
+    "departmentId": "d11",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t156",
+    "name": "Qasim Ali",
+    "shortName": "Q. Ali",
+    "departmentId": "d11",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t157",
+    "name": "Dr. Raza Taimoor",
+    "shortName": "Dr. R. Taimoor",
+    "departmentId": "d11",
+    "designation": "Professor"
+  },
+  {
+    "id": "t158",
+    "name": "Muneer Bhatti",
+    "shortName": "M. Bhatti",
+    "departmentId": "d11",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t159",
+    "name": "Abdul Qayyum",
+    "shortName": "A. Qayyum",
+    "departmentId": "d4",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t160",
+    "name": "Hamid Ali",
+    "shortName": "H. Ali",
+    "departmentId": "d4",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t161",
+    "name": "Muhammad Shahzad",
+    "shortName": "M. Shahzad",
+    "departmentId": "d4",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t162",
+    "name": "Junaid Ahmad Khan",
+    "shortName": "J.A. Khan",
+    "departmentId": "d4",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t163",
+    "name": "Rida Shah",
+    "shortName": "R. Shah",
+    "departmentId": "d4",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t164",
+    "name": "Dr. Ahmad Ali Badat",
+    "shortName": "Dr. A.A. Badat",
+    "departmentId": "d21",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t165",
+    "name": "Mati Ur Rehman",
+    "shortName": "M.U. Rehman",
+    "departmentId": "d21",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t166",
+    "name": "Dr. Mukhtar Hussain Shah",
+    "shortName": "Dr. M.H. Shah",
+    "departmentId": "d22",
+    "designation": "Professor & HOD"
+  },
+  {
+    "id": "t167",
+    "name": "Nasira Perveen",
+    "shortName": "N. Perveen",
+    "departmentId": "d22",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t168",
+    "name": "Muhammad Qasim",
+    "shortName": "M. Qasim",
+    "departmentId": "d22",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t169",
+    "name": "Dr. Muhammad Junaid Sharif",
+    "shortName": "Dr. M.J. Sharif",
+    "departmentId": "d23",
+    "designation": "Professor & HOD"
+  },
+  {
+    "id": "t170",
+    "name": "Hifz ur Rehman Usmani",
+    "shortName": "H.R. Usmani",
+    "departmentId": "d23",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t171",
+    "name": "Rao Muhammad Tariq",
+    "shortName": "R.M. Tariq",
+    "departmentId": "d23",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t172",
+    "name": "Dr Mehfooz Ahmad Bhatti",
+    "shortName": "Dr. M.A. Bhatti",
+    "departmentId": "d23",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t173",
+    "name": "Dr. Farman Ali",
+    "shortName": "Dr. F. Ali",
+    "departmentId": "d23",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t174",
+    "name": "Dr. Kaiser Mahmood",
+    "shortName": "Dr. K. Mahmood",
+    "departmentId": "d19",
+    "designation": "Professor & HOD"
+  },
+  {
+    "id": "t175",
+    "name": "Muhammad Aleem",
+    "shortName": "M. Aleem",
+    "departmentId": "d13",
+    "designation": "Associate Professor & HOD"
+  },
+  {
+    "id": "t176",
+    "name": "Amtal Saba",
+    "shortName": "A. Saba",
+    "departmentId": "d13",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t177",
+    "name": "Fakhar Elahi",
+    "shortName": "F. Elahi",
+    "departmentId": "d13",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t178",
+    "name": "Muhammad Ali",
+    "shortName": "M. Ali",
+    "departmentId": "d13",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t179",
+    "name": "Muhammad Aslam",
+    "shortName": "M. Aslam",
+    "departmentId": "d12",
+    "designation": "Associate Professor & HOD"
+  },
+  {
+    "id": "t180",
+    "name": "Abdul Aziz Taga",
+    "shortName": "A.A. Taga",
+    "departmentId": "d12",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t181",
+    "name": "Rabia Safdar",
+    "shortName": "R. Safdar",
+    "departmentId": "d12",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t182",
+    "name": "Marhaba Rana",
+    "shortName": "M. Rana",
+    "departmentId": "d12",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t183",
+    "name": "Dr Nadeem Abbas",
+    "shortName": "Dr. N. Abbas",
+    "departmentId": "d12",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t184",
+    "name": "Dr Bushra Mehmood",
+    "shortName": "Dr. B. Mehmood",
+    "departmentId": "d12",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t185",
+    "name": "Noor Fatima",
+    "shortName": "N. Fatima",
+    "departmentId": "d12",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t186",
+    "name": "Ahsan Ghafoor",
+    "shortName": "A. Ghafoor",
+    "departmentId": "d12",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t187",
+    "name": "Muhammad Amer Nazir",
+    "shortName": "M.A. Nazir",
+    "departmentId": "d14",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t188",
+    "name": "Muhammad Sabir Ch",
+    "shortName": "M.S. Ch",
+    "departmentId": "d14",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t189",
+    "name": "Amjad Ali Chaudhry",
+    "shortName": "A.A. Chaudhry",
+    "departmentId": "d14",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t190",
+    "name": "Muhammad Qasim",
+    "shortName": "M. Qasim",
+    "departmentId": "d14",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t191",
+    "name": "Muhammad Zahid Rasheed",
+    "shortName": "M.Z. Rasheed",
+    "departmentId": "d14",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t192",
+    "name": "Dr. Azam Zaka",
+    "shortName": "Dr. A. Zaka",
+    "departmentId": "d14",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t193",
+    "name": "Fayyaz Labha",
+    "shortName": "F. Labha",
+    "departmentId": "d14",
+    "designation": "Assistant Professor"
+  },
+  {
+    "id": "t194",
+    "name": "Dr. Muhammad Junaid Sharif",
+    "shortName": "Dr. M.J. Sharif",
+    "departmentId": "d18",
+    "designation": "Professor & HOD"
+  },
+  {
+    "id": "t195",
+    "name": "Hifz ur Rehman Usmani",
+    "shortName": "H.R. Usmani",
+    "departmentId": "d18",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t196",
+    "name": "Rao Muhammad Tariq",
+    "shortName": "R.M. Tariq",
+    "departmentId": "d18",
+    "designation": "Associate Professor"
+  },
+  {
+    "id": "t197",
+    "name": "Dr Mehfooz Ahmad Bhatti",
+    "shortName": "Dr. M.A. Bhatti",
+    "departmentId": "d18",
+    "designation": "Lecturer"
+  },
+  {
+    "id": "t198",
+    "name": "Dr. Farman Ali",
+    "shortName": "Dr. F. Ali",
+    "departmentId": "d18",
+    "designation": "Lecturer"
   }
 ]

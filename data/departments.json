@@ -48,12 +48,6 @@
     "offersBSDegree": true
   },
   {
-    "id": "d17",
-    "name": "History",
-    "shortName": "History",
-    "offersBSDegree": false
-  },
-  {
     "id": "d18",
     "name": "Islamic Studies",
     "shortName": "Islamic Studies",
@@ -123,6 +117,24 @@
     "id": "d16",
     "name": "Zoology",
     "shortName": "Zoology",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d21",
+    "name": "Arabic",
+    "shortName": "Arabic",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d22",
+    "name": "Botany",
+    "shortName": "Botany",
+    "offersBSDegree": true
+  },
+  {
+    "id": "d23",
+    "name": "Islamyat",
+    "shortName": "Islamyat",
     "offersBSDegree": true
   }
 ]
