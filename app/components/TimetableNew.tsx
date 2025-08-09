@@ -100,11 +100,6 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     return subjects.filter(s => s.semesterLevel === semesterLevel && s.departmentId === departmentId);
   };
 
-  // Get teachers for a specific department
-  const getTeachersForDepartment = (departmentId: string) => {
-    return teachers.filter(t => t.departmentId === departmentId || t.departmentId === 'all');
-  };
-
   // Helper function to format days display
   const formatDaysDisplay = (entries: TimetableEntry[]) => {
     const dayNumbers = entries.map(entry => {
@@ -392,17 +387,35 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                 e.stopPropagation();
                 e.preventDefault();
                 const rect = (e.target as HTMLElement).getBoundingClientRect();
+                
+                // Calculate tooltip position with boundary checking
+                let tooltipX = rect.left + rect.width / 2;
+                let tooltipY = rect.top - 10;
+                
+                // Ensure tooltip doesn't go off-screen horizontally
+                const tooltipWidth = 300; // Approximate tooltip width
+                if (tooltipX - tooltipWidth / 2 < 10) {
+                  tooltipX = tooltipWidth / 2 + 10;
+                } else if (tooltipX + tooltipWidth / 2 > window.innerWidth - 10) {
+                  tooltipX = window.innerWidth - tooltipWidth / 2 - 10;
+                }
+                
+                // Ensure tooltip doesn't go off-screen vertically
+                if (tooltipY < 100) {
+                  tooltipY = rect.bottom + 20; // Show below if not enough space above
+                }
+                
                 setConflictTooltip({
                   show: true,
                   content: getConflictDetails(entries),
-                  x: rect.left + rect.width / 2,
-                  y: rect.top - 10
+                  x: tooltipX,
+                  y: tooltipY
                 });
                 
-                // Auto-close tooltip after 5 seconds
+                // Auto-close tooltip after 8 seconds (increased for better UX)
                 setTimeout(() => {
                   setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
-                }, 5000);
+                }, 8000);
               }}
               onMouseDown={(e) => {
                 e.stopPropagation(); // Prevent drag from starting
@@ -534,6 +547,17 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   // Debug: Log modal state (development only)
   if (process.env.NODE_ENV === 'development') {
     console.log('Current modal state:', { editingData: !!editingData, editingEntry, updateCounter });
+  }
+
+  // If not mounted yet, show loading state to prevent hydration mismatches
+  if (!mounted) {
+    return (
+      <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-gray-500">Loading timetable...</div>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -713,7 +737,21 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
                 <select
                   value={editFormData.subjectId}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, subjectId: e.target.value }))}
+                  onChange={(e) => {
+                    const newSubjectId = e.target.value;
+                    const newSubject = subjects.find(s => s.id === newSubjectId);
+                    const currentSubject = subjects.find(s => s.id === editFormData.subjectId);
+                    
+                    // Reset teacher if subject's department changes
+                    const shouldResetTeacher = newSubject && currentSubject && 
+                      newSubject.departmentId !== currentSubject.departmentId;
+                    
+                    setEditFormData(prev => ({ 
+                      ...prev, 
+                      subjectId: newSubjectId,
+                      ...(shouldResetTeacher && { teacherId: '' })
+                    }));
+                  }}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
                   {subjects.map(subject => (
@@ -731,11 +769,21 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                   onChange={(e) => setEditFormData(prev => ({ ...prev, teacherId: e.target.value }))}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {teachers.map(teacher => (
-                    <option key={teacher.id} value={teacher.id}>
-                      {teacher.name}
-                    </option>
-                  ))}
+                  {(() => {
+                    // Get the selected subject to find its department
+                    const selectedSubject = subjects.find(s => s.id === editFormData.subjectId);
+                    
+                    // Filter teachers based on the selected subject's department
+                    const filteredTeachers = selectedSubject 
+                      ? teachers.filter(teacher => teacher.departmentId === selectedSubject.departmentId)
+                      : teachers; // Show all teachers if no subject is selected
+                    
+                    return filteredTeachers.map(teacher => (
+                      <option key={teacher.id} value={teacher.id}>
+                        {teacher.name}
+                      </option>
+                    ));
+                  })()}
                 </select>
               </div>
               
@@ -960,7 +1008,8 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                   onChange={(e) => {
                     setAddEntryData(prev => ({
                       ...prev,
-                      selectedSubject: e.target.value
+                      selectedSubject: e.target.value,
+                      selectedTeacher: '' // Reset teacher when subject changes
                     }));
                   }}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
@@ -980,7 +1029,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                 </select>
               </div>
 
-              {/* Teacher Selection - Filtered by Department */}
+              {/* Teacher Selection - Filtered by Selected Subject's Department */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher (Optional)</label>
                 <select
@@ -992,16 +1041,24 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                     }));
                   }}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                  disabled={!addEntryData.selectedDepartment}
+                  disabled={!addEntryData.selectedSubject}
                 >
                   <option value="">Select Teacher (Optional)</option>
-                  {addEntryData.selectedDepartment && 
-                    getTeachersForDepartment(addEntryData.selectedDepartment).map(teacher => (
+                  {(() => {
+                    // Get the selected subject to find its department
+                    const selectedSubject = subjects.find(s => s.id === addEntryData.selectedSubject);
+                    
+                    // Filter teachers based on the selected subject's department
+                    const filteredTeachers = selectedSubject 
+                      ? teachers.filter(teacher => teacher.departmentId === selectedSubject.departmentId)
+                      : [];
+                    
+                    return filteredTeachers.map(teacher => (
                       <option key={teacher.id} value={teacher.id}>
                         {teacher.name}
                       </option>
-                    ))
-                  }
+                    ));
+                  })()}
                 </select>
               </div>
 
