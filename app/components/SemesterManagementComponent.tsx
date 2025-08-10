@@ -816,6 +816,7 @@ const SemesterManagementComponent = () => {
         initialSubject={editingSubject}
         departmentId={selectedDepartmentId || departments[0]?.id || ''}
         semesterLevel={selectedLevel}
+        departments={departments}
         onSubmit={(subjectData) => {
           if (modalMode === 'edit') {
             // Ensure department and semester level remain fixed per requirements

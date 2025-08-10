@@ -84,6 +84,7 @@
     "teacherId": "t70",
     "timeSlotId": "ts2",
     "day": "Monday",
+    "room": "136",
     "semesterId": "sem1"
   },
   {
@@ -92,6 +93,7 @@
     "teacherId": "t70",
     "timeSlotId": "ts2",
     "day": "Tuesday",
+    "room": "136",
     "semesterId": "sem1"
   }
 ]

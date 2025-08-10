@@ -46,7 +46,7 @@ export interface Subject {
   isCore: boolean; // Core vs Elective
   isMajor?: boolean; // Major (taught by same department) vs Minor (taught by other departments) - optional for backwards compatibility
   teachingDepartmentIds?: string[]; // Department(s) that actually teach this subject - optional for backwards compatibility
-  semesterId: string; // Which semester this subject belongs to (sem1, sem3, sem5, sem7)
+  semesterId?: string; // Which semester this subject belongs to (sem1, sem3, sem5, sem7)
 }
 
 export interface TimeSlot {

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Room, departments, rooms as initialRooms } from '../data';
+import { Room, departments } from '../data';
 import { Button } from '../ui/button';
 import AddRoomModal from './AddRoomModal';
 
@@ -67,12 +67,14 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
         } as Room));
         setRooms(validatedRooms);
       } else {
-        console.error('Failed to fetch rooms');
-        setRooms(initialRooms); // Fallback to initial data
+        console.error('Failed to fetch rooms from API');
+        setRooms([]); // Don't fall back to stale data
+        // You could show an error message to the user here
       }
     } catch (error) {
       console.error('Error fetching rooms:', error);
-      setRooms(initialRooms); // Fallback to initial data
+      setRooms([]); // Don't fall back to stale data
+      // You could show an error message to the user here
     } finally {
       setLoading(false);
     }

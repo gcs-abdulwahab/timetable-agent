@@ -92,8 +92,15 @@ function loadJsonData<T>(filename: string): T[] {
 }
 
 export function loadTimetableEntries(): TimetableEntry[] {
-  const data = loadJsonData<any>('generated-timetable-entries.json');
-  return Array.isArray(data) ? data : data.timetableEntries || [];
+  try {
+    const dataPath = join(process.cwd(), 'data', 'generated-timetable-entries.json');
+    const data = readFileSync(dataPath, 'utf-8');
+    const parsedData = JSON.parse(data);
+    return Array.isArray(parsedData) ? parsedData : (parsedData.timetableEntries || []);
+  } catch (error) {
+    console.warn('Warning: Could not load generated-timetable-entries.json:', error);
+    return [];
+  }
 }
 
 export function loadDepartments(): Department[] {

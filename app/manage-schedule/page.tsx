@@ -337,32 +337,6 @@ const ManageSchedulePage = () => {
           </div>
         </div>
 
-        {/* Preview Section */}
-        <div className="bg-white rounded-lg shadow-lg p-6">
-          <h2 className="text-2xl font-semibold text-gray-700 mb-4">Preview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <h3 className="text-lg font-medium mb-2">Active Time Slots</h3>
-              <div className="bg-gray-50 p-3 rounded">
-                {slots.map((slot) => (
-                  <div key={slot.id} className="text-sm py-1">
-                    <span className="font-medium">Period {slot.period}:</span> {slot.start} - {slot.end}
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 className="text-lg font-medium mb-2">Active Days</h3>
-              <div className="bg-gray-50 p-3 rounded">
-                {days.filter(day => day.active).map((day) => (
-                  <span key={day.id} className="inline-block bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm mr-2 mb-2">
-                    {day.name}
-                  </span>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   );

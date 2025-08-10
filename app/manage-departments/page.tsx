@@ -11,7 +11,6 @@ import AddTeacherModal from '../components/ui/AddTeacherModal';
 import DepartmentSemesterModal from '../components/ui/DepartmentSemesterModal';
 import SemesterChipsManager from '../components/ui/SemesterChipsManager';
 import SubjectModal from '../components/ui/SubjectModal';
-import BulkImportDialog from '../components/subjects/BulkImportDialog';
 import { Badge } from '../components/ui/badge';
 import { Toggle } from '@/components/ui/toggle';
 
@@ -33,7 +32,6 @@ const ManageDepartmentsPage = () => {
   const [selectedDepartmentForSemesters, setSelectedDepartmentForSemesters] = useState<Department | null>(null);
   const [showSubjectModal, setShowSubjectModal] = useState(false);
   const [editingSubject, setEditingSubject] = useState<Subject | null>(null);
-  const [showBulkImportModal, setShowBulkImportModal] = useState(false);
   
   // Success/error alert states
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -684,23 +682,6 @@ Enter department number:`);
                           + Add Subject
                         </button>
                       </div>
-                      <div>
-                        <button
-                          onClick={() => setShowBulkImportModal(true)}
-                          disabled={selectedSubjectDepartment === 'all'}
-                          className={`w-full px-4 py-2 rounded font-medium transition-colors ${
-                            selectedSubjectDepartment === 'all'
-                              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                              : 'bg-indigo-600 text-white hover:bg-indigo-700'
-                          }`}
-                          title={selectedSubjectDepartment === 'all' 
-                            ? 'Please select a specific department for bulk import'
-                            : 'Import multiple subjects from CSV, Excel, or JSON file'
-                          }
-                        >
-                          📥 Bulk Import
-                        </button>
-                      </div>
                     </div>
                   </div>
 
@@ -1014,33 +995,6 @@ Enter department number:`);
               throw error; // Re-throw to prevent modal from closing
             }
           }
-        }}
-      />
-      
-      <BulkImportDialog
-        isOpen={showBulkImportModal}
-        onClose={() => setShowBulkImportModal(false)}
-        onImportComplete={(results) => {
-          // After successful import, refresh the subjects list from API
-          loadData();
-          
-          // Show success message with import results summary
-          const added = results.filter(r => r.status === 'added').length;
-          const updated = results.filter(r => r.status === 'updated').length;
-          const skipped = results.filter(r => r.status === 'skipped').length;
-          const failed = results.filter(r => r.status === 'failed').length;
-          
-          let summaryParts = [];
-          if (added > 0) summaryParts.push(`${added} added`);
-          if (updated > 0) summaryParts.push(`${updated} updated`);
-          if (skipped > 0) summaryParts.push(`${skipped} skipped`);
-          if (failed > 0) summaryParts.push(`${failed} failed`);
-          
-          const summaryText = summaryParts.length > 0 
-            ? `Bulk import completed: ${summaryParts.join(', ')}.`
-            : 'Bulk import completed successfully.';
-          
-          setSuccessMessage(summaryText);
         }}
       />
     </div>

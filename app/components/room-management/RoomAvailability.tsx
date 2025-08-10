@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Room, TimetableEntry, rooms as initialRooms, subjects, teachers, timeSlots, timetableEntries } from '../data';
+import { Room, TimetableEntry, subjects, teachers, timeSlots, timetableEntries } from '../data';
 
 const STORAGE_KEY = 'room-data';
 
@@ -24,26 +24,56 @@ interface RoomAvailabilityProps {
 
 const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) => {
   const [mounted, setMounted] = useState(false);
-  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<string>(selectedRoomId || '');
   const [selectedDay, setSelectedDay] = useState<string>('Monday');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  // Load rooms from localStorage after component mounts
+  // Load rooms from rooms.json or localStorage
   useEffect(() => {
-    setMounted(true);
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
+    const loadRooms = async () => {
+      try {
+        setMounted(true);
+        setLoading(true);
+        console.log('Loading rooms data...');
+        
+        // First try to load from localStorage
+        const stored = localStorage.getItem(STORAGE_KEY);
+        if (stored) {
+          console.log('Found stored rooms in localStorage');
           const parsedRooms = JSON.parse(stored);
+          console.log('Parsed rooms from localStorage:', parsedRooms.length, 'rooms');
           setRooms(parsedRooms);
-        } catch (error) {
-          console.error('Error parsing stored room data:', error);
+          setLoading(false);
+          return;
         }
+        
+        console.log('No stored rooms found, fetching from /api/rooms');
+        // If not in localStorage, load from API
+        const response = await fetch('/api/rooms');
+        console.log('Fetch response status:', response.status);
+        if (!response.ok) {
+          throw new Error(`Failed to fetch rooms data: ${response.status} ${response.statusText}`);
+        }
+        const roomsData = await response.json();
+        console.log('Fetched rooms data:', roomsData.length, 'rooms');
+        console.log('First room:', roomsData[0]);
+        setRooms(roomsData);
+        // Save to localStorage for future use
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(roomsData));
+      } catch (error) {
+        console.error('Error loading rooms data:', error);
+        console.log('Attempting to clear localStorage cache...');
+        localStorage.removeItem(STORAGE_KEY);
+        setRooms([]);
+      } finally {
+        setLoading(false);
       }
-    }
+    };
+    
+    loadRooms();
   }, []);
 
   // Set initial selected room if provided
@@ -79,7 +109,7 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
     return rooms.find(r => r.id === selectedRoom);
   };
 
-  if (!mounted) {
+  if (!mounted || loading) {
     return <div className="p-6">Loading room availability...</div>;
   }
 
@@ -146,7 +176,7 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
                 <span className="font-medium">Floor:</span> {currentRoom.floor || 'N/A'}
               </div>
               <div>
-                <span className="font-medium">Programs:</span> {currentRoom.programTypes.join(', ')}
+                <span className="font-medium">Programs:</span> {(currentRoom.programTypes || []).join(', ') || 'N/A'}
               </div>
               <div>
                 <span className="font-medium">Projector:</span> {currentRoom.hasProjector ? 'Yes' : 'No'}

@@ -111,7 +111,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
     }
   }, [isOpen, mode, initialSubject, departmentId, semesterLevel]);
 
-  const handleInputChange = (field: keyof typeof formData, value: string | number | boolean) => {
+  const handleInputChange = (field: keyof typeof formData, value: string | number | boolean | string[]) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value
@@ -147,7 +147,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
 
     // Validate teaching departments for minor subjects
     if (!formData.isMajor) {
-      if (formData.teachingDepartmentIds.length === 0) {
+      if (!formData.teachingDepartmentIds || formData.teachingDepartmentIds.length === 0) {
         newErrors.teachingDepartmentIds = 'At least one teaching department must be selected for minor subjects';
       }
     }
@@ -330,7 +330,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
                   .filter(dept => dept.offersBSDegree)
                   .map(dept => {
                     const isOwningDept = dept.id === formData.departmentId;
-                    const isSelected = formData.teachingDepartmentIds.includes(dept.id);
+                    const isSelected = formData.teachingDepartmentIds?.includes(dept.id) || false;
                     const isDisabled = false; // Allow all departments to be selected
                     
                     return (
@@ -346,7 +346,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
                           onCheckedChange={(checked) => {
                             if (isDisabled) return;
                             
-                            let newIds = [...formData.teachingDepartmentIds];
+                            let newIds = [...(formData.teachingDepartmentIds || [])];
                             if (checked) {
                               if (!newIds.includes(dept.id)) {
                                 newIds.push(dept.id);
@@ -382,7 +382,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
               </div>
               
               {/* Validation Messages */}
-              {formData.teachingDepartmentIds.length === 0 && (
+              {(!formData.teachingDepartmentIds || formData.teachingDepartmentIds.length === 0) && (
                 <div className="p-2 bg-red-50 border border-red-200 rounded-lg">
                   <div className="text-xs text-red-700">
                     <strong>⚠️ Selection Required:</strong> Please select at least one department that will teach this subject.
@@ -390,10 +390,10 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
                 </div>
               )}
               
-              {formData.teachingDepartmentIds.length > 0 && (
+              {formData.teachingDepartmentIds && formData.teachingDepartmentIds.length > 0 && (
                 <div className="p-2 bg-green-50 border border-green-200 rounded-lg">
                   <div className="text-xs text-green-700">
-                    <strong>✓ Teaching Arrangement:</strong> This subject will be taught by: <span className="font-medium">{formData.teachingDepartmentIds.map(id => departments.find(d => d.id === id)?.name).filter(Boolean).join(', ')}</span>
+                    <strong>✓ Teaching Arrangement:</strong> This subject will be taught by: <span className="font-medium">{(formData.teachingDepartmentIds || []).map(id => departments.find(d => d.id === id)?.name).filter(Boolean).join(', ')}</span>
                   </div>
                 </div>
               )}
