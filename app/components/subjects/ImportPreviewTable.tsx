@@ -75,11 +75,11 @@ const ImportPreviewTable: React.FC<ImportPreviewTableProps> = ({
     const validationState = getRowValidationState(subject);
     switch (validationState) {
       case 'invalid':
-        return 'bg-red-50 hover:bg-red-100 border-red-200';
+        return 'bg-red-50 border-red-200';
       case 'conflict':
-        return 'bg-yellow-50 hover:bg-yellow-100 border-yellow-200';
+        return 'bg-yellow-50 border-yellow-200';
       default:
-        return 'bg-white hover:bg-gray-50 border-gray-200';
+        return 'bg-white border-gray-200';
     }
   };
 

@@ -1,0 +1,73 @@
+[
+  {
+    "id": "new-1",
+    "subjectId": "bba102",
+    "teacherId": "t70",
+    "timeSlotId": "ts3",
+    "day": "Monday",
+    "semesterId": "sem1"
+  },
+  {
+    "id": "edited-16",
+    "subjectId": "cs301",
+    "teacherId": "t3",
+    "timeSlotId": "ts2",
+    "day": "Monday",
+    "room": "R-39",
+    "semesterId": "sem3"
+  },
+  {
+    "id": "edited-17",
+    "subjectId": "cs301",
+    "teacherId": "t3",
+    "timeSlotId": "ts2",
+    "day": "Tuesday",
+    "room": "R-39",
+    "semesterId": "sem3"
+  },
+  {
+    "id": "edited-18",
+    "subjectId": "cs301",
+    "teacherId": "t3",
+    "timeSlotId": "ts2",
+    "day": "Wednesday",
+    "room": "R-39",
+    "semesterId": "sem3"
+  },
+  {
+    "id": "edited-19",
+    "subjectId": "cs301",
+    "teacherId": "t3",
+    "timeSlotId": "ts2",
+    "day": "Thursday",
+    "room": "R-39",
+    "semesterId": "sem3"
+  },
+  {
+    "id": "edited-13",
+    "subjectId": "cs101",
+    "teacherId": "t2",
+    "timeSlotId": "ts2",
+    "day": "Monday",
+    "room": "R-44",
+    "semesterId": "sem1"
+  },
+  {
+    "id": "edited-14",
+    "subjectId": "cs101",
+    "teacherId": "t2",
+    "timeSlotId": "ts2",
+    "day": "Tuesday",
+    "room": "R-44",
+    "semesterId": "sem1"
+  },
+  {
+    "id": "edited-15",
+    "subjectId": "cs101",
+    "teacherId": "t2",
+    "timeSlotId": "ts2",
+    "day": "Wednesday",
+    "room": "R-44",
+    "semesterId": "sem1"
+  }
+]

@@ -1,7 +1,9 @@
 'use client';
-import React, { useEffect, useRef, useState, useMemo } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { buildDragId, createGroupKey, parseDragId } from '../../utils/dnd';
 import {
   departments,
+  getActiveDepartmentsForSemester,
   rooms,
   Semester,
   semesters,
@@ -10,10 +12,8 @@ import {
   Teacher,
   teachers,
   timeSlots,
-  TimetableEntry,
-  getActiveDepartmentsForSemester
+  TimetableEntry
 } from './data';
-import { buildDragId, parseDragId, createGroupKey } from '../../utils/dnd';
 
 // Shared constants for ESC functionality
 const ESC_TOOLTIP = 'Press ESC to cancel';
@@ -272,7 +272,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
               // Show success notification
               const targetDepartmentName = departments.find(d => d.id === targetDepartmentId)?.shortName || 'Unknown';
               const targetTimeSlot = timeSlots.find(ts => ts.id === targetTimeSlotId);
-              const successMessage = `✅ Moved ${dragData.subject.shortName} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
+              const successMessage = `✅ Moved ${dragData.subject.shortName || dragData.subject.code || dragData.subject.name} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
               
               console.log('✅ [ENTER] Move completed successfully:', successMessage);
               setNotification({ message: successMessage, type: 'success' });
@@ -377,7 +377,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     // Show success notification
     const daysDisplay = formatDaysDisplay(deleteConfirmation.entries);
     setNotification({ 
-      message: `Successfully deleted ${deleteConfirmation.subject.shortName} ${daysDisplay} by ${deleteConfirmation.teacher.shortName}`, 
+      message: `Successfully deleted ${deleteConfirmation.subject.shortName || deleteConfirmation.subject.code || deleteConfirmation.subject.name} ${daysDisplay} by ${deleteConfirmation.teacher.shortName}`, 
       type: 'success' 
     });
     setTimeout(() => setNotification(null), 3000);
@@ -839,7 +839,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     // Show success notification
     const targetDepartmentName = departments.find(d => d.id === targetDepartmentId)?.shortName || 'Unknown';
     const targetTimeSlot = timeSlots.find(ts => ts.id === targetTimeSlotId);
-    const successMessage = `Successfully moved ${dragData.subject.shortName} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
+              const successMessage = `Successfully moved ${dragData.subject.shortName || dragData.subject.code || dragData.subject.name} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
     
     setNotification({ message: successMessage, type: 'success' });
     setTimeout(() => setNotification(null), 3000);
@@ -950,7 +950,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
           )}
           
           <div className="font-semibold text-gray-800 mb-0.5" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-            {subject.shortName} {daysDisplay}
+            {subject.shortName || subject.code || subject.name} {daysDisplay}
           </div>
           <div className="text-gray-600 truncate" style={{ fontSize: '8px', lineHeight: '1.1' }}>
             {teacher.shortName}
@@ -1259,7 +1259,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
         </thead>
         <tbody>
           {visibleDepartments.map((department) => (
-            <tr key={department.id} className="hover:bg-gray-50" role="row">
+            <tr key={department.id} role="row">
               {/* Department column */}
               <th className="border border-gray-300 p-2 text-center bg-gray-50" scope="row" role="rowheader" aria-label={`${department.name} department`}>
                 <div className="text-xs font-semibold text-gray-700">
@@ -1427,7 +1427,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
               📋 Preview Move
             </div>
             <div className="text-xs mb-2">
-              Moving <span className="font-bold">{draftData.subject.shortName}</span> to {timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.start}-{timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.end}
+              Moving <span className="font-bold">{draftData.subject.shortName || draftData.subject.code || draftData.subject.name}</span> to {timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.start}-{timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.end}
             </div>
             <div className="text-xs border-t border-blue-400 pt-2">
               <div className="flex items-center gap-2">
@@ -1924,7 +1924,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                   // Show success notification
                   const subject = subjects.find(s => s.id === addEntryData.selectedSubject);
                   setNotification({ 
-                    message: `Successfully added ${subject?.shortName} for ${addEntryData.selectedDays.join(', ')}`, 
+                    message: `Successfully added ${subject?.shortName || subject?.code || subject?.name} for ${addEntryData.selectedDays.join(', ')}`, 
                     type: 'success' 
                   });
                   setTimeout(() => setNotification(null), 3000);
@@ -1981,7 +1981,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
         >
           <div className={`p-1 rounded text-xs border shadow-xl ${dragOverlay.subject.color || 'bg-gray-100'} opacity-90 transform scale-110`}>
             <div className="font-semibold text-gray-800 mb-0.5" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-              {dragOverlay.subject.shortName} {dragOverlay.daysDisplay}
+              {dragOverlay.subject.shortName || dragOverlay.subject.code || dragOverlay.subject.name} {dragOverlay.daysDisplay}
             </div>
             <div className="text-gray-600 truncate" style={{ fontSize: '8px', lineHeight: '1.1' }}>
               {dragOverlay.teacher.shortName}
@@ -2014,7 +2014,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 <div className="text-sm text-red-800">
                   <p className="font-semibold mb-2">Are you sure you want to delete this entry?</p>
                   <div className="space-y-1">
-                    <p><strong>Subject:</strong> {deleteConfirmation.subject.name} ({deleteConfirmation.subject.shortName})</p>
+                    <p><strong>Subject:</strong> {deleteConfirmation.subject.name} ({deleteConfirmation.subject.shortName || deleteConfirmation.subject.code})</p>
                     <p><strong>Teacher:</strong> {deleteConfirmation.teacher.name}</p>
                     <p><strong>Days:</strong> {formatDaysDisplay(deleteConfirmation.entries)}</p>
                     <p><strong>Time Slot:</strong> {(() => {

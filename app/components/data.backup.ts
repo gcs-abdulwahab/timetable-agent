@@ -681,9 +681,336 @@ export const rooms: Room[] = [
 
   // Computer Science Department Classes
   // Semester 1 (Fall 2024)
-// Timetable entries are now managed through the allocations.json file
-// This export is kept for backward compatibility and initial fallback data
-export const timetableEntries: TimetableEntry[] = [];
+export const timetableEntries: TimetableEntry[] = [
+  // ========= SEMESTER 3 ENTRIES =========
+  // Computer Science - Semester 3
+  { id: 'sem3_cs_ds_1', semesterId: 'sem3', subjectId: 'cs301', teacherId: 't1', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab3' },
+  { id: 'sem3_cs_ds_2', semesterId: 'sem3', subjectId: 'cs301', teacherId: 't1', timeSlotId: 'ts1', day: 'Tuesday', room: 'CS-Lab3' },
+  { id: 'sem3_cs_ds_3', semesterId: 'sem3', subjectId: 'cs301', teacherId: 't1', timeSlotId: 'ts1', day: 'Wednesday', room: 'CS-Lab3' },
+  
+  { id: 'sem3_cs_db_1', semesterId: 'sem3', subjectId: 'cs302', teacherId: 't2', timeSlotId: 'ts2', day: 'Monday', room: 'CS-Lab2' },
+  { id: 'sem3_cs_db_2', semesterId: 'sem3', subjectId: 'cs302', teacherId: 't2', timeSlotId: 'ts2', day: 'Tuesday', room: 'CS-Lab2' },
+  { id: 'sem3_cs_db_3', semesterId: 'sem3', subjectId: 'cs302', teacherId: 't2', timeSlotId: 'ts2', day: 'Wednesday', room: 'CS-Lab2' },
+
+  // Chemistry - Semester 3
+  { id: 'sem3_chem_1', semesterId: 'sem3', subjectId: 'chem301', teacherId: 't6', timeSlotId: 'ts2', day: 'Monday', room: 'Chem-301' },
+  { id: 'sem3_chem_2', semesterId: 'sem3', subjectId: 'chem301', teacherId: 't6', timeSlotId: 'ts2', day: 'Tuesday', room: 'Chem-301' },
+  { id: 'sem3_chem_3', semesterId: 'sem3', subjectId: 'chem301', teacherId: 't6', timeSlotId: 'ts2', day: 'Wednesday', room: 'Chem-301' },
+
+  // Economics - Semester 3
+  { id: 'sem3_econ_1', semesterId: 'sem3', subjectId: 'econ301', teacherId: 't26', timeSlotId: 'ts3', day: 'Monday', room: 'R-301' },
+  { id: 'sem3_econ_2', semesterId: 'sem3', subjectId: 'econ301', teacherId: 't26', timeSlotId: 'ts3', day: 'Tuesday', room: 'R-301' },
+  { id: 'sem3_econ_3', semesterId: 'sem3', subjectId: 'econ301', teacherId: 't26', timeSlotId: 'ts3', day: 'Wednesday', room: 'R-301' },
+
+  // Political Science - Semester 3
+  { id: 'sem3_pols_ct_1', semesterId: 'sem3', subjectId: '3078', teacherId: 't125', timeSlotId: 'ts1', day: 'Monday', room: 'PS-301' },
+  { id: 'sem3_pols_ct_2', semesterId: 'sem3', subjectId: '3078', teacherId: 't125', timeSlotId: 'ts1', day: 'Tuesday', room: 'PS-301' },
+  { id: 'sem3_pols_ct_3', semesterId: 'sem3', subjectId: '3078', teacherId: 't125', timeSlotId: 'ts1', day: 'Wednesday', room: 'PS-301' },
+
+  // Botany - Semester 3 (based on timetable image: Period I-VI, each subject assigned to specific time slots)
+  // GENG-201 (General English) - Period I: 8:00-9:00 (ts1)
+  { id: 'sem3_bot_geng_1', semesterId: 'sem3', subjectId: 'bot_geng201', teacherId: 'unassigned', timeSlotId: 'ts1', day: 'Monday', room: 'BOT-201' },
+  
+  // GICT-201 (General ICT) - Period II: 9:00-10:00 (ts2) 
+  { id: 'sem3_bot_gict_1', semesterId: 'sem3', subjectId: 'bot_gict201', teacherId: 'unassigned', timeSlotId: 'ts2', day: 'Monday', room: 'BOT-202' },
+  
+  // GPST-201 (General Pakistan Studies) - Period III: 10:00-11:00 (ts3)
+  { id: 'sem3_bot_gpst_1', semesterId: 'sem3', subjectId: 'bot_gpst201', teacherId: 'unassigned', timeSlotId: 'ts3', day: 'Monday', room: 'BOT-203' },
+  
+  // BOT-205 - Period IV: 11:15-12:15 (ts4) with Nasira Parveen
+  { id: 'sem3_bot_205_1', semesterId: 'sem3', subjectId: 'bot_205', teacherId: 'unassigned', timeSlotId: 'ts4', day: 'Monday', room: 'BOT-205', note: 'Nasira Parveen' },
+  
+  // BOT-201 - Period V: 12:15-1:15 (ts5) with Nasira Parveen
+  { id: 'sem3_bot_201_1', semesterId: 'sem3', subjectId: 'bot_201', teacherId: 'unassigned', timeSlotId: 'ts5', day: 'Monday', room: 'BOT-201', note: 'Nasira Parveen' },
+  
+  // BOT-203 - Period VI: 1:30-2:30 (ts6) with Nasira Parveen
+  { id: 'sem3_bot_203_1', semesterId: 'sem3', subjectId: 'bot_203', teacherId: 'unassigned', timeSlotId: 'ts6', day: 'Monday', room: 'BOT-203', note: 'Nasira Parveen' },
+  
+  { id: 'sem3_pols_ir_1', semesterId: 'sem3', subjectId: 'pols302', teacherId: 't126', timeSlotId: 'ts2', day: 'Monday', room: 'PS-302' },
+  { id: 'sem3_pols_ir_2', semesterId: 'sem3', subjectId: 'pols302', teacherId: 't126', timeSlotId: 'ts2', day: 'Tuesday', room: 'PS-302' },
+  { id: 'sem3_pols_ir_3', semesterId: 'sem3', subjectId: 'pols302', teacherId: 't126', timeSlotId: 'ts2', day: 'Wednesday', room: 'PS-302' },
+  
+  { id: 'sem3_pols_pe_1', semesterId: 'sem3', subjectId: 'pols303', teacherId: 't127', timeSlotId: 'ts4', day: 'Monday', room: 'PS-303' },
+  { id: 'sem3_pols_pe_2', semesterId: 'sem3', subjectId: 'pols303', teacherId: 't127', timeSlotId: 'ts4', day: 'Tuesday', room: 'PS-303' },
+  { id: 'sem3_pols_pe_3', semesterId: 'sem3', subjectId: 'pols303', teacherId: 't127', timeSlotId: 'ts4', day: 'Wednesday', room: 'PS-303' },
+  
+  // ========= SEMESTER 5 ENTRIES =========
+  // Computer Science - Semester 5
+  { id: 'sem5_cs_ai_1', semesterId: 'sem5', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts3', day: 'Monday', room: 'CS-401' },
+  { id: 'sem5_cs_ai_2', semesterId: 'sem5', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts3', day: 'Tuesday', room: 'CS-401' },
+  { id: 'sem5_cs_ai_3', semesterId: 'sem5', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts3', day: 'Wednesday', room: 'CS-401' },
+  
+  { id: 'sem5_cs_ml_1', semesterId: 'sem5', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts4', day: 'Monday', room: 'CS-402' },
+  { id: 'sem5_cs_ml_2', semesterId: 'sem5', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts4', day: 'Tuesday', room: 'CS-402' },
+  { id: 'sem5_cs_ml_3', semesterId: 'sem5', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts4', day: 'Wednesday', room: 'CS-402' },
+
+  // Chemistry - Semester 5
+  { id: 'sem5_chem_1', semesterId: 'sem5', subjectId: 'chem501', teacherId: 't7', timeSlotId: 'ts1', day: 'Thursday', room: 'Chem-Lab1' },
+  { id: 'sem5_chem_2', semesterId: 'sem5', subjectId: 'chem501', teacherId: 't7', timeSlotId: 'ts1', day: 'Friday', room: 'Chem-Lab1' },
+  { id: 'sem5_chem_3', semesterId: 'sem5', subjectId: 'chem501', teacherId: 't7', timeSlotId: 'ts1', day: 'Saturday', room: 'Chem-Lab1' },
+
+  // Economics - Semester 5
+  { id: 'sem5_econ_1', semesterId: 'sem5', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts5', day: 'Monday', room: 'R-501' },
+  { id: 'sem5_econ_2', semesterId: 'sem5', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-501' },
+  { id: 'sem5_econ_3', semesterId: 'sem5', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-501' },
+  
+  // ========= SEMESTER 7 ENTRIES =========
+  // Computer Science - Semester 7
+  { id: 'sem7_cs_ds_1', semesterId: 'sem7', subjectId: 'cs701', teacherId: 't5', timeSlotId: 'ts6', day: 'Monday', room: 'CS-501' },
+  { id: 'sem7_cs_ds_2', semesterId: 'sem7', subjectId: 'cs701', teacherId: 't5', timeSlotId: 'ts6', day: 'Tuesday', room: 'CS-501' },
+  { id: 'sem7_cs_ds_3', semesterId: 'sem7', subjectId: 'cs701', teacherId: 't5', timeSlotId: 'ts6', day: 'Wednesday', room: 'CS-501' },
+  
+  { id: 'sem7_cs_cloud_1', semesterId: 'sem7', subjectId: 'cs702', teacherId: 't1', timeSlotId: 'ts7', day: 'Monday', room: 'CS-502' },
+  { id: 'sem7_cs_cloud_2', semesterId: 'sem7', subjectId: 'cs702', teacherId: 't1', timeSlotId: 'ts7', day: 'Tuesday', room: 'CS-502' },
+  { id: 'sem7_cs_cloud_3', semesterId: 'sem7', subjectId: 'cs702', teacherId: 't1', timeSlotId: 'ts7', day: 'Wednesday', room: 'CS-502' },
+
+  // Chemistry - Semester 7
+  { id: 'sem7_chem_1', semesterId: 'sem7', subjectId: 'chem701', teacherId: 't8', timeSlotId: 'ts5', day: 'Thursday', room: 'Chem-501' },
+  { id: 'sem7_chem_2', semesterId: 'sem7', subjectId: 'chem701', teacherId: 't8', timeSlotId: 'ts5', day: 'Friday', room: 'Chem-501' },
+  { id: 'sem7_chem_3', semesterId: 'sem7', subjectId: 'chem701', teacherId: 't8', timeSlotId: 'ts5', day: 'Saturday', room: 'Chem-501' },
+
+  // Economics - Semester 7
+  { id: 'sem7_econ_1', semesterId: 'sem7', subjectId: 'econ701', teacherId: 't28', timeSlotId: 'ts4', day: 'Thursday', room: 'R-701' },
+  { id: 'sem7_econ_2', semesterId: 'sem7', subjectId: 'econ701', teacherId: 't28', timeSlotId: 'ts4', day: 'Friday', room: 'R-701' },
+  { id: 'sem7_econ_3', semesterId: 'sem7', subjectId: 'econ701', teacherId: 't28', timeSlotId: 'ts4', day: 'Saturday', room: 'R-701' },
+  
+  // ========= SEMESTER 1 COURSES - CREDIT HOUR BASED SCHEDULING =========
+  
+  // Computer Science - Semester 1 (3-credit courses = Monday-Tuesday-Wednesday, 1-credit labs = varies)
+  // Section A: First three days (Monday-Tuesday-Wednesday)
+  // Programming Fundamentals (3 credits) - Days 1-3
+  { id: 'cs_s1_prog_1', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't1', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab1' },
+  { id: 'cs_s1_prog_2', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't1', timeSlotId: 'ts1', day: 'Tuesday', room: 'CS-Lab1' },
+  { id: 'cs_s1_prog_3', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't1', timeSlotId: 'ts1', day: 'Wednesday', room: 'CS-Lab1' },
+  
+  // Mathematics I (3 credits) - Days 1-3
+  { id: 'cs_s1_math_1', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't85', timeSlotId: 'ts2', day: 'Monday', room: 'R-101' },
+  { id: 'cs_s1_math_2', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't85', timeSlotId: 'ts2', day: 'Tuesday', room: 'R-101' },
+  { id: 'cs_s1_math_3', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't85', timeSlotId: 'ts2', day: 'Wednesday', room: 'R-101' },
+  
+  // English I (3 credits) - Days 1-3
+  { id: 'cs_s1_eng_1', semesterId: 'sem1', subjectId: 'cs103', teacherId: 't37', timeSlotId: 'ts3', day: 'Monday', room: 'R-102' },
+  { id: 'cs_s1_eng_2', semesterId: 'sem1', subjectId: 'cs103', teacherId: 't37', timeSlotId: 'ts3', day: 'Tuesday', room: 'R-102' },
+  { id: 'cs_s1_eng_3', semesterId: 'sem1', subjectId: 'cs103', teacherId: 't37', timeSlotId: 'ts3', day: 'Wednesday', room: 'R-102' },
+
+  // Section B: Last three days (Thursday-Friday-Saturday)
+  // Programming Fundamentals (3 credits) - Days 4-6
+  { id: 'cs_s1b_prog_1', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't2', timeSlotId: 'ts1', day: 'Thursday', room: 'CS-Lab2' },
+  { id: 'cs_s1b_prog_2', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't2', timeSlotId: 'ts1', day: 'Friday', room: 'CS-Lab2' },
+  { id: 'cs_s1b_prog_3', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't2', timeSlotId: 'ts1', day: 'Saturday', room: 'CS-Lab2' },
+
+  // Chemistry - Semester 1 (3-credit courses = Days 1-3, 1-credit labs = varies)
+  // Section A: First three days
+  // General Chemistry I (3 credits) - Days 1-3
+  { id: 'chem_s1_gen_1', semesterId: 'sem1', subjectId: 'chem101', teacherId: 't6', timeSlotId: 'ts1', day: 'Monday', room: 'Chem-301' },
+  { id: 'chem_s1_gen_2', semesterId: 'sem1', subjectId: 'chem101', teacherId: 't6', timeSlotId: 'ts1', day: 'Tuesday', room: 'Chem-301' },
+  { id: 'chem_s1_gen_3', semesterId: 'sem1', subjectId: 'chem101', teacherId: 't6', timeSlotId: 'ts1', day: 'Wednesday', room: 'Chem-301' },
+  
+  // Chemistry Lab I (1 credit) - Wednesday only
+  { id: 'chem_s1_lab_1', semesterId: 'sem1', subjectId: 'chem102', teacherId: 't7', timeSlotId: 'ts2', day: 'Wednesday', room: 'Chem-Lab1', isLab: true },
+  
+  // Mathematics for Chemistry (3 credits) - Days 1-3
+  { id: 'chem_s1_math_1', semesterId: 'sem1', subjectId: 'chem103', teacherId: 't85', timeSlotId: 'ts3', day: 'Monday', room: 'R-201' },
+  { id: 'chem_s1_math_2', semesterId: 'sem1', subjectId: 'chem103', teacherId: 't85', timeSlotId: 'ts3', day: 'Tuesday', room: 'R-201' },
+  { id: 'chem_s1_math_3', semesterId: 'sem1', subjectId: 'chem103', teacherId: 't85', timeSlotId: 'ts3', day: 'Wednesday', room: 'R-201' },
+
+  // Economics - Semester 1 (3-credit courses = Days 1-3)
+  // Section A: First three days
+  // Principles of Economics (3 credits) - Days 1-3
+  { id: 'econ_s1_prin_1', semesterId: 'sem1', subjectId: 'econ101', teacherId: 't25', timeSlotId: 'ts4', day: 'Monday', room: 'R-301' },
+  { id: 'econ_s1_prin_2', semesterId: 'sem1', subjectId: 'econ101', teacherId: 't25', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-301' },
+  { id: 'econ_s1_prin_3', semesterId: 'sem1', subjectId: 'econ101', teacherId: 't25', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-301' },
+  
+  // Mathematics for Economics (3 credits) - Days 1-3
+  { id: 'econ_s1_math_1', semesterId: 'sem1', subjectId: 'econ102', teacherId: 't85', timeSlotId: 'ts5', day: 'Monday', room: 'R-302' },
+  { id: 'econ_s1_math_2', semesterId: 'sem1', subjectId: 'econ102', teacherId: 't85', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-302' },
+  { id: 'econ_s1_math_3', semesterId: 'sem1', subjectId: 'econ102', teacherId: 't85', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-302' },
+
+  // ========= SEMESTER 5 COURSES - CREDIT HOUR BASED SCHEDULING =========
+  
+  // Computer Science - Semester 5 (Advanced courses)
+  // Section A: First three days
+  // Software Engineering (3 credits) - Days 1-3
+  { id: 'cs_s5_se_1', semesterId: 'sem1', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts4', day: 'Monday', room: 'CS-401' },
+  { id: 'cs_s5_se_2', semesterId: 'sem1', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts4', day: 'Tuesday', room: 'CS-401' },
+  { id: 'cs_s5_se_3', semesterId: 'sem1', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts4', day: 'Wednesday', room: 'CS-401' },
+  
+  // Database Systems (3 credits) - Days 1-3
+  { id: 'cs_s5_db_1', semesterId: 'sem1', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts5', day: 'Monday', room: 'CS-402' },
+  { id: 'cs_s5_db_2', semesterId: 'sem1', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts5', day: 'Tuesday', room: 'CS-402' },
+  { id: 'cs_s5_db_3', semesterId: 'sem1', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts5', day: 'Wednesday', room: 'CS-402' },
+  
+  // Computer Networks (3 credits) - Days 1-3
+  { id: 'cs_s5_net_1', semesterId: 'sem1', subjectId: 'cs503', teacherId: 't5', timeSlotId: 'ts6', day: 'Monday', room: 'CS-403' },
+  { id: 'cs_s5_net_2', semesterId: 'sem1', subjectId: 'cs503', teacherId: 't5', timeSlotId: 'ts6', day: 'Tuesday', room: 'CS-403' },
+  { id: 'cs_s5_net_3', semesterId: 'sem1', subjectId: 'cs503', teacherId: 't5', timeSlotId: 'ts6', day: 'Wednesday', room: 'CS-403' },
+  
+  // Operating Systems Lab (1 credit) - Friday only
+  { id: 'cs_s5_os_lab', semesterId: 'sem1', subjectId: 'cs504', teacherId: 't6', timeSlotId: 'ts7', day: 'Friday', room: 'CS-Lab3', isLab: true },
+
+  // Chemistry - Semester 5 (Advanced courses)
+  // Section A: First three days  
+  // Physical Chemistry (3 credits) - Days 1-3
+  { id: 'chem_s5_phys_1', semesterId: 'sem1', subjectId: 'chem501', teacherId: 't10', timeSlotId: 'ts4', day: 'Monday', room: 'Chem-501' },
+  { id: 'chem_s5_phys_2', semesterId: 'sem1', subjectId: 'chem501', teacherId: 't10', timeSlotId: 'ts4', day: 'Tuesday', room: 'Chem-501' },
+  { id: 'chem_s5_phys_3', semesterId: 'sem1', subjectId: 'chem501', teacherId: 't10', timeSlotId: 'ts4', day: 'Wednesday', room: 'Chem-501' },
+  
+  // Analytical Chemistry (3 credits) - Days 1-3
+  { id: 'chem_s5_anal_1', semesterId: 'sem1', subjectId: 'chem502', teacherId: 't11', timeSlotId: 'ts5', day: 'Monday', room: 'Chem-502' },
+  { id: 'chem_s5_anal_2', semesterId: 'sem1', subjectId: 'chem502', teacherId: 't11', timeSlotId: 'ts5', day: 'Tuesday', room: 'Chem-502' },
+  { id: 'chem_s5_anal_3', semesterId: 'sem1', subjectId: 'chem502', teacherId: 't11', timeSlotId: 'ts5', day: 'Wednesday', room: 'Chem-502' },
+  
+  // Instrumental Analysis (2 credits) - Days 1-2
+  { id: 'chem_s5_inst_1', semesterId: 'sem1', subjectId: 'chem503', teacherId: 't12', timeSlotId: 'ts6', day: 'Monday', room: 'Chem-503' },
+  { id: 'chem_s5_inst_2', semesterId: 'sem1', subjectId: 'chem503', teacherId: 't12', timeSlotId: 'ts6', day: 'Tuesday', room: 'Chem-503' },
+  
+  // Advanced Chemistry Lab (1 credit) - Thursday only
+  { id: 'chem_s5_adv_lab', semesterId: 'sem1', subjectId: 'chem504', teacherId: 't13', timeSlotId: 'ts7', day: 'Thursday', room: 'Chem-Lab2', isLab: true },
+
+  // Economics - Semester 5 (Advanced courses)
+  // Section A: First three days
+  // International Economics (3 credits) - Days 1-3
+  { id: 'econ_s5_intl_1', semesterId: 'sem1', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts4', day: 'Monday', room: 'R-501' },
+  { id: 'econ_s5_intl_2', semesterId: 'sem1', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-501' },
+  { id: 'econ_s5_intl_3', semesterId: 'sem1', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-501' },
+  
+  // Development Economics (3 credits) - Days 1-3
+  { id: 'econ_s5_dev_1', semesterId: 'sem1', subjectId: 'econ502', teacherId: 't28', timeSlotId: 'ts5', day: 'Monday', room: 'R-502' },
+  { id: 'econ_s5_dev_2', semesterId: 'sem1', subjectId: 'econ502', teacherId: 't28', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-502' },
+  { id: 'econ_s5_dev_3', semesterId: 'sem1', subjectId: 'econ502', teacherId: 't28', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-502' },
+  
+  // Econometrics (2 credits) - Days 1-2
+  { id: 'econ_s5_econom_1', semesterId: 'sem1', subjectId: 'econ503', teacherId: 't29', timeSlotId: 'ts6', day: 'Monday', room: 'R-503' },
+  { id: 'econ_s5_econom_2', semesterId: 'sem1', subjectId: 'econ503', teacherId: 't29', timeSlotId: 'ts6', day: 'Tuesday', room: 'R-503' },
+
+  // English - Semester 5 (Advanced courses)
+  // Section A: First three days
+  // Contemporary Literature (3 credits) - Days 1-3
+  { id: 'eng_s5_contemp_1', semesterId: 'sem1', subjectId: 'eng501', teacherId: 't40', timeSlotId: 'ts4', day: 'Monday', room: 'R-601' },
+  { id: 'eng_s5_contemp_2', semesterId: 'sem1', subjectId: 'eng501', teacherId: 't40', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-601' },
+  { id: 'eng_s5_contemp_3', semesterId: 'sem1', subjectId: 'eng501', teacherId: 't40', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-601' },
+  
+  // Literary Criticism (3 credits) - Days 1-3
+  { id: 'eng_s5_crit_1', semesterId: 'sem1', subjectId: 'eng502', teacherId: 't41', timeSlotId: 'ts5', day: 'Monday', room: 'R-602' },
+  { id: 'eng_s5_crit_2', semesterId: 'sem1', subjectId: 'eng502', teacherId: 't41', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-602' },
+  { id: 'eng_s5_crit_3', semesterId: 'sem1', subjectId: 'eng502', teacherId: 't41', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-602' },
+  
+  // Creative Writing (2 credits) - Days 1-2
+  { id: 'eng_s5_creative_1', semesterId: 'sem1', subjectId: 'eng503', teacherId: 't42', timeSlotId: 'ts6', day: 'Monday', room: 'R-603' },
+  { id: 'eng_s5_creative_2', semesterId: 'sem1', subjectId: 'eng503', teacherId: 't42', timeSlotId: 'ts6', day: 'Tuesday', room: 'R-603' },
+
+  // Mathematics - Semester 5 (Advanced courses)
+  // Section A: First three days
+  // Real Analysis (3 credits) - Days 1-3
+  { id: 'math_s5_real_1', semesterId: 'sem1', subjectId: 'math501', teacherId: 't60', timeSlotId: 'ts4', day: 'Monday', room: 'R-701' },
+  { id: 'math_s5_real_2', semesterId: 'sem1', subjectId: 'math501', teacherId: 't60', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-701' },
+  { id: 'math_s5_real_3', semesterId: 'sem1', subjectId: 'math501', teacherId: 't60', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-701' },
+  
+  // Abstract Algebra (3 credits) - Days 1-3
+  { id: 'math_s5_abstract_1', semesterId: 'sem1', subjectId: 'math502', teacherId: 't61', timeSlotId: 'ts5', day: 'Monday', room: 'R-702' },
+  { id: 'math_s5_abstract_2', semesterId: 'sem1', subjectId: 'math502', teacherId: 't61', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-702' },
+  { id: 'math_s5_abstract_3', semesterId: 'sem1', subjectId: 'math502', teacherId: 't61', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-702' },
+  
+  // Numerical Methods (2 credits) - Days 1-2
+  { id: 'math_s5_numerical_1', semesterId: 'sem1', subjectId: 'math503', teacherId: 't62', timeSlotId: 'ts6', day: 'Monday', room: 'R-703' },
+  { id: 'math_s5_numerical_2', semesterId: 'sem1', subjectId: 'math503', teacherId: 't62', timeSlotId: 'ts6', day: 'Tuesday', room: 'R-703' },
+
+  // Physics - Semester 5 (Advanced courses)
+  // Section A: First three days
+  // Quantum Mechanics (3 credits) - Days 1-3
+  { id: 'phys_s5_quantum_1', semesterId: 'sem1', subjectId: 'phys501', teacherId: 't100', timeSlotId: 'ts4', day: 'Monday', room: 'Physics-501' },
+  { id: 'phys_s5_quantum_2', semesterId: 'sem1', subjectId: 'phys501', teacherId: 't100', timeSlotId: 'ts4', day: 'Tuesday', room: 'Physics-501' },
+  { id: 'phys_s5_quantum_3', semesterId: 'sem1', subjectId: 'phys501', teacherId: 't100', timeSlotId: 'ts4', day: 'Wednesday', room: 'Physics-501' },
+  
+  // Thermodynamics (3 credits) - Days 1-3
+  { id: 'phys_s5_thermo_1', semesterId: 'sem1', subjectId: 'phys502', teacherId: 't101', timeSlotId: 'ts5', day: 'Monday', room: 'Physics-502' },
+  { id: 'phys_s5_thermo_2', semesterId: 'sem1', subjectId: 'phys502', teacherId: 't101', timeSlotId: 'ts5', day: 'Tuesday', room: 'Physics-502' },
+  { id: 'phys_s5_thermo_3', semesterId: 'sem1', subjectId: 'phys502', teacherId: 't101', timeSlotId: 'ts5', day: 'Wednesday', room: 'Physics-502' },
+  
+  // Solid State Physics (2 credits) - Days 1-2
+  { id: 'phys_s5_solid_1', semesterId: 'sem1', subjectId: 'phys503', teacherId: 't102', timeSlotId: 'ts6', day: 'Monday', room: 'Physics-503' },
+  { id: 'phys_s5_solid_2', semesterId: 'sem1', subjectId: 'phys503', teacherId: 't102', timeSlotId: 'ts6', day: 'Tuesday', room: 'Physics-503' },
+  
+  // Advanced Physics Lab (1 credit) - Thursday only
+  { id: 'phys_s5_adv_lab', semesterId: 'sem1', subjectId: 'phys504', teacherId: 't103', timeSlotId: 'ts7', day: 'Thursday', room: 'Physics-Lab2', isLab: true },
+
+  // Business Administration - Semester 5 (Advanced courses)
+  // Section A: First three days
+  // Strategic Management (3 credits) - Days 1-3
+  { id: 'bba_s5_strategy_1', semesterId: 'sem1', subjectId: 'bba501', teacherId: 't70', timeSlotId: 'ts4', day: 'Monday', room: 'BBA-501' },
+  { id: 'bba_s5_strategy_2', semesterId: 'sem1', subjectId: 'bba501', teacherId: 't70', timeSlotId: 'ts4', day: 'Tuesday', room: 'BBA-501' },
+  { id: 'bba_s5_strategy_3', semesterId: 'sem1', subjectId: 'bba501', teacherId: 't70', timeSlotId: 'ts4', day: 'Wednesday', room: 'BBA-501' },
+  
+  // International Business (3 credits) - Days 1-3
+  { id: 'bba_s5_intl_1', semesterId: 'sem1', subjectId: 'bba502', teacherId: 't71', timeSlotId: 'ts5', day: 'Monday', room: 'BBA-502' },
+  { id: 'bba_s5_intl_2', semesterId: 'sem1', subjectId: 'bba502', teacherId: 't71', timeSlotId: 'ts5', day: 'Tuesday', room: 'BBA-502' },
+  { id: 'bba_s5_intl_3', semesterId: 'sem1', subjectId: 'bba502', teacherId: 't71', timeSlotId: 'ts5', day: 'Wednesday', room: 'BBA-502' },
+  
+  // Business Ethics (2 credits) - Days 1-2
+  { id: 'bba_s5_ethics_1', semesterId: 'sem1', subjectId: 'bba503', teacherId: 't72', timeSlotId: 'ts6', day: 'Monday', room: 'BBA-503' },
+  { id: 'bba_s5_ethics_2', semesterId: 'sem1', subjectId: 'bba503', teacherId: 't72', timeSlotId: 'ts6', day: 'Tuesday', room: 'BBA-503' },
+
+  // ========= CONFLICT ENTRIES - INTENTIONALLY ADDED FOR TESTING =========
+
+  // TEACHER CONFLICT 1: Teacher 't1' double-booked on Monday 8:00-9:00
+  // Already has: cs_s1_prog_1 at ts1 (8:00-9:00) on Monday
+  { id: 'conflict_teacher_1', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't1', timeSlotId: 'ts1', day: 'Monday', room: 'R-401', note: 'CONFLICT: Teacher t1 also teaching cs_s1_prog_1 at same time' },
+
+  // ========= QA TEST CONFLICTS - FOR MANUAL TESTING =========
+  
+  // TEACHER CONFLICT - CROSS-SEMESTER: Same teacher, different semesters, different days
+  // Teacher 't70' (Dr. Hassan Raza) teaching Subject A in Semester 1 on Monday and Subject B in Semester 3 on Wednesday
+  { id: 'qa_teacher_conflict_1', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't70', timeSlotId: 'ts2', day: 'Monday', room: 'QA-Room1', note: 'QA TEST: Cross-semester teacher conflict' },
+  { id: 'qa_teacher_conflict_2', semesterId: 'sem3', subjectId: 'bba201', teacherId: 't70', timeSlotId: 'ts2', day: 'Wednesday', room: 'QA-Room2', note: 'QA TEST: Cross-semester teacher conflict' },
+  
+  // ROOM CONFLICT - CROSS-SEMESTER: Same room, different semesters, different teachers
+  // Room 'QA-TestRoom' booked for Subject C (Semester 5) with Dr. Jane Doe on Tuesday
+  { id: 'qa_room_conflict_1', semesterId: 'sem5', subjectId: 'cs501', teacherId: 't71', timeSlotId: 'ts3', day: 'Tuesday', room: 'QA-TestRoom', note: 'QA TEST: Cross-semester room conflict' },
+  { id: 'qa_room_conflict_2', semesterId: 'sem1', subjectId: 'math101', teacherId: 't85', timeSlotId: 'ts3', day: 'Tuesday', room: 'QA-TestRoom', note: 'QA TEST: Cross-semester room conflict' },
+  
+  // UNKNOWN SEMESTER FALLBACK TEST: Conflict with non-existent semester
+  { id: 'qa_unknown_semester', semesterId: 'unknown_sem', subjectId: 'test101', teacherId: 't1', timeSlotId: 'ts4', day: 'Friday', room: 'Unknown-Room', note: 'QA TEST: Unknown semester fallback' },
+
+  // TEACHER CONFLICT 2: Teacher 't85' triple-booked on Monday 9:00-10:00
+  // Already has multiple entries at ts2 (9:00-10:00) on Monday
+  { id: 'conflict_teacher_2a', semesterId: 'sem1', subjectId: 'math101', teacherId: 't85', timeSlotId: 'ts2', day: 'Monday', room: 'R-501', note: 'CONFLICT: Teacher t85 also teaching cs_s1_math_1, chem_s1_math_1, econ_s1_math_1 at same time' },
+  { id: 'conflict_teacher_2b', semesterId: 'sem1', subjectId: 'phys101', teacherId: 't85', timeSlotId: 'ts2', day: 'Monday', room: 'R-502', note: 'CONFLICT: Teacher t85 also teaching multiple courses at same time' },
+
+  // ROOM CONFLICT 1: Room 'CS-Lab1' double-booked on Monday 8:00-9:00
+  // Already has: cs_s1_prog_1 at ts1 (8:00-9:00) on Monday
+  { id: 'conflict_room_1', semesterId: 'sem1', subjectId: 'phys101', teacherId: 't57', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab1', note: 'CONFLICT: Room CS-Lab1 also booked for cs_s1_prog_1 at same time' },
+
+  // ROOM CONFLICT 2: Room 'R-301' triple-booked on Monday
+  // Already has: econ_s1_prin_1 at ts4 (11:15-12:15) on Monday
+  { id: 'conflict_room_2a', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't70', timeSlotId: 'ts4', day: 'Monday', room: 'R-301', note: 'CONFLICT: Room R-301 also booked for econ_s1_prin_1 at same time' },
+  { id: 'conflict_room_2b', semesterId: 'sem1', subjectId: 'eng101', teacherId: 't37', timeSlotId: 'ts4', day: 'Monday', room: 'R-301', note: 'CONFLICT: Room R-301 also triple-booked' },
+
+  // TEACHER CONFLICT 3: Teacher 't37' double-booked on Monday
+  // Already has: cs_s1_eng_1 at ts3 (10:00-11:00) on Monday
+  { id: 'conflict_teacher_3', semesterId: 'sem1', subjectId: 'math102', teacherId: 't37', timeSlotId: 'ts3', day: 'Monday', room: 'R-601', note: 'CONFLICT: Teacher t37 also teaching cs_s1_eng_1 at same time' },
+
+  // ROOM CONFLICT 3: Room 'Chem-301' double-booked on Monday
+  // Already has: chem_s1_gen_1 at ts1 (8:00-9:00) on Monday
+  { id: 'conflict_room_3', semesterId: 'sem1', subjectId: 'phys102', teacherId: 't99', timeSlotId: 'ts1', day: 'Monday', room: 'Chem-301', note: 'CONFLICT: Room Chem-301 also booked for chem_s1_gen_1 at same time', isLab: true },
+
+  // COMPLEX CONFLICT: Both teacher and room conflict
+  // Teacher 't6' and Room 'CS-Lab1' both conflicted
+  { id: 'conflict_complex_1', semesterId: 'sem1', subjectId: 'chem201', teacherId: 't6', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab1', note: 'COMPLEX CONFLICT: Teacher t6 teaching chem_s1_gen_1, Room CS-Lab1 also booked for cs_s1_prog_1' },
+
+  // ========= DEMONSTRATION ENTRIES FOR DAY DISPLAY FORMATTING =========
+  
+  // BBA course demonstration - showing consecutive days (1-3) pattern
+  { id: 'demo_consecutive_1', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't78', timeSlotId: 'ts7', day: 'Monday', room: 'Demo-101' },
+  { id: 'demo_consecutive_2', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't78', timeSlotId: 'ts7', day: 'Tuesday', room: 'Demo-101' },
+  { id: 'demo_consecutive_3', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't78', timeSlotId: 'ts7', day: 'Wednesday', room: 'Demo-101' },
+
+  // Math course demonstration - showing non-consecutive days (2,5) pattern
+  { id: 'demo_non_consecutive_1', semesterId: 'sem1', subjectId: 'math101', teacherId: 't56', timeSlotId: 'ts7', day: 'Tuesday', room: 'Demo-201' },
+  { id: 'demo_non_consecutive_2', semesterId: 'sem1', subjectId: 'math101', teacherId: 't56', timeSlotId: 'ts7', day: 'Friday', room: 'Demo-201' },
+
+  // Physics course demonstration - showing single day (3) pattern
+  { id: 'demo_single_day', semesterId: 'sem1', subjectId: 'phys101', teacherId: 't57', timeSlotId: 'ts7', day: 'Wednesday', room: 'Demo-301' },
+];
 
 export const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
