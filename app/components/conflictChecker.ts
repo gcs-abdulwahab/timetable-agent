@@ -1,4 +1,4 @@
-import { teachers, timetableEntries } from './data';
+import { teachers, timetableEntries, subjects, semesters } from './data';
 
 export interface ConflictInfo {
   type: 'teacher' | 'room';
@@ -37,12 +37,29 @@ export function checkScheduleConflicts(): ConflictInfo[] {
     teacherMap.forEach((entryIds, teacherId) => {
       if (entryIds.length > 1) {
         const teacher = teachers.find(t => t.id === teacherId);
+        
+        // Generate detailed conflict message for QA testing
+        const conflictEntries = entryIds.map(entryId => {
+          const entry = timetableEntries.find(e => e.id === entryId);
+          if (!entry) return 'Unknown Entry';
+          
+          const subject = subjects.find(s => s.id === entry.subjectId);
+          const semester = semesters.find(sem => sem.id === entry.semesterId);
+          
+          const subjectName = subject?.name || 'Unknown Subject';
+          const semesterName = semester?.name || 'Unknown Semester';
+          
+          return `${subjectName} (${semesterName}) on ${entry.day}`;
+        });
+        
+        const detailsMessage = conflictEntries.join(', ');
+        
         conflicts.push({
           type: 'teacher',
           timeSlot: timeSlotId,
           day,
           conflictingEntries: entryIds,
-          details: `Teacher ${teacher?.name || teacherId} is scheduled for multiple classes`
+          details: detailsMessage
         });
       }
     });
@@ -60,12 +77,31 @@ export function checkScheduleConflicts(): ConflictInfo[] {
 
     roomMap.forEach((entryIds, room) => {
       if (entryIds.length > 1) {
+        
+        // Generate detailed room conflict message for QA testing
+        const conflictEntries = entryIds.map(entryId => {
+          const entry = timetableEntries.find(e => e.id === entryId);
+          if (!entry) return 'Unknown Entry';
+          
+          const subject = subjects.find(s => s.id === entry.subjectId);
+          const semester = semesters.find(sem => sem.id === entry.semesterId);
+          const teacher = teachers.find(t => t.id === entry.teacherId);
+          
+          const subjectName = subject?.name || 'Unknown Subject';
+          const semesterName = semester?.name || 'Unknown Semester';
+          const teacherName = teacher?.name || 'Unknown Teacher';
+          
+          return `${subjectName} (${semesterName}) - ${teacherName} on ${entry.day}`;
+        });
+        
+        const detailsMessage = conflictEntries.join(', ');
+        
         conflicts.push({
           type: 'room',
           timeSlot: timeSlotId,
           day,
           conflictingEntries: entryIds,
-          details: `Room ${room} is booked for multiple classes`
+          details: detailsMessage
         });
       }
     });
