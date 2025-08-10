@@ -50,9 +50,14 @@ function generateTimetableSummary() {
         return;
     }
 
-    // Create lookup maps
+    // Create lookup maps with proper ID handling
     const departmentMap = new Map(departments.map(d => [d.id, d]));
-    const subjectMap = new Map(subjects.map(s => [s.id, s]));
+    const subjectMap = new Map();
+    subjects.forEach(s => {
+        // Store both string and number versions of ID
+        subjectMap.set(s.id, s);
+        subjectMap.set(s.id.toString(), s);
+    });
     const teacherMap = new Map(teachers.map(t => [t.id, t]));
     const roomMap = new Map(rooms.map(r => [r.id, r]));
     const timeslotMap = new Map(timeslots.map(ts => [ts.id, ts]));

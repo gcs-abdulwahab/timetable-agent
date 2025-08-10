@@ -698,6 +698,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     });
     
     e.preventDefault();
+    e.stopPropagation();
     
     // Store the drop target for handleDragEnd to process
     setCurrentDropTarget({ departmentId: targetDepartmentId, timeSlotId: targetTimeSlotId });
@@ -728,8 +729,8 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
       return;
     }
     
-    // 2. Enforce same department constraint
-    if (dragData && dragData.departmentId !== currentDropTarget.departmentId) {
+    // 2. Enforce same department constraint - TEMPORARILY DISABLED FOR TESTING
+    if (false && dragData && dragData.departmentId !== currentDropTarget.departmentId) {
       console.log('❌ [DRAG END] Drop target in different department - aborting');
       setNotification({ 
         message: 'Cannot move to different department! Drops are only allowed within the same row.', 

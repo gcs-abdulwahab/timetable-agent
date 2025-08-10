@@ -9,7 +9,11 @@
     "start": "next start",
     "lint": "next lint",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "validate": "node scripts/validate-timetable.js",
+    "validate:report": "node scripts/generate-validation-report.js",
+    "test:snapshot": "jest __tests__/allocations-snapshot.test.js",
+    "test:validation": "npm run validate && npm run test:snapshot"
   },
   "jest": {
     "testEnvironment": "jsdom",

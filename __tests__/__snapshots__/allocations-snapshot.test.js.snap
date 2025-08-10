@@ -1,0 +1,147 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Allocations Data Structure allocations.json structure matches expected format 1`] = `
+[
+  {
+    "allowedFields": [
+      "day",
+      "id",
+      "room",
+      "semesterId",
+      "subjectId",
+      "teacherId",
+      "timeSlotId",
+    ],
+    "day": "string",
+    "hasDay": true,
+    "hasId": true,
+    "hasSemesterId": true,
+    "hasSubjectId": true,
+    "hasTimeSlotId": true,
+    "id": "string",
+    "room": "string",
+    "semesterId": "string",
+    "subjectId": "string",
+    "teacherId": "string",
+    "timeSlotId": "string",
+  },
+  {
+    "allowedFields": [
+      "day",
+      "id",
+      "room",
+      "semesterId",
+      "subjectId",
+      "teacherId",
+      "timeSlotId",
+    ],
+    "day": "string",
+    "hasDay": true,
+    "hasId": true,
+    "hasSemesterId": true,
+    "hasSubjectId": true,
+    "hasTimeSlotId": true,
+    "id": "string",
+    "room": "string",
+    "semesterId": "string",
+    "subjectId": "string",
+    "teacherId": "string",
+    "timeSlotId": "string",
+  },
+  {
+    "allowedFields": [
+      "day",
+      "id",
+      "room",
+      "semesterId",
+      "subjectId",
+      "teacherId",
+      "timeSlotId",
+    ],
+    "day": "string",
+    "hasDay": true,
+    "hasId": true,
+    "hasSemesterId": true,
+    "hasSubjectId": true,
+    "hasTimeSlotId": true,
+    "id": "string",
+    "room": "string",
+    "semesterId": "string",
+    "subjectId": "string",
+    "teacherId": "string",
+    "timeSlotId": "string",
+  },
+]
+`;
+
+exports[`Allocations Data Structure data consistency snapshot 1`] = `
+{
+  "dayDistribution": {
+    "Monday": 4,
+    "Thursday": 1,
+    "Tuesday": 4,
+    "Wednesday": 2,
+  },
+  "roomAssignmentStats": {
+    "withRoom": 7,
+    "withoutRoom": 4,
+  },
+  "semesterDistribution": {
+    "sem1": 7,
+    "sem3": 4,
+  },
+  "teacherAssignmentStats": {
+    "withTeacher": 11,
+    "withoutTeacher": 0,
+  },
+  "totalAllocations": 11,
+  "uniqueDays": 4,
+  "uniqueRooms": 2,
+  "uniqueSemesters": 2,
+  "uniqueSubjects": 4,
+  "uniqueTeachers": 3,
+  "uniqueTimeSlots": 2,
+}
+`;
+
+exports[`Allocations Data Structure field types are consistent 1`] = `
+{
+  "day": [
+    "string",
+  ],
+  "id": [
+    "string",
+  ],
+  "room": [
+    "string",
+  ],
+  "semesterId": [
+    "string",
+  ],
+  "subjectId": [
+    "string",
+  ],
+  "teacherId": [
+    "string",
+  ],
+  "timeSlotId": [
+    "string",
+  ],
+}
+`;
+
+exports[`Allocations Data Structure sort order is deterministic 1`] = `
+[
+  "edited-16-sem3-Monday-ts2",
+  "edited-17-sem3-Tuesday-ts2",
+  "edited-18-sem3-Wednesday-ts2",
+  "edited-19-sem3-Thursday-ts2",
+  "edited-13-sem1-Monday-ts2",
+  "edited-14-sem1-Tuesday-ts2",
+  "edited-15-sem1-Wednesday-ts2",
+  "edited-2-sem1-Monday-ts4",
+  "edited-3-sem1-Tuesday-ts4",
+  "edited-0-sem1-Monday-ts2",
+  "edited-1-sem1-Tuesday-ts2",
+]
+`;
