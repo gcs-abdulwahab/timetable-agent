@@ -4,7 +4,7 @@ import { z } from 'zod';
 export interface Subject {
   id: string;
   name: string;
-  shortName: string;
+  shortName?: string; // Made optional since it was removed from data
   code: string; // Course code like CS-101, MATH-201, etc.
   creditHours: number;
   color: string;
