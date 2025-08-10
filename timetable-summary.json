@@ -1,0 +1,15 @@
+{
+  "metadata": {
+    "generatedAt": "2025-08-10T17:57:54.749Z",
+    "totalDepartments": 23,
+    "totalSubjects": 323,
+    "totalTeachers": 170,
+    "totalRooms": 65,
+    "totalEntries": 0
+  },
+  "departmentSummary": [],
+  "unresolvedPlaceholders": {
+    "rooms": [],
+    "teachers": []
+  }
+}

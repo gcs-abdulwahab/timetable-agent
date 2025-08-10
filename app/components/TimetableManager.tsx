@@ -9,64 +9,93 @@ import { validateTimetable } from './conflictChecker';
 import { timetableEntries as initialEntries, TimetableEntry } from './data';
 import { generateStats } from './timetableUtils';
 
-const STORAGE_KEY = 'timetable-entries';
-
 const TimetableManager: React.FC = () => {
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
   
-  // Load entries from localStorage or use initial data
-  const [entries, setEntries] = useState<TimetableEntry[]>(initialEntries);
+  // Load entries from allocations.json file
+  const [entries, setEntries] = useState<TimetableEntry[]>([]);
   
   const [showAdmin, setShowAdmin] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
 
-  // Load from localStorage after component mounts (client-side only)
+  // Load from allocations.json file
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsedEntries = JSON.parse(stored);
-          setEntries(parsedEntries);
-        } catch (error) {
-          console.error('Error parsing stored timetable entries:', error);
-        }
-      }
-    }
+    loadAllocations();
   }, []);
 
-  // Save to localStorage whenever entries change
-  useEffect(() => {
-    if (mounted && typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
+  const loadAllocations = async () => {
+    try {
+      const response = await fetch('/api/allocations');
+      if (response.ok) {
+        const allocations = await response.json();
+        setEntries(allocations);
+      } else {
+        console.warn('Failed to load allocations, using initial entries');
+        setEntries(initialEntries);
+      }
+    } catch (error) {
+      console.error('Error loading allocations:', error);
+      setEntries(initialEntries);
+    } finally {
+      setLoading(false);
     }
-  }, [entries, mounted]);
+  };
 
-  const handleAddEntry = (newEntry: Omit<TimetableEntry, 'id'>) => {
+  const saveAllocations = async (updatedEntries: TimetableEntry[]) => {
+    try {
+      const response = await fetch('/api/allocations', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedEntries),
+      });
+      
+      if (!response.ok) {
+        throw new Error('Failed to save allocations');
+      }
+    } catch (error) {
+      console.error('Error saving allocations:', error);
+      alert('Failed to save allocations. Please try again.');
+    }
+  };
+
+  const handleAddEntry = async (newEntry: Omit<TimetableEntry, 'id'>) => {
     const entry: TimetableEntry = {
       ...newEntry,
       id: `e${Date.now()}` // Simple ID generation
     };
     
-    setEntries(prev => [...prev, entry]);
-  };
-
-  const handleUpdateEntries = (updatedEntries: TimetableEntry[]) => {
+    const updatedEntries = [...entries, entry];
     setEntries(updatedEntries);
+    await saveAllocations(updatedEntries);
   };
 
-  // For testing purposes - clear stored data
-  const handleClearStorage = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem(STORAGE_KEY);
-      setEntries(initialEntries);
-    }
+  const handleUpdateEntries = async (updatedEntries: TimetableEntry[]) => {
+    setEntries(updatedEntries);
+    await saveAllocations(updatedEntries);
+  };
+
+  // Clear allocations data
+  const handleClearStorage = async () => {
+    const emptyEntries: TimetableEntry[] = [];
+    setEntries(emptyEntries);
+    await saveAllocations(emptyEntries);
   };
 
   const validation = validateTimetable();
   const stats = generateStats(entries);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen p-4 bg-gray-50 flex items-center justify-center">
+        <div className="text-lg text-gray-600">Loading timetable data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen p-4 bg-gray-50">

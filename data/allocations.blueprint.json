@@ -1,0 +1,647 @@
+[
+  {
+    "department": "Biotechnology",
+    "departmentId": "d1",
+    "roomId": "bs-1",
+    "roomName": "1",
+    "allocations": [
+      {
+        "subjectId": "5010",
+        "subjectCode": "Biotech-3101",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5007",
+        "subjectCode": "Biotech-3102",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5008",
+        "subjectCode": "Biotech-3103",
+        "days": [1, 2],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5009",
+        "subjectCode": "Biotech-3104",
+        "days": [1, 2],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5011",
+        "subjectCode": "Biotech-3105",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Botany",
+    "departmentId": "d22",
+    "roomId": "bs-64",
+    "roomName": "64",
+    "allocations": [
+      {
+        "subjectId": "5020",
+        "subjectCode": "BOT-301",
+        "days": [1, 2],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5016",
+        "subjectCode": "BOT-303",
+        "days": [1, 2],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5018",
+        "subjectCode": "BOT-305",
+        "days": [1, 2],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5024",
+        "subjectCode": "BOT-309",
+        "days": [1, 2],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5022",
+        "subjectCode": "BOT-311",
+        "days": [1, 2],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Chemistry",
+    "departmentId": "d2",
+    "roomId": null,
+    "roomName": null,
+    "allocations": [
+      {
+        "subjectId": "5027",
+        "subjectCode": "CHEM-301",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5031",
+        "subjectCode": "CHEM-303",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5026",
+        "subjectCode": "CHEM-304",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      },
+      {
+        "subjectId": "5028",
+        "subjectCode": "CHEM-307",
+        "days": [1, 2, 3],
+        "period": 6,
+        "timeSlotId": "ts6"
+      },
+      {
+        "subjectId": "5029",
+        "subjectCode": "CHEM-309",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5030",
+        "subjectCode": "CHEM-311",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      }
+    ]
+  },
+  {
+    "department": "Economics",
+    "departmentId": "d3",
+    "roomId": "bs-104",
+    "roomName": "104",
+    "allocations": [
+      {
+        "subjectId": "5040",
+        "subjectCode": "ECON-314",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5042",
+        "subjectCode": "ECON-318",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5038",
+        "subjectCode": "ECON-319",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5039",
+        "subjectCode": "ECON-321",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5041",
+        "subjectCode": "ECON-322",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Education",
+    "departmentId": "d4",
+    "roomId": "b-12",
+    "roomName": "B12",
+    "allocations": [
+      {
+        "subjectId": "5043",
+        "subjectCode": "ED-322",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5044",
+        "subjectCode": "EDE-322",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5045",
+        "subjectCode": "EDE-372",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5046",
+        "subjectCode": "EDE-373",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5047",
+        "subjectCode": "EDE-374",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "English",
+    "departmentId": "d5",
+    "roomId": "bs-2",
+    "roomName": "2",
+    "allocations": [
+      {
+        "subjectId": "5048",
+        "subjectCode": "ENG-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5052",
+        "subjectCode": "ENG-302",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5050",
+        "subjectCode": "ENG-304",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5049",
+        "subjectCode": "ENG-305",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5051",
+        "subjectCode": "ENG-306",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Geography",
+    "departmentId": "d7",
+    "roomId": "bs-132",
+    "roomName": "132",
+    "allocations": [
+      {
+        "subjectId": "5069",
+        "subjectCode": "GEOG-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5065",
+        "subjectCode": "GEOG-302",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5067",
+        "subjectCode": "GEOG-303",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5066",
+        "subjectCode": "GEOG-304",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5068",
+        "subjectCode": "GEOG-305",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Mass Communication",
+    "departmentId": "d8",
+    "roomId": "b-18",
+    "roomName": "B18",
+    "allocations": [
+      {
+        "subjectId": "5071",
+        "subjectCode": "BSCS-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5072",
+        "subjectCode": "BSCS-302",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5074",
+        "subjectCode": "BSCS-303",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5073",
+        "subjectCode": "BSCS-304",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5070",
+        "subjectCode": "BSCS-305",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Mathematics",
+    "departmentId": "d9",
+    "roomId": "bs-111",
+    "roomName": "111",
+    "allocations": [
+      {
+        "subjectId": "5075",
+        "subjectCode": "MATH-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5077",
+        "subjectCode": "MATH-302",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5078",
+        "subjectCode": "MATH-303",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5076",
+        "subjectCode": "MATH-304",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5079",
+        "subjectCode": "MATH-305",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Physics",
+    "departmentId": "d10",
+    "roomId": "bs-79",
+    "roomName": "79",
+    "allocations": [
+      {
+        "subjectId": "5082",
+        "subjectCode": "Phys-3101",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5081",
+        "subjectCode": "Phys-3501",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5083",
+        "subjectCode": "Phys-3502",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5080",
+        "subjectCode": "Phys-3701",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      }
+    ]
+  },
+  {
+    "department": "Political Science",
+    "departmentId": "d11",
+    "roomId": "b-24",
+    "roomName": "B24",
+    "allocations": [
+      {
+        "subjectId": "5089",
+        "subjectCode": "POL-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5085",
+        "subjectCode": "POL-302",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5086",
+        "subjectCode": "POL-303",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5087",
+        "subjectCode": "POL-304",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5088",
+        "subjectCode": "POL-305",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Sociology",
+    "departmentId": "d12",
+    "roomId": "b-14",
+    "roomName": "B14",
+    "allocations": [
+      {
+        "subjectId": "5092",
+        "subjectCode": "SOC-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5091",
+        "subjectCode": "SOC-303",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5093",
+        "subjectCode": "SOC-304",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5094",
+        "subjectCode": "SOC-305",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5090",
+        "subjectCode": "SOC-306",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Statistics",
+    "departmentId": "d14",
+    "roomId": "bs-135",
+    "roomName": "135",
+    "allocations": [
+      {
+        "subjectId": "5099",
+        "subjectCode": "STAT-301",
+        "days": [1, 2],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5097",
+        "subjectCode": "STAT-303",
+        "days": [1, 2],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5095",
+        "subjectCode": "STAT-305",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5096",
+        "subjectCode": "STAT-307",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5098",
+        "subjectCode": "STAT-309",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Urdu",
+    "departmentId": "d15",
+    "roomId": "bs-7",
+    "roomName": "7",
+    "allocations": [
+      {
+        "subjectId": "5103",
+        "subjectCode": "BSU-301",
+        "days": [1, 2, 3],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5104",
+        "subjectCode": "BSU-302",
+        "days": [1, 2, 3],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5107",
+        "subjectCode": "BSU-303",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5108",
+        "subjectCode": "BSU-304",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5105",
+        "subjectCode": "URDU-305",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  },
+  {
+    "department": "Zoology",
+    "departmentId": "d16",
+    "roomId": "bs-62",
+    "roomName": "62",
+    "allocations": [
+      {
+        "subjectId": "5109",
+        "subjectCode": "ZOOL-302",
+        "days": [1, 2],
+        "period": 1,
+        "timeSlotId": "ts1"
+      },
+      {
+        "subjectId": "5110",
+        "subjectCode": "ZOOL-303",
+        "days": [1, 2],
+        "period": 2,
+        "timeSlotId": "ts2"
+      },
+      {
+        "subjectId": "5111",
+        "subjectCode": "ZOOL-304",
+        "days": [1, 2, 3],
+        "period": 3,
+        "timeSlotId": "ts3"
+      },
+      {
+        "subjectId": "5113",
+        "subjectCode": "ZOOL-305",
+        "days": [1, 2, 3],
+        "period": 4,
+        "timeSlotId": "ts4"
+      },
+      {
+        "subjectId": "5112",
+        "subjectCode": "ZOOL-306",
+        "days": [1, 2, 3],
+        "period": 5,
+        "timeSlotId": "ts5"
+      }
+    ]
+  }
+]

@@ -1,0 +1,4402 @@
+{
+  "metadata": {
+    "generatedAt": "2025-08-10T17:32:50.061Z",
+    "totalAssignments": 323,
+    "placeholderCount": 0,
+    "teacherCount": 134
+  },
+  "assignments": [
+    {
+      "subjectCode": "BT-101",
+      "subjectId": "bt101",
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BCBT-101",
+      "subjectId": "bcbt101",
+      "teacherId": "t74",
+      "teacherName": "Adnan Khalid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "N-BOT-110",
+      "subjectId": "nbot110",
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_bt",
+      "teacherId": "t74",
+      "teacherName": "Adnan Khalid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_bt",
+      "teacherId": "t75",
+      "teacherName": "Atiqa Wajid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_bt",
+      "teacherId": "t76",
+      "teacherName": "Dr. Adil Abbas",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-110",
+      "subjectId": "bot110",
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-112",
+      "subjectId": "bot112",
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NB-107",
+      "subjectId": "nb107",
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_bot",
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_bot",
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_bot",
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Physical Chemistry-101",
+      "subjectId": "phychem101",
+      "teacherId": "t7",
+      "teacherName": "Dr. Qamar Subhani",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Physical Chemistry-102",
+      "subjectId": "phychem102",
+      "teacherId": "t8",
+      "teacherName": "Dr. M. Monim ul Mahboob",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NSW-106",
+      "subjectId": "nsw106",
+      "teacherId": "t7",
+      "teacherName": "Dr. Qamar Subhani",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Chem-116",
+      "subjectId": "chem116",
+      "teacherId": "t8",
+      "teacherName": "Dr. M. Monim ul Mahboob",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Chem-117",
+      "subjectId": "chem117",
+      "teacherId": "t9",
+      "teacherName": "Aamir Niaz",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_chem",
+      "teacherId": "t10",
+      "teacherName": "Zahid Sharif",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_chem",
+      "teacherId": "t11",
+      "teacherName": "Muhammad Arshad Bhatti",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_chem",
+      "teacherId": "t12",
+      "teacherName": "Asif Masaud Khurum",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-102",
+      "subjectId": "bba102",
+      "teacherId": "t25",
+      "teacherName": "Dr. M. Khalid Rashid",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GNS-101",
+      "subjectId": "gns101",
+      "teacherId": "t26",
+      "teacherName": "Muhammad Tariq",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-101",
+      "subjectId": "bba101",
+      "teacherId": "t27",
+      "teacherName": "Iftikhar Ahmad",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MCEd-101",
+      "subjectId": "mced101",
+      "teacherId": "t159",
+      "teacherName": "Abdul Qayyum",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MCEd-102",
+      "subjectId": "mced102",
+      "teacherId": "t160",
+      "teacherName": "Hamid Ali",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NPHY-110",
+      "subjectId": "nphy110",
+      "teacherId": "t161",
+      "teacherName": "Muhammad Shahzad",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NZ-116",
+      "subjectId": "nz116_ed",
+      "teacherId": "t162",
+      "teacherName": "Junaid Ahmad Khan",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_ed",
+      "teacherId": "t163",
+      "teacherName": "Rida Shah",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_ed",
+      "teacherId": "t159",
+      "teacherName": "Abdul Qayyum",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_ed",
+      "teacherId": "t160",
+      "teacherName": "Hamid Ali",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ELL-101",
+      "subjectId": "ell101",
+      "teacherId": "t38",
+      "teacherName": "Asif Shaheen",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ELL-102",
+      "subjectId": "ell102",
+      "teacherId": "t39",
+      "teacherName": "Nighat Iftekhar",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NPH-102",
+      "subjectId": "nph102",
+      "teacherId": "t40",
+      "teacherName": "Saleem Ahsan",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_eng",
+      "teacherId": "t41",
+      "teacherName": "Rana Yousaf",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_eng",
+      "teacherId": "t42",
+      "teacherName": "Nosheen Jafar",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_eng",
+      "teacherId": "t43",
+      "teacherName": "Dr. Nazir Ahmed",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GE-169",
+      "subjectId": "ge169",
+      "teacherId": "t1",
+      "teacherName": "Ejaz Ahmad",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GE-190",
+      "subjectId": "ge190",
+      "teacherId": "t4",
+      "teacherName": "Muhammad Zeeshan",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GE-160",
+      "subjectId": "ge160",
+      "teacherId": "t1",
+      "teacherName": "Ejaz Ahmad",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GE-167",
+      "subjectId": "ge167",
+      "teacherId": "t4",
+      "teacherName": "Muhammad Zeeshan",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MS-251",
+      "subjectId": "ms251",
+      "teacherId": "t5",
+      "teacherName": "Naureen",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MD-001",
+      "subjectId": "md001",
+      "teacherId": "t1",
+      "teacherName": "Ejaz Ahmad",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NAG-101",
+      "subjectId": "nag101",
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Geog-101",
+      "subjectId": "geog101",
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Geog-102",
+      "subjectId": "geog102",
+      "teacherId": "t52",
+      "teacherName": "Muhammad Sohail",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_geo",
+      "teacherId": "t53",
+      "teacherName": "Kiran Hamayon",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_geo",
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_geo",
+      "teacherId": "t52",
+      "teacherName": "Muhammad Sohail",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-101",
+      "subjectId": "bscs101",
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-102",
+      "subjectId": "bscs102",
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-104",
+      "subjectId": "gisl104",
+      "teacherId": "t83",
+      "teacherName": "Saiba Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GIES-201",
+      "subjectId": "gies201",
+      "teacherId": "t84",
+      "teacherName": "Nain Tara",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_mass",
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_mass",
+      "teacherId": "t83",
+      "teacherName": "Saiba Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "AHPH-100",
+      "subjectId": "ahph100",
+      "teacherId": "t85",
+      "teacherName": "Dr. Naveed Akhtar",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICP-101",
+      "subjectId": "gicp101",
+      "teacherId": "t86",
+      "teacherName": "M. Arshed Rashed",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-101",
+      "subjectId": "math101_math",
+      "teacherId": "t87",
+      "teacherName": "Ahmad Saleem",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GQR-101",
+      "subjectId": "gqr101_math",
+      "teacherId": "t88",
+      "teacherName": "Dr. Qaisar Mehmood",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SS-101",
+      "subjectId": "ss101",
+      "teacherId": "t89",
+      "teacherName": "Tariq Sharif",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_math",
+      "teacherId": "t90",
+      "teacherName": "Muhammad Ikram",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APHL-122",
+      "subjectId": "aphl122",
+      "teacherId": "t97",
+      "teacherName": "Dr. Muhammad Saleem",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MPHY-111",
+      "subjectId": "mphy111",
+      "teacherId": "t98",
+      "teacherName": "Dr. Abdul Rashid",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MPHY-101",
+      "subjectId": "mphy101",
+      "teacherId": "t99",
+      "teacherName": "Ms. Noreen Azam",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GQR-101",
+      "subjectId": "gqr101_phy",
+      "teacherId": "t100",
+      "teacherName": "M. Tariq Shaikh",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_phy",
+      "teacherId": "t101",
+      "teacherName": "Ms. Majida Ch.",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_phy",
+      "teacherId": "t102",
+      "teacherName": "Jamil Ahmad",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "PS-xxx",
+      "subjectId": "psxxx",
+      "teacherId": "t125",
+      "teacherName": "Dr. Rehman Gul Khan",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NDM-120",
+      "subjectId": "ndm120_pol",
+      "teacherId": "t126",
+      "teacherName": "Mujeeb Ul Islam",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_pol",
+      "teacherId": "t127",
+      "teacherName": "Dr. Muneera Sultana",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_pol",
+      "teacherId": "t128",
+      "teacherName": "Abdul Rasheed",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_pol",
+      "teacherId": "t129",
+      "teacherName": "Qamar Abbas",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-101",
+      "subjectId": "soc101",
+      "teacherId": "t179",
+      "teacherName": "Muhammad Aslam",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-102",
+      "subjectId": "soc102",
+      "teacherId": "t180",
+      "teacherName": "Abdul Aziz Taga",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NDM-120",
+      "subjectId": "ndm120_soc",
+      "teacherId": "t181",
+      "teacherName": "Rabia Safdar",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_soc",
+      "teacherId": "t179",
+      "teacherName": "Muhammad Aslam",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_soc",
+      "teacherId": "t180",
+      "teacherName": "Abdul Aziz Taga",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_soc",
+      "teacherId": "t181",
+      "teacherName": "Rabia Safdar",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APSY-111A",
+      "subjectId": "apsy111a",
+      "teacherId": "t175",
+      "teacherName": "Muhammad Aleem",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APSY-112",
+      "subjectId": "apsy112",
+      "teacherId": "t176",
+      "teacherName": "Amtal Saba",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APSY-113",
+      "subjectId": "apsy113",
+      "teacherId": "t177",
+      "teacherName": "Fakhar Elahi",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NHPY-110",
+      "subjectId": "nhpy110",
+      "teacherId": "t175",
+      "teacherName": "Muhammad Aleem",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_psy",
+      "teacherId": "t176",
+      "teacherName": "Amtal Saba",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_psy",
+      "teacherId": "t177",
+      "teacherName": "Fakhar Elahi",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_psy",
+      "teacherId": "t178",
+      "teacherName": "Muhammad Ali",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-101",
+      "subjectId": "stat101",
+      "teacherId": "t187",
+      "teacherName": "Muhammad Amer Nazir",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SMTH-101",
+      "subjectId": "smth101",
+      "teacherId": "t188",
+      "teacherName": "Muhammad Sabir Ch",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NSS-104",
+      "subjectId": "nss104",
+      "teacherId": "t189",
+      "teacherName": "Amjad Ali Chaudhry",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_stat",
+      "teacherId": "t190",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_stat",
+      "teacherId": "t191",
+      "teacherName": "Muhammad Zahid Rasheed",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_stat",
+      "teacherId": "t192",
+      "teacherName": "Dr. Azam Zaka",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-101",
+      "subjectId": "bsu101",
+      "teacherId": "t134",
+      "teacherName": "Dr. Muhammad Naeem",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-102",
+      "subjectId": "bsu102",
+      "teacherId": "t135",
+      "teacherName": "Talat Rashid",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_urdu",
+      "teacherId": "t136",
+      "teacherName": "Dr. Sohail Mumtaz",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_urdu",
+      "teacherId": "t137",
+      "teacherName": "Dr. Taimoor Hassan",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_urdu",
+      "teacherId": "t138",
+      "teacherName": "Ghulam Sabir",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-101",
+      "subjectId": "zool101",
+      "teacherId": "t142",
+      "teacherName": "Dr. Naveed Akhtar",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-102",
+      "subjectId": "zool102",
+      "teacherId": "t143",
+      "teacherName": "Dr. Asma Karim",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-103",
+      "subjectId": "zool103",
+      "teacherId": "t144",
+      "teacherName": "Dr. Syed Shahid Imran Bokhari",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-104",
+      "subjectId": "zool104",
+      "teacherId": "t145",
+      "teacherName": "Mariam Zaheer",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NZ-116",
+      "subjectId": "nz116_zoo",
+      "teacherId": "t146",
+      "teacherName": "Dr. Muhammad Tariq",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "NZ-117",
+      "subjectId": "nz117",
+      "teacherId": "t147",
+      "teacherName": "Sabir Javed",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GISL-101",
+      "subjectId": "gisl101_zoo",
+      "teacherId": "t142",
+      "teacherName": "Dr. Naveed Akhtar",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-101",
+      "subjectId": "geng101_zoo",
+      "teacherId": "t143",
+      "teacherName": "Dr. Asma Karim",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GCCE-101",
+      "subjectId": "gcce101_zoo",
+      "teacherId": "t144",
+      "teacherName": "Dr. Syed Shahid Imran Bokhari",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3001,
+      "teacherId": "t28",
+      "teacherName": "Muhammad Tanveer",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3002,
+      "teacherId": "t29",
+      "teacherName": "Atiq-ur-Rerhman",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3003,
+      "teacherId": "t30",
+      "teacherName": "Muhammad Rehan Hameed",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3005,
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3006,
+      "teacherId": "t74",
+      "teacherName": "Adnan Khalid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-5",
+      "subjectId": 3007,
+      "teacherId": "t75",
+      "teacherName": "Atiqa Wajid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BT-201",
+      "subjectId": 3008,
+      "teacherId": "t76",
+      "teacherName": "Dr. Adil Abbas",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BCBT-203",
+      "subjectId": 3009,
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BCBT-201",
+      "subjectId": 3010,
+      "teacherId": "t74",
+      "teacherName": "Adnan Khalid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3011,
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3012,
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-5",
+      "subjectId": 3013,
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3014,
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-205",
+      "subjectId": 3015,
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-201",
+      "subjectId": 3016,
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-203",
+      "subjectId": 3017,
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3025,
+      "teacherId": "t161",
+      "teacherName": "Muhammad Shahzad",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3026,
+      "teacherId": "t162",
+      "teacherName": "Junaid Ahmad Khan",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MCEd-202",
+      "subjectId": 3027,
+      "teacherId": "t163",
+      "teacherName": "Rida Shah",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MCEd-203",
+      "subjectId": 3028,
+      "teacherId": "t159",
+      "teacherName": "Abdul Qayyum",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3029,
+      "teacherId": "t160",
+      "teacherName": "Hamid Ali",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-3",
+      "subjectId": 3030,
+      "teacherId": "t161",
+      "teacherName": "Muhammad Shahzad",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MCEd-201",
+      "subjectId": 3031,
+      "teacherId": "t162",
+      "teacherName": "Junaid Ahmad Khan",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3032,
+      "teacherId": "t44",
+      "teacherName": "Mubashir Sadiq",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-5",
+      "subjectId": 3033,
+      "teacherId": "t45",
+      "teacherName": "Imran Khan",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ELL-203",
+      "subjectId": 3034,
+      "teacherId": "t38",
+      "teacherName": "Asif Shaheen",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3035,
+      "teacherId": "t39",
+      "teacherName": "Nighat Iftekhar",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ELL-201",
+      "subjectId": 3036,
+      "teacherId": "t40",
+      "teacherName": "Saleem Ahsan",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ELL-104",
+      "subjectId": 3037,
+      "teacherId": "t41",
+      "teacherName": "Rana Yousaf",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3038,
+      "teacherId": "t42",
+      "teacherName": "Nosheen Jafar",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GE-192",
+      "subjectId": 3039,
+      "teacherId": "t4",
+      "teacherName": "Muhammad Zeeshan",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-211",
+      "subjectId": 3040,
+      "teacherId": "t2",
+      "teacherName": "Sadaf Siddique",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-215",
+      "subjectId": 3041,
+      "teacherId": "t5",
+      "teacherName": "Naureen",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-210",
+      "subjectId": 3042,
+      "teacherId": "t1",
+      "teacherName": "Ejaz Ahmad",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GE-162",
+      "subjectId": 3043,
+      "teacherId": "t3",
+      "teacherName": "Abdul Wahab",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "HQ-003",
+      "subjectId": 3044,
+      "teacherId": "t4",
+      "teacherName": "Muhammad Zeeshan",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-211L",
+      "subjectId": 3045,
+      "teacherId": "t2",
+      "teacherName": "Sadaf Siddique",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-215L",
+      "subjectId": 3046,
+      "teacherId": "t5",
+      "teacherName": "Naureen",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3047,
+      "teacherId": "t53",
+      "teacherName": "Kiran Hamayon",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-4",
+      "subjectId": 3048,
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-201",
+      "subjectId": 3049,
+      "teacherId": "t52",
+      "teacherName": "Muhammad Sohail",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-203",
+      "subjectId": 3050,
+      "teacherId": "t53",
+      "teacherName": "Kiran Hamayon",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3051,
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-202",
+      "subjectId": 3052,
+      "teacherId": "t52",
+      "teacherName": "Muhammad Sohail",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3053,
+      "teacherId": "t53",
+      "teacherName": "Kiran Hamayon",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3054,
+      "teacherId": "t193",
+      "teacherName": "Fayyaz Labha",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-2",
+      "subjectId": 3055,
+      "teacherId": "t187",
+      "teacherName": "Muhammad Amer Nazir",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-202",
+      "subjectId": 3056,
+      "teacherId": "t188",
+      "teacherName": "Muhammad Sabir Ch",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-201",
+      "subjectId": 3057,
+      "teacherId": "t189",
+      "teacherName": "Amjad Ali Chaudhry",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3058,
+      "teacherId": "t190",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-203",
+      "subjectId": 3059,
+      "teacherId": "t191",
+      "teacherName": "Muhammad Zahid Rasheed",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3060,
+      "teacherId": "t192",
+      "teacherName": "Dr. Azam Zaka",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3061,
+      "teacherId": "t103",
+      "teacherName": "Dr. Muhammad Zubair",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-6",
+      "subjectId": 3062,
+      "teacherId": "t104",
+      "teacherName": "Dr. Jamil Sadique",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3063,
+      "teacherId": "t105",
+      "teacherName": "M. Attiqus Salam",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3064,
+      "teacherId": "t106",
+      "teacherName": "Saeed Ahmad Pal",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEN(NS)",
+      "subjectId": 3065,
+      "teacherId": "t91",
+      "teacherName": "Javed Ali",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-201",
+      "subjectId": 3066,
+      "teacherId": "t92",
+      "teacherName": "Dr. Imran Nadeem",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3067,
+      "teacherId": "t93",
+      "teacherName": "Imama Zehra",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3068,
+      "teacherId": "t94",
+      "teacherName": "Malka Shahbano",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-202",
+      "subjectId": 3069,
+      "teacherId": "t85",
+      "teacherName": "Dr. Naveed Akhtar",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-203",
+      "subjectId": 3070,
+      "teacherId": "t86",
+      "teacherName": "M. Arshed Rashed",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3071,
+      "teacherId": "t84",
+      "teacherName": "Nain Tara",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3072,
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3073,
+      "teacherId": "t83",
+      "teacherName": "Saiba Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-1",
+      "subjectId": 3074,
+      "teacherId": "t84",
+      "teacherName": "Nain Tara",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "PS-Major",
+      "subjectId": 3075,
+      "teacherId": "t130",
+      "teacherName": "Khushbakhat Bajwa",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3076,
+      "teacherId": "t131",
+      "teacherName": "Qasim Ali",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3077,
+      "teacherId": "t132",
+      "teacherName": "Dr. Raza Taimoor",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-2",
+      "subjectId": 3078,
+      "teacherId": "t133",
+      "teacherName": "Muneer Bhatti",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-204",
+      "subjectId": 3079,
+      "teacherId": "t182",
+      "teacherName": "Marhaba Rana",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3080,
+      "teacherId": "t183",
+      "teacherName": "Dr Nadeem Abbas",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-203",
+      "subjectId": 3081,
+      "teacherId": "t184",
+      "teacherName": "Dr Bushra Mehmood",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-202",
+      "subjectId": 3082,
+      "teacherId": "t185",
+      "teacherName": "Noor Fatima",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3083,
+      "teacherId": "t186",
+      "teacherName": "Ahsan Ghafoor",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-6",
+      "subjectId": 3084,
+      "teacherId": "t179",
+      "teacherName": "Muhammad Aslam",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3085,
+      "teacherId": "t180",
+      "teacherName": "Abdul Aziz Taga",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-201",
+      "subjectId": 3086,
+      "teacherId": "t181",
+      "teacherName": "Rabia Safdar",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APSY-233",
+      "subjectId": 3087,
+      "teacherId": "t175",
+      "teacherName": "Muhammad Aleem",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3088,
+      "teacherId": "t176",
+      "teacherName": "Amtal Saba",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3089,
+      "teacherId": "t177",
+      "teacherName": "Fakhar Elahi",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3090,
+      "teacherId": "t178",
+      "teacherName": "Muhammad Ali",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-7",
+      "subjectId": 3091,
+      "teacherId": "t175",
+      "teacherName": "Muhammad Aleem",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APSY-232",
+      "subjectId": 3092,
+      "teacherId": "t176",
+      "teacherName": "Amtal Saba",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "APSY-231",
+      "subjectId": 3093,
+      "teacherId": "t177",
+      "teacherName": "Fakhar Elahi",
+      "departmentId": "d13",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3094,
+      "teacherId": "t13",
+      "teacherName": "Iftikhar Ahmad",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GPST-201",
+      "subjectId": 3095,
+      "teacherId": "t14",
+      "teacherName": "Muhammad Zafarullah Bhatti",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3096,
+      "teacherId": "t15",
+      "teacherName": "Anfas Ahmad",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-201",
+      "subjectId": 3097,
+      "teacherId": "t139",
+      "teacherName": "Muhammad Asif",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3098,
+      "teacherId": "t140",
+      "teacherName": "Muhammad Asif (2)",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-6",
+      "subjectId": 3099,
+      "teacherId": "t141",
+      "teacherName": "Muhammad Farooq",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-203",
+      "subjectId": 3100,
+      "teacherId": "t134",
+      "teacherName": "Dr. Muhammad Naeem",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-202",
+      "subjectId": 3101,
+      "teacherId": "t135",
+      "teacherName": "Talat Rashid",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3102,
+      "teacherId": "t136",
+      "teacherName": "Dr. Sohail Mumtaz",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-203",
+      "subjectId": 3103,
+      "teacherId": "t145",
+      "teacherName": "Mariam Zaheer",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-206",
+      "subjectId": 3104,
+      "teacherId": "t146",
+      "teacherName": "Dr. Muhammad Tariq",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GICT-201",
+      "subjectId": 3105,
+      "teacherId": "t147",
+      "teacherName": "Sabir Javed",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-3",
+      "subjectId": 3106,
+      "teacherId": "t148",
+      "teacherName": "Bushra Younas",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-201",
+      "subjectId": 3107,
+      "teacherId": "t149",
+      "teacherName": "Qurat-Ul-Ain",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-205",
+      "subjectId": 3108,
+      "teacherId": "t142",
+      "teacherName": "Dr. Naveed Akhtar",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GENG-201",
+      "subjectId": 3109,
+      "teacherId": "t143",
+      "teacherName": "Dr. Asma Karim",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-202",
+      "subjectId": 3110,
+      "teacherId": "t144",
+      "teacherName": "Dr. Syed Shahid Imran Bokhari",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-204L",
+      "subjectId": 3111,
+      "teacherId": "t145",
+      "teacherName": "Mariam Zaheer",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-301",
+      "subjectId": 5001,
+      "teacherId": "t31",
+      "teacherName": "Ghulam Farid",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-304",
+      "subjectId": 5002,
+      "teacherId": "t32",
+      "teacherName": "Fahim Abbas",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-3",
+      "subjectId": 5003,
+      "teacherId": "t25",
+      "teacherName": "Dr. M. Khalid Rashid",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-303",
+      "subjectId": 5004,
+      "teacherId": "t26",
+      "teacherName": "Muhammad Tariq",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-302",
+      "subjectId": 5005,
+      "teacherId": "t27",
+      "teacherName": "Iftikhar Ahmad",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BBA-305",
+      "subjectId": 5006,
+      "teacherId": "t28",
+      "teacherName": "Muhammad Tanveer",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3102",
+      "subjectId": 5007,
+      "teacherId": "t75",
+      "teacherName": "Atiqa Wajid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3103",
+      "subjectId": 5008,
+      "teacherId": "t76",
+      "teacherName": "Dr. Adil Abbas",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3104",
+      "subjectId": 5009,
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3101",
+      "subjectId": 5010,
+      "teacherId": "t74",
+      "teacherName": "Adnan Khalid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3105",
+      "subjectId": 5011,
+      "teacherId": "t75",
+      "teacherName": "Atiqa Wajid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3102P",
+      "subjectId": 5012,
+      "teacherId": "t76",
+      "teacherName": "Dr. Adil Abbas",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3103P",
+      "subjectId": 5013,
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3104P",
+      "subjectId": 5014,
+      "teacherId": "t74",
+      "teacherName": "Adnan Khalid",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Biotech-3105P",
+      "subjectId": 5015,
+      "teacherId": "t73",
+      "teacherName": "Dr. Zia Ur Rehman",
+      "departmentId": "d1",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-303",
+      "subjectId": 5016,
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-304",
+      "subjectId": 5017,
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-305",
+      "subjectId": 5018,
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-306",
+      "subjectId": 5019,
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-301",
+      "subjectId": 5020,
+      "teacherId": "t166",
+      "teacherName": "Dr. Mukhtar Hussain Shah",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-302",
+      "subjectId": 5021,
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-311",
+      "subjectId": 5022,
+      "teacherId": "t167",
+      "teacherName": "Nasira Perveen",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-312",
+      "subjectId": 5023,
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-309",
+      "subjectId": 5024,
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BOT-310",
+      "subjectId": 5025,
+      "teacherId": "t168",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d22",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-304",
+      "subjectId": 5026,
+      "teacherId": "t16",
+      "teacherName": "Naveed Asalm Dogar",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-301",
+      "subjectId": 5027,
+      "teacherId": "t17",
+      "teacherName": "Dr. Tariq Mehmood",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-307",
+      "subjectId": 5028,
+      "teacherId": "t18",
+      "teacherName": "Dr. Iftikhar Hussain",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-309",
+      "subjectId": 5029,
+      "teacherId": "t19",
+      "teacherName": "Dr. Abdul Rauf",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-311",
+      "subjectId": 5030,
+      "teacherId": "t20",
+      "teacherName": "Dr. Abida Hassan",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-303",
+      "subjectId": 5031,
+      "teacherId": "t21",
+      "teacherName": "Munawar Ali",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-305",
+      "subjectId": 5032,
+      "teacherId": "t22",
+      "teacherName": "Dr. Muhammad Waheed Mushtaq",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-313",
+      "subjectId": 5033,
+      "teacherId": "t23",
+      "teacherName": "Dr. Adeel Ahmad Hassan",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-306",
+      "subjectId": 5034,
+      "teacherId": "t24",
+      "teacherName": "Sajjad Hussain",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-312",
+      "subjectId": 5035,
+      "teacherId": "t7",
+      "teacherName": "Dr. Qamar Subhani",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-308",
+      "subjectId": 5036,
+      "teacherId": "t8",
+      "teacherName": "Dr. M. Monim ul Mahboob",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CHEM-302",
+      "subjectId": 5037,
+      "teacherId": "t9",
+      "teacherName": "Aamir Niaz",
+      "departmentId": "d2",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ECON-319",
+      "subjectId": 5038,
+      "teacherId": "t29",
+      "teacherName": "Atiq-ur-Rerhman",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ECON-321",
+      "subjectId": 5039,
+      "teacherId": "t30",
+      "teacherName": "Muhammad Rehan Hameed",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ECON-314",
+      "subjectId": 5040,
+      "teacherId": "t31",
+      "teacherName": "Ghulam Farid",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ECON-322",
+      "subjectId": 5041,
+      "teacherId": "t32",
+      "teacherName": "Fahim Abbas",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ECON-318",
+      "subjectId": 5042,
+      "teacherId": "t33",
+      "teacherName": "Aneesa Razaq",
+      "departmentId": "d3",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ED-322",
+      "subjectId": 5043,
+      "teacherId": "t163",
+      "teacherName": "Rida Shah",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "EDE-322",
+      "subjectId": 5044,
+      "teacherId": "t159",
+      "teacherName": "Abdul Qayyum",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "EDE-372",
+      "subjectId": 5045,
+      "teacherId": "t160",
+      "teacherName": "Hamid Ali",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "EDE-373",
+      "subjectId": 5046,
+      "teacherId": "t161",
+      "teacherName": "Muhammad Shahzad",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "EDE-374",
+      "subjectId": 5047,
+      "teacherId": "t162",
+      "teacherName": "Junaid Ahmad Khan",
+      "departmentId": "d4",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ENG-301",
+      "subjectId": 5048,
+      "teacherId": "t43",
+      "teacherName": "Dr. Nazir Ahmed",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ENG-305",
+      "subjectId": 5049,
+      "teacherId": "t44",
+      "teacherName": "Mubashir Sadiq",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ENG-304",
+      "subjectId": 5050,
+      "teacherId": "t45",
+      "teacherName": "Imran Khan",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ENG-306",
+      "subjectId": 5051,
+      "teacherId": "t46",
+      "teacherName": "M. Talha",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ENG-302",
+      "subjectId": 5052,
+      "teacherId": "t47",
+      "teacherName": "Shehryar",
+      "departmentId": "d5",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "DC-321",
+      "subjectId": 5053,
+      "teacherId": "t1",
+      "teacherName": "Ejaz Ahmad",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-311",
+      "subjectId": 5054,
+      "teacherId": "t3",
+      "teacherName": "Abdul Wahab",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-215",
+      "subjectId": 5055,
+      "teacherId": "t4",
+      "teacherName": "Muhammad Zeeshan",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-312",
+      "subjectId": 5056,
+      "teacherId": "t2",
+      "teacherName": "Sadaf Siddique",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "DC-322",
+      "subjectId": 5057,
+      "teacherId": "t3",
+      "teacherName": "Abdul Wahab",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "EC-331",
+      "subjectId": 5058,
+      "teacherId": "t5",
+      "teacherName": "Naureen",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-6",
+      "subjectId": 5059,
+      "teacherId": "t2",
+      "teacherName": "Sadaf Siddique",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-311L",
+      "subjectId": 5060,
+      "teacherId": "t3",
+      "teacherName": "Abdul Wahab",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "EC-331L",
+      "subjectId": 5061,
+      "teacherId": "t1",
+      "teacherName": "Ejaz Ahmad",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-8",
+      "subjectId": 5062,
+      "teacherId": "t2",
+      "teacherName": "Sadaf Siddique",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-9",
+      "subjectId": 5063,
+      "teacherId": "t3",
+      "teacherName": "Abdul Wahab",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CC-215L",
+      "subjectId": 5064,
+      "teacherId": "t4",
+      "teacherName": "Muhammad Zeeshan",
+      "departmentId": "d6",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-302",
+      "subjectId": 5065,
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-304",
+      "subjectId": 5066,
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-303",
+      "subjectId": 5067,
+      "teacherId": "t51",
+      "teacherName": "Dr. Muhammad Ghous",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-305",
+      "subjectId": 5068,
+      "teacherId": "t52",
+      "teacherName": "Muhammad Sohail",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "GEOG-301",
+      "subjectId": 5069,
+      "teacherId": "t53",
+      "teacherName": "Kiran Hamayon",
+      "departmentId": "d7",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-305",
+      "subjectId": 5070,
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-301",
+      "subjectId": 5071,
+      "teacherId": "t83",
+      "teacherName": "Saiba Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-302",
+      "subjectId": 5072,
+      "teacherId": "t84",
+      "teacherName": "Nain Tara",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-304",
+      "subjectId": 5073,
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSCS-303",
+      "subjectId": 5074,
+      "teacherId": "t82",
+      "teacherName": "Dr. Shafayat Ali",
+      "departmentId": "d8",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-301",
+      "subjectId": 5075,
+      "teacherId": "t87",
+      "teacherName": "Ahmad Saleem",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-304",
+      "subjectId": 5076,
+      "teacherId": "t88",
+      "teacherName": "Dr. Qaisar Mehmood",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-302",
+      "subjectId": 5077,
+      "teacherId": "t89",
+      "teacherName": "Tariq Sharif",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-303",
+      "subjectId": 5078,
+      "teacherId": "t90",
+      "teacherName": "Muhammad Ikram",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "MATH-305",
+      "subjectId": 5079,
+      "teacherId": "t91",
+      "teacherName": "Javed Ali",
+      "departmentId": "d9",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Phys-3701",
+      "subjectId": 5080,
+      "teacherId": "t107",
+      "teacherName": "Nadeem Ahmad",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Phys-3501",
+      "subjectId": 5081,
+      "teacherId": "t108",
+      "teacherName": "Dr. Waris Ali",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Phys-3101",
+      "subjectId": 5082,
+      "teacherId": "t109",
+      "teacherName": "Zahid Niazi",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Phys-3502",
+      "subjectId": 5083,
+      "teacherId": "t110",
+      "teacherName": "Abid Hussain",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Phys-3605L",
+      "subjectId": 5084,
+      "teacherId": "t111",
+      "teacherName": "Muhammad Asghar",
+      "departmentId": "d10",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "POL-302",
+      "subjectId": 5085,
+      "teacherId": "t150",
+      "teacherName": "Dr. Rehman Gul Khan",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "POL-303",
+      "subjectId": 5086,
+      "teacherId": "t151",
+      "teacherName": "Mujeeb Ul Islam",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "POL-304",
+      "subjectId": 5087,
+      "teacherId": "t152",
+      "teacherName": "Dr. Muneera Sultana",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "POL-305",
+      "subjectId": 5088,
+      "teacherId": "t153",
+      "teacherName": "Abdul Rasheed",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "POL-301",
+      "subjectId": 5089,
+      "teacherId": "t154",
+      "teacherName": "Qamar Abbas",
+      "departmentId": "d11",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-306",
+      "subjectId": 5090,
+      "teacherId": "t182",
+      "teacherName": "Marhaba Rana",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-303",
+      "subjectId": 5091,
+      "teacherId": "t183",
+      "teacherName": "Dr Nadeem Abbas",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-301",
+      "subjectId": 5092,
+      "teacherId": "t184",
+      "teacherName": "Dr Bushra Mehmood",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-304",
+      "subjectId": 5093,
+      "teacherId": "t185",
+      "teacherName": "Noor Fatima",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "SOC-305",
+      "subjectId": 5094,
+      "teacherId": "t186",
+      "teacherName": "Ahsan Ghafoor",
+      "departmentId": "d12",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-305",
+      "subjectId": 5095,
+      "teacherId": "t193",
+      "teacherName": "Fayyaz Labha",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-307",
+      "subjectId": 5096,
+      "teacherId": "t187",
+      "teacherName": "Muhammad Amer Nazir",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-303",
+      "subjectId": 5097,
+      "teacherId": "t188",
+      "teacherName": "Muhammad Sabir Ch",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-309",
+      "subjectId": 5098,
+      "teacherId": "t189",
+      "teacherName": "Amjad Ali Chaudhry",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-301",
+      "subjectId": 5099,
+      "teacherId": "t190",
+      "teacherName": "Muhammad Qasim",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-306",
+      "subjectId": 5100,
+      "teacherId": "t191",
+      "teacherName": "Muhammad Zahid Rasheed",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-308",
+      "subjectId": 5101,
+      "teacherId": "t192",
+      "teacherName": "Dr. Azam Zaka",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "STAT-304",
+      "subjectId": 5102,
+      "teacherId": "t193",
+      "teacherName": "Fayyaz Labha",
+      "departmentId": "d14",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-301",
+      "subjectId": 5103,
+      "teacherId": "t137",
+      "teacherName": "Dr. Taimoor Hassan",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-302",
+      "subjectId": 5104,
+      "teacherId": "t138",
+      "teacherName": "Ghulam Sabir",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "URDU-305",
+      "subjectId": 5105,
+      "teacherId": "t139",
+      "teacherName": "Muhammad Asif",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "CCTI-3",
+      "subjectId": 5106,
+      "teacherId": "t140",
+      "teacherName": "Muhammad Asif (2)",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-303",
+      "subjectId": 5107,
+      "teacherId": "t141",
+      "teacherName": "Muhammad Farooq",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "BSU-304",
+      "subjectId": 5108,
+      "teacherId": "t134",
+      "teacherName": "Dr. Muhammad Naeem",
+      "departmentId": "d15",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-302",
+      "subjectId": 5109,
+      "teacherId": "t146",
+      "teacherName": "Dr. Muhammad Tariq",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-303",
+      "subjectId": 5110,
+      "teacherId": "t147",
+      "teacherName": "Sabir Javed",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-304",
+      "subjectId": 5111,
+      "teacherId": "t148",
+      "teacherName": "Bushra Younas",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-306",
+      "subjectId": 5112,
+      "teacherId": "t149",
+      "teacherName": "Qurat-Ul-Ain",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-305",
+      "subjectId": 5113,
+      "teacherId": "t142",
+      "teacherName": "Dr. Naveed Akhtar",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-303L",
+      "subjectId": 5114,
+      "teacherId": "t143",
+      "teacherName": "Dr. Asma Karim",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "ZOOL-302L",
+      "subjectId": 5115,
+      "teacherId": "t144",
+      "teacherName": "Dr. Syed Shahid Imran Bokhari",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    },
+    {
+      "subjectCode": "Z-305L",
+      "subjectId": 5116,
+      "teacherId": "t145",
+      "teacherName": "Mariam Zaheer",
+      "departmentId": "d16",
+      "isPlaceholder": false,
+      "assignmentReason": "department_match"
+    }
+  ],
+  "workloadSummary": {
+    "t1": {
+      "name": "Ejaz Ahmad",
+      "department": "d6",
+      "load": 6,
+      "subjects": [
+        "GE-169",
+        "GE-160",
+        "MD-001",
+        "CC-210",
+        "DC-321",
+        "EC-331L"
+      ]
+    },
+    "t2": {
+      "name": "Sadaf Siddique",
+      "department": "d6",
+      "load": 8,
+      "subjects": [
+        "cs101",
+        "CC-211",
+        "CC-211L",
+        "CC-312",
+        "CCTI-6",
+        "CCTI-8"
+      ]
+    },
+    "t3": {
+      "name": "Abdul Wahab",
+      "department": "d6",
+      "load": 9,
+      "subjects": [
+        "cs301",
+        "GE-162",
+        "CC-311",
+        "DC-322",
+        "CC-311L",
+        "CCTI-9"
+      ]
+    },
+    "t4": {
+      "name": "Muhammad Zeeshan",
+      "department": "d6",
+      "load": 6,
+      "subjects": [
+        "GE-190",
+        "GE-167",
+        "GE-192",
+        "HQ-003",
+        "CC-215",
+        "CC-215L"
+      ]
+    },
+    "t5": {
+      "name": "Naureen",
+      "department": "d6",
+      "load": 4,
+      "subjects": [
+        "MS-251",
+        "CC-215",
+        "CC-215L",
+        "EC-331"
+      ]
+    },
+    "t7": {
+      "name": "Dr. Qamar Subhani",
+      "department": "d2",
+      "load": 3,
+      "subjects": [
+        "Physical Chemistry-101",
+        "NSW-106",
+        "CHEM-312"
+      ]
+    },
+    "t8": {
+      "name": "Dr. M. Monim ul Mahboob",
+      "department": "d2",
+      "load": 3,
+      "subjects": [
+        "Physical Chemistry-102",
+        "Chem-116",
+        "CHEM-308"
+      ]
+    },
+    "t9": {
+      "name": "Aamir Niaz",
+      "department": "d2",
+      "load": 2,
+      "subjects": [
+        "Chem-117",
+        "CHEM-302"
+      ]
+    },
+    "t10": {
+      "name": "Zahid Sharif",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "GISL-101"
+      ]
+    },
+    "t11": {
+      "name": "Muhammad Arshad Bhatti",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "GENG-101"
+      ]
+    },
+    "t12": {
+      "name": "Asif Masaud Khurum",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "GCCE-101"
+      ]
+    },
+    "t13": {
+      "name": "Iftikhar Ahmad",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "GICT-201"
+      ]
+    },
+    "t14": {
+      "name": "Muhammad Zafarullah Bhatti",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "GPST-201"
+      ]
+    },
+    "t15": {
+      "name": "Anfas Ahmad",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "GENG-201"
+      ]
+    },
+    "t16": {
+      "name": "Naveed Asalm Dogar",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-304"
+      ]
+    },
+    "t17": {
+      "name": "Dr. Tariq Mehmood",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-301"
+      ]
+    },
+    "t18": {
+      "name": "Dr. Iftikhar Hussain",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-307"
+      ]
+    },
+    "t19": {
+      "name": "Dr. Abdul Rauf",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-309"
+      ]
+    },
+    "t20": {
+      "name": "Dr. Abida Hassan",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-311"
+      ]
+    },
+    "t21": {
+      "name": "Munawar Ali",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-303"
+      ]
+    },
+    "t22": {
+      "name": "Dr. Muhammad Waheed Mushtaq",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-305"
+      ]
+    },
+    "t23": {
+      "name": "Dr. Adeel Ahmad Hassan",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-313"
+      ]
+    },
+    "t24": {
+      "name": "Sajjad Hussain",
+      "department": "d2",
+      "load": 1,
+      "subjects": [
+        "CHEM-306"
+      ]
+    },
+    "t25": {
+      "name": "Dr. M. Khalid Rashid",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "BBA-102",
+        "CCTI-3"
+      ]
+    },
+    "t26": {
+      "name": "Muhammad Tariq",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "GNS-101",
+        "BBA-303"
+      ]
+    },
+    "t27": {
+      "name": "Iftikhar Ahmad",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "BBA-101",
+        "BBA-302"
+      ]
+    },
+    "t28": {
+      "name": "Muhammad Tanveer",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "GENG-201",
+        "BBA-305"
+      ]
+    },
+    "t29": {
+      "name": "Atiq-ur-Rerhman",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "GPST-201",
+        "ECON-319"
+      ]
+    },
+    "t30": {
+      "name": "Muhammad Rehan Hameed",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "GICT-201",
+        "ECON-321"
+      ]
+    },
+    "t31": {
+      "name": "Ghulam Farid",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "BBA-301",
+        "ECON-314"
+      ]
+    },
+    "t32": {
+      "name": "Fahim Abbas",
+      "department": "d3",
+      "load": 2,
+      "subjects": [
+        "BBA-304",
+        "ECON-322"
+      ]
+    },
+    "t33": {
+      "name": "Aneesa Razaq",
+      "department": "d3",
+      "load": 1,
+      "subjects": [
+        "ECON-318"
+      ]
+    },
+    "t34": {
+      "name": "Naveed Munir",
+      "department": "d3",
+      "load": 0,
+      "subjects": []
+    },
+    "t35": {
+      "name": "Maaz Anis",
+      "department": "d3",
+      "load": 0,
+      "subjects": []
+    },
+    "t36": {
+      "name": "Naseem Akhtar",
+      "department": "d3",
+      "load": 0,
+      "subjects": []
+    },
+    "t38": {
+      "name": "Asif Shaheen",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "ELL-101",
+        "ELL-203"
+      ]
+    },
+    "t39": {
+      "name": "Nighat Iftekhar",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "ELL-102",
+        "GENG-201"
+      ]
+    },
+    "t40": {
+      "name": "Saleem Ahsan",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "NPH-102",
+        "ELL-201"
+      ]
+    },
+    "t41": {
+      "name": "Rana Yousaf",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "GISL-101",
+        "ELL-104"
+      ]
+    },
+    "t42": {
+      "name": "Nosheen Jafar",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "GENG-101",
+        "GPST-201"
+      ]
+    },
+    "t43": {
+      "name": "Dr. Nazir Ahmed",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "GCCE-101",
+        "ENG-301"
+      ]
+    },
+    "t44": {
+      "name": "Mubashir Sadiq",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "GICT-201",
+        "ENG-305"
+      ]
+    },
+    "t45": {
+      "name": "Imran Khan",
+      "department": "d5",
+      "load": 2,
+      "subjects": [
+        "CCTI-5",
+        "ENG-304"
+      ]
+    },
+    "t46": {
+      "name": "M. Talha",
+      "department": "d5",
+      "load": 1,
+      "subjects": [
+        "ENG-306"
+      ]
+    },
+    "t47": {
+      "name": "Shehryar",
+      "department": "d5",
+      "load": 1,
+      "subjects": [
+        "ENG-302"
+      ]
+    },
+    "t48": {
+      "name": "Nabeel Minhas",
+      "department": "d5",
+      "load": 0,
+      "subjects": []
+    },
+    "t49": {
+      "name": "Hafsa Khan",
+      "department": "d5",
+      "load": 0,
+      "subjects": []
+    },
+    "t50": {
+      "name": "Hamza Sultan",
+      "department": "d5",
+      "load": 0,
+      "subjects": []
+    },
+    "t51": {
+      "name": "Dr. Muhammad Ghous",
+      "department": "d7",
+      "load": 8,
+      "subjects": [
+        "NAG-101",
+        "Geog-101",
+        "GCCE-101",
+        "CCTI-4",
+        "GENG-201",
+        "GEOG-302",
+        "GEOG-304",
+        "GEOG-303"
+      ]
+    },
+    "t52": {
+      "name": "Muhammad Sohail",
+      "department": "d7",
+      "load": 5,
+      "subjects": [
+        "Geog-102",
+        "GISL-101",
+        "GEOG-201",
+        "GEOG-202",
+        "GEOG-305"
+      ]
+    },
+    "t53": {
+      "name": "Kiran Hamayon",
+      "department": "d7",
+      "load": 5,
+      "subjects": [
+        "GENG-101",
+        "GICT-201",
+        "GEOG-203",
+        "GPST-201",
+        "GEOG-301"
+      ]
+    },
+    "t73": {
+      "name": "Dr. Zia Ur Rehman",
+      "department": "d1",
+      "load": 7,
+      "subjects": [
+        "BT-101",
+        "N-BOT-110",
+        "GENG-201",
+        "BCBT-203",
+        "Biotech-3104",
+        "Biotech-3103P",
+        "Biotech-3105P"
+      ]
+    },
+    "t74": {
+      "name": "Adnan Khalid",
+      "department": "d1",
+      "load": 6,
+      "subjects": [
+        "BCBT-101",
+        "GENG-101",
+        "GICT-201",
+        "BCBT-201",
+        "Biotech-3101",
+        "Biotech-3104P"
+      ]
+    },
+    "t75": {
+      "name": "Atiqa Wajid",
+      "department": "d1",
+      "load": 4,
+      "subjects": [
+        "GCCE-101",
+        "CCTI-5",
+        "Biotech-3102",
+        "Biotech-3105"
+      ]
+    },
+    "t76": {
+      "name": "Dr. Adil Abbas",
+      "department": "d1",
+      "load": 4,
+      "subjects": [
+        "GISL-101",
+        "BT-201",
+        "Biotech-3103",
+        "Biotech-3102P"
+      ]
+    },
+    "t77": {
+      "name": "Shahzada Shahab Khan",
+      "department": "d20",
+      "load": 0,
+      "subjects": []
+    },
+    "t78": {
+      "name": "Hifsa Farooq",
+      "department": "d20",
+      "load": 0,
+      "subjects": []
+    },
+    "t79": {
+      "name": "Asifa Sohail",
+      "department": "d20",
+      "load": 0,
+      "subjects": []
+    },
+    "t80": {
+      "name": "Faisal Shehzad",
+      "department": "d20",
+      "load": 0,
+      "subjects": []
+    },
+    "t81": {
+      "name": "Sana Shahzad",
+      "department": "d20",
+      "load": 0,
+      "subjects": []
+    },
+    "t82": {
+      "name": "Dr. Shafayat Ali",
+      "department": "d8",
+      "load": 7,
+      "subjects": [
+        "BSCS-101",
+        "BSCS-102",
+        "GENG-101",
+        "GPST-201",
+        "BSCS-305",
+        "BSCS-304",
+        "BSCS-303"
+      ]
+    },
+    "t83": {
+      "name": "Saiba Ali",
+      "department": "d8",
+      "load": 4,
+      "subjects": [
+        "GISL-104",
+        "GCCE-101",
+        "GICT-201",
+        "BSCS-301"
+      ]
+    },
+    "t84": {
+      "name": "Nain Tara",
+      "department": "d8",
+      "load": 4,
+      "subjects": [
+        "GIES-201",
+        "GENG-201",
+        "CCTI-1",
+        "BSCS-302"
+      ]
+    },
+    "t85": {
+      "name": "Dr. Naveed Akhtar",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "AHPH-100",
+        "MATH-202"
+      ]
+    },
+    "t86": {
+      "name": "M. Arshed Rashed",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "GICP-101",
+        "MATH-203"
+      ]
+    },
+    "t87": {
+      "name": "Ahmad Saleem",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "MATH-101",
+        "MATH-301"
+      ]
+    },
+    "t88": {
+      "name": "Dr. Qaisar Mehmood",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "GQR-101",
+        "MATH-304"
+      ]
+    },
+    "t89": {
+      "name": "Tariq Sharif",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "SS-101",
+        "MATH-302"
+      ]
+    },
+    "t90": {
+      "name": "Muhammad Ikram",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "GENG-101",
+        "MATH-303"
+      ]
+    },
+    "t91": {
+      "name": "Javed Ali",
+      "department": "d9",
+      "load": 2,
+      "subjects": [
+        "GEN(NS)",
+        "MATH-305"
+      ]
+    },
+    "t92": {
+      "name": "Dr. Imran Nadeem",
+      "department": "d9",
+      "load": 1,
+      "subjects": [
+        "MATH-201"
+      ]
+    },
+    "t93": {
+      "name": "Imama Zehra",
+      "department": "d9",
+      "load": 1,
+      "subjects": [
+        "GPST-201"
+      ]
+    },
+    "t94": {
+      "name": "Malka Shahbano",
+      "department": "d9",
+      "load": 1,
+      "subjects": [
+        "GENG-201"
+      ]
+    },
+    "t95": {
+      "name": "Abdul Aziz",
+      "department": "d9",
+      "load": 0,
+      "subjects": []
+    },
+    "t96": {
+      "name": "Ayesha Liaqat",
+      "department": "d9",
+      "load": 0,
+      "subjects": []
+    },
+    "t97": {
+      "name": "Dr. Muhammad Saleem",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "APHL-122"
+      ]
+    },
+    "t98": {
+      "name": "Dr. Abdul Rashid",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "MPHY-111"
+      ]
+    },
+    "t99": {
+      "name": "Ms. Noreen Azam",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "MPHY-101"
+      ]
+    },
+    "t100": {
+      "name": "M. Tariq Shaikh",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "GQR-101"
+      ]
+    },
+    "t101": {
+      "name": "Ms. Majida Ch.",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "GISL-101"
+      ]
+    },
+    "t102": {
+      "name": "Jamil Ahmad",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "GENG-101"
+      ]
+    },
+    "t103": {
+      "name": "Dr. Muhammad Zubair",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "GICT-201"
+      ]
+    },
+    "t104": {
+      "name": "Dr. Jamil Sadique",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "CCTI-6"
+      ]
+    },
+    "t105": {
+      "name": "M. Attiqus Salam",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "GPST-201"
+      ]
+    },
+    "t106": {
+      "name": "Saeed Ahmad Pal",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "GENG-201"
+      ]
+    },
+    "t107": {
+      "name": "Nadeem Ahmad",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "Phys-3701"
+      ]
+    },
+    "t108": {
+      "name": "Dr. Waris Ali",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "Phys-3501"
+      ]
+    },
+    "t109": {
+      "name": "Zahid Niazi",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "Phys-3101"
+      ]
+    },
+    "t110": {
+      "name": "Abid Hussain",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "Phys-3502"
+      ]
+    },
+    "t111": {
+      "name": "Muhammad Asghar",
+      "department": "d10",
+      "load": 1,
+      "subjects": [
+        "Phys-3605L"
+      ]
+    },
+    "t112": {
+      "name": "M. Salman Azhar",
+      "department": "d10",
+      "load": 0,
+      "subjects": []
+    },
+    "t113": {
+      "name": "Muhammad Ismail",
+      "department": "d10",
+      "load": 0,
+      "subjects": []
+    },
+    "t114": {
+      "name": "Dr. Saba Masood",
+      "department": "d10",
+      "load": 0,
+      "subjects": []
+    },
+    "t115": {
+      "name": "Rabia Mehboob",
+      "department": "d10",
+      "load": 0,
+      "subjects": []
+    },
+    "t116": {
+      "name": "Bilal Bhatti",
+      "department": "d10",
+      "load": 0,
+      "subjects": []
+    },
+    "t125": {
+      "name": "Dr. Rehman Gul Khan",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "PS-xxx"
+      ]
+    },
+    "t126": {
+      "name": "Mujeeb Ul Islam",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "NDM-120"
+      ]
+    },
+    "t127": {
+      "name": "Dr. Muneera Sultana",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "GCCE-101"
+      ]
+    },
+    "t128": {
+      "name": "Abdul Rasheed",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "GISL-101"
+      ]
+    },
+    "t129": {
+      "name": "Qamar Abbas",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "GENG-101"
+      ]
+    },
+    "t130": {
+      "name": "Khushbakhat Bajwa",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "PS-Major"
+      ]
+    },
+    "t131": {
+      "name": "Qasim Ali",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "GENG-201"
+      ]
+    },
+    "t132": {
+      "name": "Dr. Raza Taimoor",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "GICT-201"
+      ]
+    },
+    "t133": {
+      "name": "Muneer Bhatti",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "CCTI-2"
+      ]
+    },
+    "t134": {
+      "name": "Dr. Muhammad Naeem",
+      "department": "d15",
+      "load": 3,
+      "subjects": [
+        "BSU-101",
+        "BSU-203",
+        "BSU-304"
+      ]
+    },
+    "t135": {
+      "name": "Talat Rashid",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "BSU-102",
+        "BSU-202"
+      ]
+    },
+    "t136": {
+      "name": "Dr. Sohail Mumtaz",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "GCCE-101",
+        "GENG-201"
+      ]
+    },
+    "t137": {
+      "name": "Dr. Taimoor Hassan",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "GENG-101",
+        "BSU-301"
+      ]
+    },
+    "t138": {
+      "name": "Ghulam Sabir",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "GISL-101",
+        "BSU-302"
+      ]
+    },
+    "t139": {
+      "name": "Muhammad Asif",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "BSU-201",
+        "URDU-305"
+      ]
+    },
+    "t140": {
+      "name": "Muhammad Asif (2)",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "GICT-201",
+        "CCTI-3"
+      ]
+    },
+    "t141": {
+      "name": "Muhammad Farooq",
+      "department": "d15",
+      "load": 2,
+      "subjects": [
+        "CCTI-6",
+        "BSU-303"
+      ]
+    },
+    "t142": {
+      "name": "Dr. Naveed Akhtar",
+      "department": "d16",
+      "load": 4,
+      "subjects": [
+        "ZOOL-101",
+        "GISL-101",
+        "ZOOL-205",
+        "ZOOL-305"
+      ]
+    },
+    "t143": {
+      "name": "Dr. Asma Karim",
+      "department": "d16",
+      "load": 4,
+      "subjects": [
+        "ZOOL-102",
+        "GENG-101",
+        "GENG-201",
+        "ZOOL-303L"
+      ]
+    },
+    "t144": {
+      "name": "Dr. Syed Shahid Imran Bokhari",
+      "department": "d16",
+      "load": 4,
+      "subjects": [
+        "ZOOL-103",
+        "GCCE-101",
+        "ZOOL-202",
+        "ZOOL-302L"
+      ]
+    },
+    "t145": {
+      "name": "Mariam Zaheer",
+      "department": "d16",
+      "load": 4,
+      "subjects": [
+        "ZOOL-104",
+        "ZOOL-203",
+        "ZOOL-204L",
+        "Z-305L"
+      ]
+    },
+    "t146": {
+      "name": "Dr. Muhammad Tariq",
+      "department": "d16",
+      "load": 3,
+      "subjects": [
+        "NZ-116",
+        "ZOOL-206",
+        "ZOOL-302"
+      ]
+    },
+    "t147": {
+      "name": "Sabir Javed",
+      "department": "d16",
+      "load": 3,
+      "subjects": [
+        "NZ-117",
+        "GICT-201",
+        "ZOOL-303"
+      ]
+    },
+    "t148": {
+      "name": "Bushra Younas",
+      "department": "d16",
+      "load": 2,
+      "subjects": [
+        "CCTI-3",
+        "ZOOL-304"
+      ]
+    },
+    "t149": {
+      "name": "Qurat-Ul-Ain",
+      "department": "d16",
+      "load": 2,
+      "subjects": [
+        "ZOOL-201",
+        "ZOOL-306"
+      ]
+    },
+    "t1754228459714": {
+      "name": "Dr Ahmad Khan",
+      "department": "d1754228405483",
+      "load": 0,
+      "subjects": []
+    },
+    "t150": {
+      "name": "Dr. Rehman Gul Khan",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "POL-302"
+      ]
+    },
+    "t151": {
+      "name": "Mujeeb Ul Islam",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "POL-303"
+      ]
+    },
+    "t152": {
+      "name": "Dr. Muneera Sultana",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "POL-304"
+      ]
+    },
+    "t153": {
+      "name": "Abdul Rasheed",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "POL-305"
+      ]
+    },
+    "t154": {
+      "name": "Qamar Abbas",
+      "department": "d11",
+      "load": 1,
+      "subjects": [
+        "POL-301"
+      ]
+    },
+    "t155": {
+      "name": "Khushbakhat Bajwa",
+      "department": "d11",
+      "load": 0,
+      "subjects": []
+    },
+    "t156": {
+      "name": "Qasim Ali",
+      "department": "d11",
+      "load": 0,
+      "subjects": []
+    },
+    "t157": {
+      "name": "Dr. Raza Taimoor",
+      "department": "d11",
+      "load": 0,
+      "subjects": []
+    },
+    "t158": {
+      "name": "Muneer Bhatti",
+      "department": "d11",
+      "load": 0,
+      "subjects": []
+    },
+    "t159": {
+      "name": "Abdul Qayyum",
+      "department": "d4",
+      "load": 4,
+      "subjects": [
+        "MCEd-101",
+        "GENG-101",
+        "MCEd-203",
+        "EDE-322"
+      ]
+    },
+    "t160": {
+      "name": "Hamid Ali",
+      "department": "d4",
+      "load": 4,
+      "subjects": [
+        "MCEd-102",
+        "GCCE-101",
+        "GICT-201",
+        "EDE-372"
+      ]
+    },
+    "t161": {
+      "name": "Muhammad Shahzad",
+      "department": "d4",
+      "load": 4,
+      "subjects": [
+        "NPHY-110",
+        "GPST-201",
+        "CCTI-3",
+        "EDE-373"
+      ]
+    },
+    "t162": {
+      "name": "Junaid Ahmad Khan",
+      "department": "d4",
+      "load": 4,
+      "subjects": [
+        "NZ-116",
+        "GENG-201",
+        "MCEd-201",
+        "EDE-374"
+      ]
+    },
+    "t163": {
+      "name": "Rida Shah",
+      "department": "d4",
+      "load": 3,
+      "subjects": [
+        "GISL-101",
+        "MCEd-202",
+        "ED-322"
+      ]
+    },
+    "t164": {
+      "name": "Dr. Ahmad Ali Badat",
+      "department": "d21",
+      "load": 0,
+      "subjects": []
+    },
+    "t165": {
+      "name": "Mati Ur Rehman",
+      "department": "d21",
+      "load": 0,
+      "subjects": []
+    },
+    "t166": {
+      "name": "Dr. Mukhtar Hussain Shah",
+      "department": "d22",
+      "load": 8,
+      "subjects": [
+        "BOT-110",
+        "NB-107",
+        "GCCE-101",
+        "CCTI-5",
+        "BOT-201",
+        "BOT-304",
+        "BOT-306",
+        "BOT-301"
+      ]
+    },
+    "t167": {
+      "name": "Nasira Perveen",
+      "department": "d22",
+      "load": 8,
+      "subjects": [
+        "BOT-112",
+        "GISL-101",
+        "GENG-201",
+        "GPST-201",
+        "BOT-203",
+        "BOT-305",
+        "BOT-302",
+        "BOT-311"
+      ]
+    },
+    "t168": {
+      "name": "Muhammad Qasim",
+      "department": "d22",
+      "load": 7,
+      "subjects": [
+        "GENG-101",
+        "GICT-201",
+        "BOT-205",
+        "BOT-303",
+        "BOT-312",
+        "BOT-309",
+        "BOT-310"
+      ]
+    },
+    "t169": {
+      "name": "Dr. Muhammad Junaid Sharif",
+      "department": "d23",
+      "load": 0,
+      "subjects": []
+    },
+    "t170": {
+      "name": "Hifz ur Rehman Usmani",
+      "department": "d23",
+      "load": 0,
+      "subjects": []
+    },
+    "t171": {
+      "name": "Rao Muhammad Tariq",
+      "department": "d23",
+      "load": 0,
+      "subjects": []
+    },
+    "t172": {
+      "name": "Dr Mehfooz Ahmad Bhatti",
+      "department": "d23",
+      "load": 0,
+      "subjects": []
+    },
+    "t173": {
+      "name": "Dr. Farman Ali",
+      "department": "d23",
+      "load": 0,
+      "subjects": []
+    },
+    "t174": {
+      "name": "Dr. Kaiser Mahmood",
+      "department": "d19",
+      "load": 0,
+      "subjects": []
+    },
+    "t175": {
+      "name": "Muhammad Aleem",
+      "department": "d13",
+      "load": 4,
+      "subjects": [
+        "APSY-111A",
+        "NHPY-110",
+        "APSY-233",
+        "CCTI-7"
+      ]
+    },
+    "t176": {
+      "name": "Amtal Saba",
+      "department": "d13",
+      "load": 4,
+      "subjects": [
+        "APSY-112",
+        "GCCE-101",
+        "GENG-201",
+        "APSY-232"
+      ]
+    },
+    "t177": {
+      "name": "Fakhar Elahi",
+      "department": "d13",
+      "load": 4,
+      "subjects": [
+        "APSY-113",
+        "GENG-101",
+        "GPST-201",
+        "APSY-231"
+      ]
+    },
+    "t178": {
+      "name": "Muhammad Ali",
+      "department": "d13",
+      "load": 2,
+      "subjects": [
+        "GISL-101",
+        "GICT-201"
+      ]
+    },
+    "t179": {
+      "name": "Muhammad Aslam",
+      "department": "d12",
+      "load": 3,
+      "subjects": [
+        "SOC-101",
+        "GCCE-101",
+        "CCTI-6"
+      ]
+    },
+    "t180": {
+      "name": "Abdul Aziz Taga",
+      "department": "d12",
+      "load": 3,
+      "subjects": [
+        "SOC-102",
+        "GENG-101",
+        "GPST-201"
+      ]
+    },
+    "t181": {
+      "name": "Rabia Safdar",
+      "department": "d12",
+      "load": 3,
+      "subjects": [
+        "NDM-120",
+        "GISL-101",
+        "SOC-201"
+      ]
+    },
+    "t182": {
+      "name": "Marhaba Rana",
+      "department": "d12",
+      "load": 2,
+      "subjects": [
+        "SOC-204",
+        "SOC-306"
+      ]
+    },
+    "t183": {
+      "name": "Dr Nadeem Abbas",
+      "department": "d12",
+      "load": 2,
+      "subjects": [
+        "GENG-201",
+        "SOC-303"
+      ]
+    },
+    "t184": {
+      "name": "Dr Bushra Mehmood",
+      "department": "d12",
+      "load": 2,
+      "subjects": [
+        "SOC-203",
+        "SOC-301"
+      ]
+    },
+    "t185": {
+      "name": "Noor Fatima",
+      "department": "d12",
+      "load": 2,
+      "subjects": [
+        "SOC-202",
+        "SOC-304"
+      ]
+    },
+    "t186": {
+      "name": "Ahsan Ghafoor",
+      "department": "d12",
+      "load": 2,
+      "subjects": [
+        "GICT-201",
+        "SOC-305"
+      ]
+    },
+    "t187": {
+      "name": "Muhammad Amer Nazir",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "STAT-101",
+        "CCTI-2",
+        "STAT-307"
+      ]
+    },
+    "t188": {
+      "name": "Muhammad Sabir Ch",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "SMTH-101",
+        "STAT-202",
+        "STAT-303"
+      ]
+    },
+    "t189": {
+      "name": "Amjad Ali Chaudhry",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "NSS-104",
+        "STAT-201",
+        "STAT-309"
+      ]
+    },
+    "t190": {
+      "name": "Muhammad Qasim",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "GISL-101",
+        "GENG-201",
+        "STAT-301"
+      ]
+    },
+    "t191": {
+      "name": "Muhammad Zahid Rasheed",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "GENG-101",
+        "STAT-203",
+        "STAT-306"
+      ]
+    },
+    "t192": {
+      "name": "Dr. Azam Zaka",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "GCCE-101",
+        "GPST-201",
+        "STAT-308"
+      ]
+    },
+    "t193": {
+      "name": "Fayyaz Labha",
+      "department": "d14",
+      "load": 3,
+      "subjects": [
+        "GICT-201",
+        "STAT-305",
+        "STAT-304"
+      ]
+    },
+    "t194": {
+      "name": "Dr. Muhammad Junaid Sharif",
+      "department": "d18",
+      "load": 0,
+      "subjects": []
+    },
+    "t195": {
+      "name": "Hifz ur Rehman Usmani",
+      "department": "d18",
+      "load": 0,
+      "subjects": []
+    },
+    "t196": {
+      "name": "Rao Muhammad Tariq",
+      "department": "d18",
+      "load": 0,
+      "subjects": []
+    },
+    "t197": {
+      "name": "Dr Mehfooz Ahmad Bhatti",
+      "department": "d18",
+      "load": 0,
+      "subjects": []
+    },
+    "t198": {
+      "name": "Dr. Farman Ali",
+      "department": "d18",
+      "load": 0,
+      "subjects": []
+    }
+  },
+  "validation": {
+    "isValid": true,
+    "conflicts": []
+  }
+}

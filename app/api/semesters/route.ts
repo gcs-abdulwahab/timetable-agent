@@ -2,6 +2,9 @@ import { promises as fs } from 'fs';
 import { NextResponse } from 'next/server';
 import path from 'path';
 
+// Force Node.js runtime to guarantee access to Node APIs
+export const runtime = 'nodejs';
+
 const dataDir = path.join(process.cwd(), 'data');
 const semestersFile = path.join(dataDir, 'semesters.json');
 

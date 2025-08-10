@@ -8,7 +8,8 @@ import {
   subjects,
   teachers,
   timeSlots,
-  TimetableEntry
+  TimetableEntry,
+  getActiveDepartmentsForSemester
 } from './data';
 
 interface TimetableAdminProps {
@@ -26,9 +27,12 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
   });
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
-  // Get departments that offer BS degrees
-  const getBSDepartments = () => {
-    return departments.filter(dept => dept.offersBSDegree);
+  // Get departments that offer BS degrees with semester-scoped filtering
+  const getBSDepartmentsForSemester = () => {
+    if (!formData.semesterId) {
+      return departments.filter(d => d.offersBSDegree);
+    }
+    return getActiveDepartmentsForSemester(formData.semesterId);
   };
 
   // Get teachers filtered by selected department
@@ -113,9 +117,10 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             onChange={handleInputChange}
             className="w-full p-2 border border-gray-300 rounded-md text-sm"
             required
+            disabled={!formData.semesterId}
           >
             <option value="">Select Department</option>
-            {getBSDepartments().map(department => (
+            {getBSDepartmentsForSemester().map(department => (
               <option key={department.id} value={department.id}>
                 {department.name}
               </option>

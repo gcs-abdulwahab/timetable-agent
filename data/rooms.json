@@ -1,353 +1,978 @@
 [
   {
-    "id": "cs-lab1",
-    "name": "CS-Lab1",
-    "capacity": 40,
-    "type": "Laboratory",
-    "building": "Computer Science Block",
-    "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
-    "description": "Programming Lab with latest computers",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d6",
-    "availableForOtherDepartments": false
-  },
-  {
-    "id": "cs-lab2",
-    "name": "CS-Lab2",
-    "capacity": 35,
-    "type": "Laboratory",
-    "building": "Computer Science Block",
-    "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
-    "description": "Advanced Programming Lab",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d6",
-    "availableForOtherDepartments": false
-  },
-  {
-    "id": "cs-lab3",
-    "name": "CS-Lab3",
-    "capacity": 30,
-    "type": "Laboratory",
-    "building": "Computer Science Block",
-    "floor": 2,
-    "hasProjector": true,
-    "hasAC": false,
-    "description": "Network Lab",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d6",
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "r-101",
-    "name": "R-101",
-    "capacity": 60,
+    "name": "RRRR",
+    "capacity": 5,
     "type": "Classroom",
     "building": "Main Academic Block",
     "floor": 1,
     "hasProjector": true,
+    "hasAC": false,
+    "description": "",
+    "programTypes": [
+      "BS"
+    ],
+    "primaryDepartmentId": "d12",
+    "availableForOtherDepartments": true,
+    "id": "r-6"
+  },
+  {
+    "id": "r-7",
+    "name": "R-7",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block A",
+    "floor": 1,
+    "hasProjector": true,
     "hasAC": true,
-    "description": "Large classroom for lectures",
-    "programTypes": ["Inter", "BS"],
-    "availableForOtherDepartments": true
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-8",
+    "name": "R-8",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-9",
+    "name": "R-9",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-10",
+    "name": "R-10",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-11",
+    "name": "R-11",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-27",
+    "name": "R-27",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-28",
+    "name": "R-28",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-32",
+    "name": "R-32",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-33",
+    "name": "R-33",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-34",
+    "name": "R-34",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-35",
+    "name": "R-35",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-36",
+    "name": "R-36",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-37",
+    "name": "R-37",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-38",
+    "name": "R-38",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-39",
+    "name": "R-39",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block C",
+    "floor": 3,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-40",
+    "name": "R-40",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block C",
+    "floor": 3,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-44",
+    "name": "R-44",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block C",
+    "floor": 3,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-45",
+    "name": "R-45",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block C",
+    "floor": 3,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-71",
+    "name": "R-71",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block D",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-72",
+    "name": "R-72",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block D",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-76",
+    "name": "R-76",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block D",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-95",
+    "name": "R-95",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block E",
+    "floor": 5,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-96",
+    "name": "R-96",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block E",
+    "floor": 5,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-97",
+    "name": "R-97",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block E",
+    "floor": 5,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-98",
+    "name": "R-98",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block E",
+    "floor": 5,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-100",
+    "name": "R-100",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block E",
+    "floor": 5,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
+  },
+  {
+    "id": "r-101",
+    "name": "R-101",
+    "capacity": 50,
+    "type": "Classroom",
+    "building": "Intermediate Block E",
+    "floor": 5,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
   },
   {
     "id": "r-102",
     "name": "R-102",
     "capacity": 50,
     "type": "Classroom",
-    "building": "Main Academic Block",
-    "floor": 1,
+    "building": "Intermediate Block E",
+    "floor": 5,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Medium-sized classroom",
-    "programTypes": ["Inter", "BS"],
-    "availableForOtherDepartments": true
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
+    "availableForOtherDepartments": false
   },
   {
     "id": "r-103",
     "name": "R-103",
-    "capacity": 40,
-    "type": "Classroom",
-    "building": "Main Academic Block",
-    "floor": 1,
-    "hasProjector": false,
-    "hasAC": false,
-    "description": "Basic classroom",
-    "programTypes": ["Inter"],
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "r-201",
-    "name": "R-201",
-    "capacity": 70,
-    "type": "Classroom",
-    "building": "Main Academic Block",
-    "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
-    "description": "Large lecture hall",
-    "programTypes": ["Inter", "BS"],
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "r-202",
-    "name": "R-202",
-    "capacity": 45,
-    "type": "Classroom",
-    "building": "Main Academic Block",
-    "floor": 2,
-    "hasProjector": true,
-    "hasAC": false,
-    "description": "Standard classroom",
-    "programTypes": ["Inter", "BS"],
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "r-301",
-    "name": "R-301",
-    "capacity": 55,
-    "type": "Classroom",
-    "building": "Main Academic Block",
-    "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
-    "description": "Classroom with modern facilities",
-    "programTypes": ["Inter", "BS"],
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "r-401",
-    "name": "R-401",
-    "capacity": 35,
-    "type": "Classroom",
-    "building": "Main Academic Block",
-    "floor": 4,
-    "hasProjector": false,
-    "hasAC": false,
-    "description": "Small classroom for seminars",
-    "programTypes": ["Inter", "BS"],
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "chem-301",
-    "name": "Chem-301",
     "capacity": 50,
     "type": "Classroom",
-    "building": "Science Block",
-    "floor": 3,
+    "building": "Intermediate Block E",
+    "floor": 5,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Chemistry lecture hall",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d2",
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "chem-lab1",
-    "name": "Chem-Lab1",
-    "capacity": 25,
-    "type": "Laboratory",
-    "building": "Science Block",
-    "floor": 3,
-    "hasProjector": false,
-    "hasAC": true,
-    "description": "General Chemistry Lab with fume hoods",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d2",
+    "description": "Intermediate classroom",
+    "programTypes": [
+      "Inter"
+    ],
     "availableForOtherDepartments": false
   },
   {
-    "id": "chem-lab2",
-    "name": "Chem-Lab2",
-    "capacity": 20,
-    "type": "Laboratory",
-    "building": "Science Block",
-    "floor": 3,
-    "hasProjector": false,
-    "hasAC": true,
-    "description": "Organic Chemistry Lab",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d2",
-    "availableForOtherDepartments": false
-  },
-  {
-    "id": "phys-201",
-    "name": "Phys-201",
+    "id": "b-11",
+    "name": "B11",
     "capacity": 60,
     "type": "Classroom",
-    "building": "Science Block",
-    "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
-    "description": "Physics lecture hall",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d10",
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "phys-lab1",
-    "name": "Phys-Lab1",
-    "capacity": 30,
-    "type": "Laboratory",
-    "building": "Science Block",
-    "floor": 2,
-    "hasProjector": false,
-    "hasAC": false,
-    "description": "General Physics Lab",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d10",
-    "availableForOtherDepartments": false
-  },
-  {
-    "id": "math-101",
-    "name": "Math-101",
-    "capacity": 80,
-    "type": "Classroom",
-    "building": "Mathematics Block",
+    "building": "BS Block A",
     "floor": 1,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Large mathematics lecture hall",
-    "programTypes": ["Inter", "BS"],
-    "primaryDepartmentId": "d9",
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   },
   {
-    "id": "math-201",
-    "name": "Math-201",
-    "capacity": 50,
+    "id": "b-12",
+    "name": "B12",
+    "capacity": 60,
     "type": "Classroom",
-    "building": "Mathematics Block",
-    "floor": 2,
-    "hasProjector": true,
-    "hasAC": false,
-    "description": "Mathematics classroom",
-    "programTypes": ["Inter", "BS"],
-    "primaryDepartmentId": "d9",
-    "availableForOtherDepartments": true
-  },
-  {
-    "id": "eng-101",
-    "name": "Eng-101",
-    "capacity": 40,
-    "type": "Classroom",
-    "building": "Humanities Block",
+    "building": "BS Block A",
     "floor": 1,
     "hasProjector": true,
     "hasAC": true,
-    "description": "English language lab",
-    "programTypes": ["Inter", "BS"],
-    "primaryDepartmentId": "d5",
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   },
   {
-    "id": "eng-201",
-    "name": "Eng-201",
-    "capacity": 35,
+    "id": "b-13",
+    "name": "B13",
+    "capacity": 60,
     "type": "Classroom",
-    "building": "Humanities Block",
+    "building": "BS Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-14",
+    "name": "B14",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-15",
+    "name": "B15",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-17",
+    "name": "B17",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-18",
+    "name": "B18",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block A",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-21",
+    "name": "B21",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block B",
     "floor": 2,
-    "hasProjector": false,
-    "hasAC": false,
-    "description": "Literature classroom",
-    "programTypes": ["Inter"],
-    "primaryDepartmentId": "d5",
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   },
   {
-    "id": "econ-301",
-    "name": "Econ-301",
-    "capacity": 65,
+    "id": "b-22",
+    "name": "B22",
+    "capacity": 60,
     "type": "Classroom",
-    "building": "Business Block",
+    "building": "BS Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-23",
+    "name": "B23",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-24",
+    "name": "B24",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-25",
+    "name": "B25",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-26",
+    "name": "B26",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "b-27",
+    "name": "B27",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block B",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-1",
+    "name": "1",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block C",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-2",
+    "name": "2",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block C",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-3",
+    "name": "3",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block C",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-7",
+    "name": "7",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block C",
+    "floor": 1,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-62",
+    "name": "62",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block D",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-63",
+    "name": "63",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block D",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-64",
+    "name": "64",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block D",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-78",
+    "name": "78",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block D",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-79",
+    "name": "79",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block D",
+    "floor": 2,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-104",
+    "name": "104",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block E",
     "floor": 3,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Economics lecture hall",
-    "programTypes": ["BS"],
-    "primaryDepartmentId": "d3",
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   },
   {
-    "id": "inter-hall1",
-    "name": "Inter Hall 1",
-    "capacity": 120,
+    "id": "bs-105",
+    "name": "105",
+    "capacity": 60,
     "type": "Classroom",
-    "building": "Intermediate Block",
-    "floor": 1,
+    "building": "BS Block E",
+    "floor": 3,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Large hall for intermediate classes",
-    "programTypes": ["Inter"],
-    "availableForOtherDepartments": false
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
   },
   {
-    "id": "inter-hall2",
-    "name": "Inter Hall 2",
-    "capacity": 100,
+    "id": "bs-106",
+    "name": "106",
+    "capacity": 60,
     "type": "Classroom",
-    "building": "Intermediate Block",
-    "floor": 1,
-    "hasProjector": true,
-    "hasAC": false,
-    "description": "Inter examination hall",
-    "programTypes": ["Inter"],
-    "availableForOtherDepartments": false
-  },
-  {
-    "id": "inter-lab1",
-    "name": "Inter Lab 1",
-    "capacity": 40,
-    "type": "Laboratory",
-    "building": "Intermediate Block",
-    "floor": 2,
-    "hasProjector": false,
-    "hasAC": false,
-    "description": "Basic computer lab for intermediate",
-    "programTypes": ["Inter"],
-    "availableForOtherDepartments": false
-  },
-  {
-    "id": "auditorium",
-    "name": "Main Auditorium",
-    "capacity": 200,
-    "type": "Auditorium",
-    "building": "Main Block",
-    "floor": 0,
+    "building": "BS Block E",
+    "floor": 3,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Large auditorium for events and seminars",
-    "programTypes": ["Inter", "BS"],
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   },
   {
-    "id": "conf-room1",
-    "name": "Conference Room 1",
-    "capacity": 20,
-    "type": "Conference",
-    "building": "Administrative Block",
-    "floor": 2,
+    "id": "bs-111",
+    "name": "111",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block E",
+    "floor": 3,
     "hasProjector": true,
     "hasAC": true,
-    "description": "Meeting room for faculty",
-    "programTypes": ["Inter", "BS"],
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   },
   {
-    "id": "library-hall",
-    "name": "Library Hall",
-    "capacity": 100,
-    "type": "Other",
-    "building": "Library Block",
-    "floor": 1,
-    "hasProjector": false,
+    "id": "bs-112",
+    "name": "112",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block E",
+    "floor": 3,
+    "hasProjector": true,
     "hasAC": true,
-    "description": "Study hall in library",
-    "programTypes": ["Inter", "BS"],
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-123",
+    "name": "123",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block E",
+    "floor": 3,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-121",
+    "name": "121",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block F",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-124",
+    "name": "124",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block F",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-128",
+    "name": "128",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block F",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-132",
+    "name": "132",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block F",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-135",
+    "name": "135",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block F",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
+    "availableForOtherDepartments": true
+  },
+  {
+    "id": "bs-136",
+    "name": "136",
+    "capacity": 60,
+    "type": "Classroom",
+    "building": "BS Block F",
+    "floor": 4,
+    "hasProjector": true,
+    "hasAC": true,
+    "description": "BS program classroom",
+    "programTypes": [
+      "BS"
+    ],
     "availableForOtherDepartments": true
   }
 ]

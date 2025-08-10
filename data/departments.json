@@ -3,67 +3,155 @@
     "id": "d1",
     "name": "Biotechnology",
     "shortName": "Biotech",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d20",
     "name": "Business Administration",
     "shortName": "BBA",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d2",
     "name": "Chemistry",
     "shortName": "Chemistry",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d6",
     "name": "Computer Science",
     "shortName": "CS",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d3",
     "name": "Economics",
     "shortName": "Economics",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d4",
     "name": "Education",
     "shortName": "Education",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d5",
     "name": "English",
     "shortName": "English",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d7",
     "name": "Geography",
     "shortName": "Geography",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d18",
     "name": "Islamic Studies",
     "shortName": "Islamic Studies",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d8",
     "name": "Mass Communication",
     "shortName": "Mass Com",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d9",
     "name": "Mathematics",
     "shortName": "Mathematics",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d1754228405483",
@@ -81,60 +169,138 @@
     "id": "d10",
     "name": "Physics",
     "shortName": "Physics",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d11",
     "name": "Political Science",
     "shortName": "Pol Science",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d13",
     "name": "Psychology",
     "shortName": "Psychology",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d12",
     "name": "Sociology",
     "shortName": "Sociology",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d14",
     "name": "Statistics",
     "shortName": "Statistics",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d15",
     "name": "Urdu",
     "shortName": "Urdu",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d16",
     "name": "Zoology",
     "shortName": "Zoology",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d21",
     "name": "Arabic",
     "shortName": "Arabic",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d22",
     "name": "Botany",
     "shortName": "Botany",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        1,
+        3,
+        5,
+        7
+      ]
+    }
   },
   {
     "id": "d23",
     "name": "Islamyat",
     "shortName": "Islamyat",
-    "offersBSDegree": true
+    "offersBSDegree": true,
+    "bsSemesterAvailability": {
+      "offeredLevels": [
+        5,
+        7
+      ]
+    }
   }
 ]

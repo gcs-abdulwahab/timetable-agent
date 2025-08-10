@@ -4,6 +4,10 @@ export interface Department {
   name: string;
   shortName: string;
   offersBSDegree: boolean; // Indicates if the department offers BS degree programs
+  bsSemesterAvailability?: {
+    offeredLevels?: number[];
+    excludedLevels?: number[];
+  };
 }
 
 export interface Semester {
@@ -37,9 +41,12 @@ export interface Subject {
   code: string; // Course code like CS-101, MATH-201, etc.
   creditHours: number;
   color: string;
-  departmentId: string;
+  departmentId: string; // Department that offers this subject in their curriculum
   semesterLevel: number; // 1-8 for BS programs
   isCore: boolean; // Core vs Elective
+  isMajor?: boolean; // Major (taught by same department) vs Minor (taught by other departments) - optional for backwards compatibility
+  teachingDepartmentIds?: string[]; // Department(s) that actually teach this subject - optional for backwards compatibility
+  semesterId: string; // Which semester this subject belongs to (sem1, sem3, sem5, sem7)
 }
 
 export interface TimeSlot {
@@ -127,7 +134,9 @@ export const departments: Department[] = [
   { id: 'd5', name: 'English', shortName: 'English', offersBSDegree: true },
   { id: 'd7', name: 'Geography', shortName: 'Geography', offersBSDegree: true },
   { id: 'd17', name: 'History', shortName: 'History', offersBSDegree: false },
-  { id: 'd18', name: 'Islamic Studies', shortName: 'Islamic Studies', offersBSDegree: true },
+  { id: 'd18', name: 'Islamic Studies', shortName: 'Islamic Studies', offersBSDegree: true, bsSemesterAvailability: { excludedLevels: [1, 3, 5] } },
+  { id: 'd22', name: 'Botany', shortName: 'Botany', offersBSDegree: true, bsSemesterAvailability: { excludedLevels: [1] } },
+  { id: 'd23', name: 'Islamyat', shortName: 'Islamyat', offersBSDegree: true, bsSemesterAvailability: { excludedLevels: [1, 3, 5] } },
   { id: 'd8', name: 'Mass Communication', shortName: 'Mass Com', offersBSDegree: true },
   { id: 'd9', name: 'Mathematics', shortName: 'Mathematics', offersBSDegree: true },
   { id: 'd19', name: 'Philosophy', shortName: 'Philosophy', offersBSDegree: false },
@@ -323,32 +332,32 @@ export const teachers: Teacher[] = [
 export const subjects: Subject[] = [
   // Computer Science Department (d6) - 5 subjects per semester
   // Semester 1
-  { id: 'cs101', name: 'Programming Fundamentals', shortName: 'Prog Fund', code: 'CS-101', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 1, isCore: true },
-  { id: 'cs102', name: 'Mathematics I', shortName: 'Math I', code: 'MATH-101', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 1, isCore: true },
-  { id: 'cs103', name: 'English I', shortName: 'Eng I', code: 'ENG-101', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 1, isCore: true },
-  { id: 'cs104', name: 'Introduction to Computing', shortName: 'Intro CS', code: 'CS-102', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 1, isCore: true },
-  { id: 'cs105', name: 'Computer Programming Lab', shortName: 'CS Lab', code: 'CS-103', creditHours: 1, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 1, isCore: true },
+  { id: 'cs101', name: 'Programming Fundamentals', shortName: 'Prog Fund', code: 'CS-101', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 1, isCore: true, isMajor: true, teachingDepartmentIds: ['d6'], semesterId: 'sem1' },
+  { id: 'cs102', name: 'Mathematics I', shortName: 'Math I', code: 'MATH-101', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'cs103', name: 'English I', shortName: 'Eng I', code: 'ENG-101', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'cs104', name: 'Introduction to Computing', shortName: 'Intro CS', code: 'CS-102', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'cs105', name: 'Computer Programming Lab', shortName: 'CS Lab', code: 'CS-103', creditHours: 1, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
   
   // Semester 3
-  { id: 'cs301', name: 'Data Structures', shortName: 'DS', code: 'CS-301', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 3, isCore: true },
-  { id: 'cs302', name: 'Database Systems', shortName: 'Database', code: 'CS-302', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 3, isCore: true },
-  { id: 'cs303', name: 'Computer Networks', shortName: 'Networks', code: 'CS-303', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 3, isCore: true },
-  { id: 'cs304', name: 'Web Development', shortName: 'Web Dev', code: 'CS-304', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 3, isCore: true },
-  { id: 'cs305', name: 'Software Engineering', shortName: 'SE', code: 'CS-305', creditHours: 3, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 3, isCore: true },
+  { id: 'cs301', name: 'Data Structures', shortName: 'DS', code: 'CS-301', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'cs302', name: 'Database Systems', shortName: 'Database', code: 'CS-302', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'cs303', name: 'Computer Networks', shortName: 'Networks', code: 'CS-303', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'cs304', name: 'Web Development', shortName: 'Web Dev', code: 'CS-304', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'cs305', name: 'Software Engineering', shortName: 'SE', code: 'CS-305', creditHours: 3, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
   
   // Semester 5
-  { id: 'cs501', name: 'Artificial Intelligence', shortName: 'AI', code: 'CS-501', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 5, isCore: true },
-  { id: 'cs502', name: 'Machine Learning', shortName: 'ML', code: 'CS-502', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 5, isCore: true },
-  { id: 'cs503', name: 'Operating Systems', shortName: 'OS', code: 'CS-503', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 5, isCore: true },
-  { id: 'cs504', name: 'Computer Graphics', shortName: 'Graphics', code: 'CS-504', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 5, isCore: true },
-  { id: 'cs505', name: 'Cyber Security', shortName: 'Security', code: 'CS-505', creditHours: 3, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 5, isCore: true },
+  { id: 'cs501', name: 'Artificial Intelligence', shortName: 'AI', code: 'CS-501', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'cs502', name: 'Machine Learning', shortName: 'ML', code: 'CS-502', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'cs503', name: 'Operating Systems', shortName: 'OS', code: 'CS-503', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'cs504', name: 'Computer Graphics', shortName: 'Graphics', code: 'CS-504', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'cs505', name: 'Cyber Security', shortName: 'Security', code: 'CS-505', creditHours: 3, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
   
   // Semester 7
-  { id: 'cs701', name: 'Distributed Systems', shortName: 'Distributed', code: 'CS-701', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 7, isCore: true },
-  { id: 'cs702', name: 'Cloud Computing', shortName: 'Cloud', code: 'CS-702', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 7, isCore: true },
-  { id: 'cs703', name: 'Mobile App Development', shortName: 'Mobile Dev', code: 'CS-703', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 7, isCore: true },
-  { id: 'cs704', name: 'Blockchain Technology', shortName: 'Blockchain', code: 'CS-704', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 7, isCore: true },
-  { id: 'cs705', name: 'Project Management', shortName: 'PM', code: 'CS-705', creditHours: 3, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 7, isCore: true },
+  { id: 'cs701', name: 'Distributed Systems', shortName: 'Distributed', code: 'CS-701', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'cs702', name: 'Cloud Computing', shortName: 'Cloud', code: 'CS-702', creditHours: 3, color: 'bg-gray-150', departmentId: 'd6', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'cs703', name: 'Mobile App Development', shortName: 'Mobile Dev', code: 'CS-703', creditHours: 3, color: 'bg-gray-200', departmentId: 'd6', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'cs704', name: 'Blockchain Technology', shortName: 'Blockchain', code: 'CS-704', creditHours: 3, color: 'bg-gray-250', departmentId: 'd6', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'cs705', name: 'Project Management', shortName: 'PM', code: 'CS-705', creditHours: 3, color: 'bg-gray-300', departmentId: 'd6', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
 
   // Chemistry Department (d2) - 5 subjects per semester
   // Semester 1
@@ -526,28 +535,65 @@ export const subjects: Subject[] = [
 
   // Business Administration Department (d20) - 5 subjects per semester
   // Semester 1
-  { id: 'bba101', name: 'Subject A', shortName: 'Subject A', code: 'BBA-101', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 1, isCore: true },
-  { id: 'bba102', name: 'Business Communication', shortName: 'Bus Comm', code: 'BBA-102', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 1, isCore: true },
-  { id: 'bba103', name: 'Introduction to Business', shortName: 'Intro Bus', code: 'BBA-103', creditHours: 3, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 1, isCore: true },
-  { id: 'bba104', name: 'Principles of Management', shortName: 'Mgmt', code: 'BBA-104', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 1, isCore: true },
-  { id: 'bba105', name: 'Business Mathematics', shortName: 'Bus Math', code: 'BBA-105', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 1, isCore: true },
+  { id: 'bba101', name: 'Subject A', shortName: 'Subject A', code: 'BBA-101', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'bba102', name: 'Business Communication', shortName: 'Bus Comm', code: 'BBA-102', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'bba103', name: 'Introduction to Business', shortName: 'Intro Bus', code: 'BBA-103', creditHours: 3, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'bba104', name: 'Principles of Management', shortName: 'Mgmt', code: 'BBA-104', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'bba105', name: 'Business Mathematics', shortName: 'Bus Math', code: 'BBA-105', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
   
   // Semester 3
-  { id: 'bba201', name: 'Subject B', shortName: 'Subject B', code: 'BBA-201', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 3, isCore: true },
-  { id: 'bba202', name: 'Marketing Management', shortName: 'Marketing', code: 'BBA-202', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 3, isCore: true },
-  { id: 'bba203', name: 'Financial Management', shortName: 'Finance', code: 'BBA-203', creditHours: 3, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 3, isCore: true },
-  { id: 'bba204', name: 'Human Resource Management', shortName: 'HRM', code: 'BBA-204', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 3, isCore: true },
-  { id: 'bba205', name: 'Operations Management', shortName: 'Operations', code: 'BBA-205', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 3, isCore: true },
+  { id: 'bba201', name: 'Subject B', shortName: 'Subject B', code: 'BBA-201', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bba202', name: 'Marketing Management', shortName: 'Marketing', code: 'BBA-202', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bba203', name: 'Financial Management', shortName: 'Finance', code: 'BBA-203', creditHours: 3, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bba204', name: 'Human Resource Management', shortName: 'HRM', code: 'BBA-204', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bba205', name: 'Operations Management', shortName: 'Operations', code: 'BBA-205', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
   
   // Semester 5
-  { id: 'bba501', name: 'Subject C', shortName: 'Subject C', code: 'BBA-501', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 5, isCore: true },
-  { id: 'bba502', name: 'International Business', shortName: 'Intl Bus', code: 'BBA-502', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 5, isCore: true },
-  { id: 'bba503', name: 'Business Ethics', shortName: 'Ethics', code: 'BBA-503', creditHours: 2, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 5, isCore: true },
-  { id: 'bba504', name: 'Strategic Management', shortName: 'Strategy', code: 'BBA-504', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 5, isCore: true },
-  { id: 'bba505', name: 'Entrepreneurship', shortName: 'Entrepreneur', code: 'BBA-505', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 5, isCore: true },
+  { id: 'bba501', name: 'Subject C', shortName: 'Subject C', code: 'BBA-501', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'bba502', name: 'International Business', shortName: 'Intl Bus', code: 'BBA-502', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'bba503', name: 'Business Ethics', shortName: 'Ethics', code: 'BBA-503', creditHours: 2, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'bba504', name: 'Strategic Management', shortName: 'Strategy', code: 'BBA-504', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'bba505', name: 'Entrepreneurship', shortName: 'Entrepreneur', code: 'BBA-505', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+
+  // Botany Department (d22) - Semester 3 subjects
+  { id: 'bot_geng201', name: 'General English', shortName: 'Gen Eng', code: 'GENG-201', creditHours: 3, color: 'bg-lime-100', departmentId: 'd22', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bot_gict201', name: 'General Information & Communication Technology', shortName: 'Gen ICT', code: 'GICT-201', creditHours: 3, color: 'bg-lime-150', departmentId: 'd22', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bot_gpst201', name: 'General Pakistan Studies', shortName: 'Gen PST', code: 'GPST-201', creditHours: 3, color: 'bg-lime-200', departmentId: 'd22', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bot_205', name: 'Botany Core Subject 205', shortName: 'Bot 205', code: 'BOT-205', creditHours: 3, color: 'bg-lime-250', departmentId: 'd22', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bot_201', name: 'Botany Core Subject 201', shortName: 'Bot 201', code: 'BOT-201', creditHours: 3, color: 'bg-lime-300', departmentId: 'd22', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'bot_203', name: 'Botany Core Subject 203', shortName: 'Bot 203', code: 'BOT-203', creditHours: 3, color: 'bg-lime-350', departmentId: 'd22', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+
+  // Political Science Department (d11) - 5 subjects per semester
+  // Semester 1
+  { id: 'pols101', name: 'Introduction to Political Science', shortName: 'Intro Pols', code: 'POLS-101', creditHours: 3, color: 'bg-green-100', departmentId: 'd11', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'pols102', name: 'Political Theory', shortName: 'Pol Theory', code: 'POLS-102', creditHours: 3, color: 'bg-green-150', departmentId: 'd11', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'pols103', name: 'Comparative Politics', shortName: 'Comp Pol', code: 'POLS-103', creditHours: 3, color: 'bg-green-200', departmentId: 'd11', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'pols104', name: 'Constitutional Law', shortName: 'Const Law', code: 'POLS-104', creditHours: 3, color: 'bg-green-250', departmentId: 'd11', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  { id: 'pols105', name: 'Public Administration', shortName: 'Pub Admin', code: 'POLS-105', creditHours: 3, color: 'bg-green-300', departmentId: 'd11', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
+  
+  // Semester 3
+  { id: '3078', name: 'Contemporary Critical Thinking Issues II', shortName: 'Critical Thinking II', code: 'POLS-301', creditHours: 3, color: 'bg-green-100', departmentId: 'd11', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'pols302', name: 'International Relations', shortName: 'Intl Relations', code: 'POLS-302', creditHours: 3, color: 'bg-green-150', departmentId: 'd11', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'pols303', name: 'Political Economy', shortName: 'Pol Economy', code: 'POLS-303', creditHours: 3, color: 'bg-green-200', departmentId: 'd11', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'pols304', name: 'Research Methods', shortName: 'Research', code: 'POLS-304', creditHours: 3, color: 'bg-green-250', departmentId: 'd11', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  { id: 'pols305', name: 'Human Rights', shortName: 'Human Rights', code: 'POLS-305', creditHours: 3, color: 'bg-green-300', departmentId: 'd11', semesterLevel: 3, isCore: true, semesterId: 'sem3' },
+  
+  // Semester 5
+  { id: 'pols501', name: 'Advanced Political Theory', shortName: 'Adv Pol Theory', code: 'POLS-501', creditHours: 3, color: 'bg-green-100', departmentId: 'd11', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'pols502', name: 'Public Policy Analysis', shortName: 'Policy Analysis', code: 'POLS-502', creditHours: 3, color: 'bg-green-150', departmentId: 'd11', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'pols503', name: 'Diplomacy and Foreign Policy', shortName: 'Diplomacy', code: 'POLS-503', creditHours: 3, color: 'bg-green-200', departmentId: 'd11', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'pols504', name: 'Political Sociology', shortName: 'Pol Sociology', code: 'POLS-504', creditHours: 3, color: 'bg-green-250', departmentId: 'd11', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  { id: 'pols505', name: 'Democracy and Governance', shortName: 'Democracy', code: 'POLS-505', creditHours: 3, color: 'bg-green-300', departmentId: 'd11', semesterLevel: 5, isCore: true, semesterId: 'sem5' },
+  
+  // Semester 7
+  { id: 'pols701', name: 'Advanced International Relations', shortName: 'Adv Intl Relations', code: 'POLS-701', creditHours: 3, color: 'bg-green-100', departmentId: 'd11', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'pols702', name: 'Thesis Research', shortName: 'Thesis', code: 'POLS-702', creditHours: 6, color: 'bg-green-150', departmentId: 'd11', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'pols703', name: 'Contemporary Global Issues', shortName: 'Global Issues', code: 'POLS-703', creditHours: 3, color: 'bg-green-200', departmentId: 'd11', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'pols704', name: 'Political Leadership', shortName: 'Leadership', code: 'POLS-704', creditHours: 3, color: 'bg-green-250', departmentId: 'd11', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
+  { id: 'pols705', name: 'Seminar in Political Science', shortName: 'Seminar', code: 'POLS-705', creditHours: 3, color: 'bg-green-300', departmentId: 'd11', semesterLevel: 7, isCore: true, semesterId: 'sem7' },
   
   // Test subject for unknown semester fallback
-  { id: 'test101', name: 'Test Subject', shortName: 'Test', code: 'TEST-101', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 1, isCore: true },
+  { id: 'test101', name: 'Test Subject', shortName: 'Test', code: 'TEST-101', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 1, isCore: true, semesterId: 'sem1' },
 ];
 
 export const timeSlots: TimeSlot[] = [
@@ -561,290 +607,190 @@ export const timeSlots: TimeSlot[] = [
 ];
 
 export const rooms: Room[] = [
-  // Computer Science Department Rooms
-  { id: 'cs-lab1', name: 'CS-Lab1', capacity: 40, type: 'Laboratory', building: 'Computer Science Block', floor: 1, hasProjector: true, hasAC: true, description: 'Programming Lab with latest computers', programTypes: ['BS'], primaryDepartmentId: 'd6', availableForOtherDepartments: false },
-  { id: 'cs-lab2', name: 'CS-Lab2', capacity: 35, type: 'Laboratory', building: 'Computer Science Block', floor: 1, hasProjector: true, hasAC: true, description: 'Advanced Programming Lab', programTypes: ['BS'], primaryDepartmentId: 'd6', availableForOtherDepartments: false },
-  { id: 'cs-lab3', name: 'CS-Lab3', capacity: 30, type: 'Laboratory', building: 'Computer Science Block', floor: 2, hasProjector: true, hasAC: false, description: 'Network Lab', programTypes: ['BS'], primaryDepartmentId: 'd6', availableForOtherDepartments: true },
-  
-  // General Classrooms - Available for both Inter and BS
-  { id: 'r-101', name: 'R-101', capacity: 60, type: 'Classroom', building: 'Main Academic Block', floor: 1, hasProjector: true, hasAC: true, description: 'Large classroom for lectures', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'r-102', name: 'R-102', capacity: 50, type: 'Classroom', building: 'Main Academic Block', floor: 1, hasProjector: true, hasAC: true, description: 'Medium-sized classroom', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'r-103', name: 'R-103', capacity: 40, type: 'Classroom', building: 'Main Academic Block', floor: 1, hasProjector: false, hasAC: false, description: 'Basic classroom', programTypes: ['Inter'], availableForOtherDepartments: true },
-  { id: 'r-201', name: 'R-201', capacity: 70, type: 'Classroom', building: 'Main Academic Block', floor: 2, hasProjector: true, hasAC: true, description: 'Large lecture hall', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'r-202', name: 'R-202', capacity: 45, type: 'Classroom', building: 'Main Academic Block', floor: 2, hasProjector: true, hasAC: false, description: 'Standard classroom', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'r-301', name: 'R-301', capacity: 55, type: 'Classroom', building: 'Main Academic Block', floor: 3, hasProjector: true, hasAC: true, description: 'Classroom with modern facilities', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'r-401', name: 'R-401', capacity: 35, type: 'Classroom', building: 'Main Academic Block', floor: 4, hasProjector: false, hasAC: false, description: 'Small classroom for seminars', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  
-  // Chemistry Department Rooms
-  { id: 'chem-301', name: 'Chem-301', capacity: 50, type: 'Classroom', building: 'Science Block', floor: 3, hasProjector: true, hasAC: true, description: 'Chemistry lecture hall', programTypes: ['BS'], primaryDepartmentId: 'd2', availableForOtherDepartments: true },
-  { id: 'chem-lab1', name: 'Chem-Lab1', capacity: 25, type: 'Laboratory', building: 'Science Block', floor: 3, hasProjector: false, hasAC: true, description: 'General Chemistry Lab with fume hoods', programTypes: ['BS'], primaryDepartmentId: 'd2', availableForOtherDepartments: false },
-  { id: 'chem-lab2', name: 'Chem-Lab2', capacity: 20, type: 'Laboratory', building: 'Science Block', floor: 3, hasProjector: false, hasAC: true, description: 'Organic Chemistry Lab', programTypes: ['BS'], primaryDepartmentId: 'd2', availableForOtherDepartments: false },
-  
-  // Physics Department Rooms
-  { id: 'phys-201', name: 'Phys-201', capacity: 60, type: 'Classroom', building: 'Science Block', floor: 2, hasProjector: true, hasAC: true, description: 'Physics lecture hall', programTypes: ['BS'], primaryDepartmentId: 'd10', availableForOtherDepartments: true },
-  { id: 'phys-lab1', name: 'Phys-Lab1', capacity: 30, type: 'Laboratory', building: 'Science Block', floor: 2, hasProjector: false, hasAC: false, description: 'General Physics Lab', programTypes: ['BS'], primaryDepartmentId: 'd10', availableForOtherDepartments: false },
-  
-  // Mathematics Department Rooms
-  { id: 'math-101', name: 'Math-101', capacity: 80, type: 'Classroom', building: 'Mathematics Block', floor: 1, hasProjector: true, hasAC: true, description: 'Large mathematics lecture hall', programTypes: ['Inter', 'BS'], primaryDepartmentId: 'd9', availableForOtherDepartments: true },
-  { id: 'math-201', name: 'Math-201', capacity: 50, type: 'Classroom', building: 'Mathematics Block', floor: 2, hasProjector: true, hasAC: false, description: 'Mathematics classroom', programTypes: ['Inter', 'BS'], primaryDepartmentId: 'd9', availableForOtherDepartments: true },
-  
-  // English Department Rooms
-  { id: 'eng-101', name: 'Eng-101', capacity: 40, type: 'Classroom', building: 'Humanities Block', floor: 1, hasProjector: true, hasAC: true, description: 'English language lab', programTypes: ['Inter', 'BS'], primaryDepartmentId: 'd5', availableForOtherDepartments: true },
-  { id: 'eng-201', name: 'Eng-201', capacity: 35, type: 'Classroom', building: 'Humanities Block', floor: 2, hasProjector: false, hasAC: false, description: 'Literature classroom', programTypes: ['Inter'], primaryDepartmentId: 'd5', availableForOtherDepartments: true },
-  
-  // Economics Department Rooms
-  { id: 'econ-301', name: 'Econ-301', capacity: 65, type: 'Classroom', building: 'Business Block', floor: 3, hasProjector: true, hasAC: true, description: 'Economics lecture hall', programTypes: ['BS'], primaryDepartmentId: 'd3', availableForOtherDepartments: true },
-  
-  // Inter-specific Rooms
-  { id: 'inter-hall1', name: 'Inter Hall 1', capacity: 120, type: 'Classroom', building: 'Intermediate Block', floor: 1, hasProjector: true, hasAC: true, description: 'Large hall for intermediate classes', programTypes: ['Inter'], availableForOtherDepartments: false },
-  { id: 'inter-hall2', name: 'Inter Hall 2', capacity: 100, type: 'Classroom', building: 'Intermediate Block', floor: 1, hasProjector: true, hasAC: false, description: 'Inter examination hall', programTypes: ['Inter'], availableForOtherDepartments: false },
-  { id: 'inter-lab1', name: 'Inter Lab 1', capacity: 40, type: 'Laboratory', building: 'Intermediate Block', floor: 2, hasProjector: false, hasAC: false, description: 'Basic computer lab for intermediate', programTypes: ['Inter'], availableForOtherDepartments: false },
-  
-  // Special Purpose Rooms
-  { id: 'auditorium', name: 'Main Auditorium', capacity: 200, type: 'Auditorium', building: 'Main Block', floor: 0, hasProjector: true, hasAC: true, description: 'Large auditorium for events and seminars', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'conf-room1', name: 'Conference Room 1', capacity: 20, type: 'Conference', building: 'Administrative Block', floor: 2, hasProjector: true, hasAC: true, description: 'Meeting room for faculty', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true },
-  { id: 'library-hall', name: 'Library Hall', capacity: 100, type: 'Other', building: 'Library Block', floor: 1, hasProjector: false, hasAC: true, description: 'Study hall in library', programTypes: ['Inter', 'BS'], availableForOtherDepartments: true }
+  // Intermediate Program Rooms (with R- prefix)
+  { id: 'r-6', name: 'R-6', capacity: 50, type: 'Classroom', building: 'Intermediate Block A', floor: 1, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-7', name: 'R-7', capacity: 50, type: 'Classroom', building: 'Intermediate Block A', floor: 1, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-8', name: 'R-8', capacity: 50, type: 'Classroom', building: 'Intermediate Block A', floor: 1, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-9', name: 'R-9', capacity: 50, type: 'Classroom', building: 'Intermediate Block A', floor: 1, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-10', name: 'R-10', capacity: 50, type: 'Classroom', building: 'Intermediate Block A', floor: 1, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-11', name: 'R-11', capacity: 50, type: 'Classroom', building: 'Intermediate Block A', floor: 1, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-27', name: 'R-27', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-28', name: 'R-28', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-32', name: 'R-32', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-33', name: 'R-33', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-34', name: 'R-34', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-35', name: 'R-35', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-36', name: 'R-36', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-37', name: 'R-37', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-38', name: 'R-38', capacity: 50, type: 'Classroom', building: 'Intermediate Block B', floor: 2, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-39', name: 'R-39', capacity: 50, type: 'Classroom', building: 'Intermediate Block C', floor: 3, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-40', name: 'R-40', capacity: 50, type: 'Classroom', building: 'Intermediate Block C', floor: 3, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-44', name: 'R-44', capacity: 50, type: 'Classroom', building: 'Intermediate Block C', floor: 3, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-45', name: 'R-45', capacity: 50, type: 'Classroom', building: 'Intermediate Block C', floor: 3, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-71', name: 'R-71', capacity: 50, type: 'Classroom', building: 'Intermediate Block D', floor: 4, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-72', name: 'R-72', capacity: 50, type: 'Classroom', building: 'Intermediate Block D', floor: 4, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-76', name: 'R-76', capacity: 50, type: 'Classroom', building: 'Intermediate Block D', floor: 4, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-95', name: 'R-95', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-96', name: 'R-96', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-97', name: 'R-97', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-98', name: 'R-98', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-100', name: 'R-100', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-101', name: 'R-101', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-102', name: 'R-102', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+  { id: 'r-103', name: 'R-103', capacity: 50, type: 'Classroom', building: 'Intermediate Block E', floor: 5, hasProjector: true, hasAC: true, description: 'Intermediate classroom', programTypes: ['Inter'], availableForOtherDepartments: false },
+
+  // BS Program Rooms - B-series rooms
+  { id: 'b-11', name: 'B11', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-12', name: 'B12', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-13', name: 'B13', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-14', name: 'B14', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-15', name: 'B15', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-17', name: 'B17', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-18', name: 'B18', capacity: 60, type: 'Classroom', building: 'BS Block A', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-21', name: 'B21', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-22', name: 'B22', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-23', name: 'B23', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-24', name: 'B24', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-25', name: 'B25', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-26', name: 'B26', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'b-27', name: 'B27', capacity: 60, type: 'Classroom', building: 'BS Block B', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+
+  // BS Program Rooms - Numeric series
+  { id: 'bs-1', name: '1', capacity: 60, type: 'Classroom', building: 'BS Block C', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-2', name: '2', capacity: 60, type: 'Classroom', building: 'BS Block C', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-3', name: '3', capacity: 60, type: 'Classroom', building: 'BS Block C', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-7', name: '7', capacity: 60, type: 'Classroom', building: 'BS Block C', floor: 1, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-62', name: '62', capacity: 60, type: 'Classroom', building: 'BS Block D', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-63', name: '63', capacity: 60, type: 'Classroom', building: 'BS Block D', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-64', name: '64', capacity: 60, type: 'Classroom', building: 'BS Block D', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-78', name: '78', capacity: 60, type: 'Classroom', building: 'BS Block D', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-79', name: '79', capacity: 60, type: 'Classroom', building: 'BS Block D', floor: 2, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-104', name: '104', capacity: 60, type: 'Classroom', building: 'BS Block E', floor: 3, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-105', name: '105', capacity: 60, type: 'Classroom', building: 'BS Block E', floor: 3, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-106', name: '106', capacity: 60, type: 'Classroom', building: 'BS Block E', floor: 3, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-111', name: '111', capacity: 60, type: 'Classroom', building: 'BS Block E', floor: 3, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-112', name: '112', capacity: 60, type: 'Classroom', building: 'BS Block E', floor: 3, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-123', name: '123', capacity: 60, type: 'Classroom', building: 'BS Block E', floor: 3, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-121', name: '121', capacity: 60, type: 'Classroom', building: 'BS Block F', floor: 4, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-124', name: '124', capacity: 60, type: 'Classroom', building: 'BS Block F', floor: 4, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-128', name: '128', capacity: 60, type: 'Classroom', building: 'BS Block F', floor: 4, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-132', name: '132', capacity: 60, type: 'Classroom', building: 'BS Block F', floor: 4, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-135', name: '135', capacity: 60, type: 'Classroom', building: 'BS Block F', floor: 4, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true },
+  { id: 'bs-136', name: '136', capacity: 60, type: 'Classroom', building: 'BS Block F', floor: 4, hasProjector: true, hasAC: true, description: 'BS program classroom', programTypes: ['BS'], availableForOtherDepartments: true }
 ];
 
   // Computer Science Department Classes
   // Semester 1 (Fall 2024)
-export const timetableEntries: TimetableEntry[] = [
-  // ========= SEMESTER 1 COURSES - CREDIT HOUR BASED SCHEDULING =========
-  
-  // Computer Science - Semester 1 (3-credit courses = Monday-Tuesday-Wednesday, 1-credit labs = varies)
-  // Section A: First three days (Monday-Tuesday-Wednesday)
-  // Programming Fundamentals (3 credits) - Days 1-3
-  { id: 'cs_s1_prog_1', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't1', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab1' },
-  { id: 'cs_s1_prog_2', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't1', timeSlotId: 'ts1', day: 'Tuesday', room: 'CS-Lab1' },
-  { id: 'cs_s1_prog_3', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't1', timeSlotId: 'ts1', day: 'Wednesday', room: 'CS-Lab1' },
-  
-  // Mathematics I (3 credits) - Days 1-3
-  { id: 'cs_s1_math_1', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't85', timeSlotId: 'ts2', day: 'Monday', room: 'R-101' },
-  { id: 'cs_s1_math_2', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't85', timeSlotId: 'ts2', day: 'Tuesday', room: 'R-101' },
-  { id: 'cs_s1_math_3', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't85', timeSlotId: 'ts2', day: 'Wednesday', room: 'R-101' },
-  
-  // English I (3 credits) - Days 1-3
-  { id: 'cs_s1_eng_1', semesterId: 'sem1', subjectId: 'cs103', teacherId: 't37', timeSlotId: 'ts3', day: 'Monday', room: 'R-102' },
-  { id: 'cs_s1_eng_2', semesterId: 'sem1', subjectId: 'cs103', teacherId: 't37', timeSlotId: 'ts3', day: 'Tuesday', room: 'R-102' },
-  { id: 'cs_s1_eng_3', semesterId: 'sem1', subjectId: 'cs103', teacherId: 't37', timeSlotId: 'ts3', day: 'Wednesday', room: 'R-102' },
-
-  // Section B: Last three days (Thursday-Friday-Saturday)
-  // Programming Fundamentals (3 credits) - Days 4-6
-  { id: 'cs_s1b_prog_1', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't2', timeSlotId: 'ts1', day: 'Thursday', room: 'CS-Lab2' },
-  { id: 'cs_s1b_prog_2', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't2', timeSlotId: 'ts1', day: 'Friday', room: 'CS-Lab2' },
-  { id: 'cs_s1b_prog_3', semesterId: 'sem1', subjectId: 'cs101', teacherId: 't2', timeSlotId: 'ts1', day: 'Saturday', room: 'CS-Lab2' },
-
-  // Chemistry - Semester 1 (3-credit courses = Days 1-3, 1-credit labs = varies)
-  // Section A: First three days
-  // General Chemistry I (3 credits) - Days 1-3
-  { id: 'chem_s1_gen_1', semesterId: 'sem1', subjectId: 'chem101', teacherId: 't6', timeSlotId: 'ts1', day: 'Monday', room: 'Chem-301' },
-  { id: 'chem_s1_gen_2', semesterId: 'sem1', subjectId: 'chem101', teacherId: 't6', timeSlotId: 'ts1', day: 'Tuesday', room: 'Chem-301' },
-  { id: 'chem_s1_gen_3', semesterId: 'sem1', subjectId: 'chem101', teacherId: 't6', timeSlotId: 'ts1', day: 'Wednesday', room: 'Chem-301' },
-  
-  // Chemistry Lab I (1 credit) - Wednesday only
-  { id: 'chem_s1_lab_1', semesterId: 'sem1', subjectId: 'chem102', teacherId: 't7', timeSlotId: 'ts2', day: 'Wednesday', room: 'Chem-Lab1', isLab: true },
-  
-  // Mathematics for Chemistry (3 credits) - Days 1-3
-  { id: 'chem_s1_math_1', semesterId: 'sem1', subjectId: 'chem103', teacherId: 't85', timeSlotId: 'ts3', day: 'Monday', room: 'R-201' },
-  { id: 'chem_s1_math_2', semesterId: 'sem1', subjectId: 'chem103', teacherId: 't85', timeSlotId: 'ts3', day: 'Tuesday', room: 'R-201' },
-  { id: 'chem_s1_math_3', semesterId: 'sem1', subjectId: 'chem103', teacherId: 't85', timeSlotId: 'ts3', day: 'Wednesday', room: 'R-201' },
-
-  // Economics - Semester 1 (3-credit courses = Days 1-3)
-  // Section A: First three days
-  // Principles of Economics (3 credits) - Days 1-3
-  { id: 'econ_s1_prin_1', semesterId: 'sem1', subjectId: 'econ101', teacherId: 't25', timeSlotId: 'ts4', day: 'Monday', room: 'R-301' },
-  { id: 'econ_s1_prin_2', semesterId: 'sem1', subjectId: 'econ101', teacherId: 't25', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-301' },
-  { id: 'econ_s1_prin_3', semesterId: 'sem1', subjectId: 'econ101', teacherId: 't25', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-301' },
-  
-  // Mathematics for Economics (3 credits) - Days 1-3
-  { id: 'econ_s1_math_1', semesterId: 'sem1', subjectId: 'econ102', teacherId: 't85', timeSlotId: 'ts5', day: 'Monday', room: 'R-302' },
-  { id: 'econ_s1_math_2', semesterId: 'sem1', subjectId: 'econ102', teacherId: 't85', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-302' },
-  { id: 'econ_s1_math_3', semesterId: 'sem1', subjectId: 'econ102', teacherId: 't85', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-302' },
-
-  // ========= SEMESTER 5 COURSES - CREDIT HOUR BASED SCHEDULING =========
-  
-  // Computer Science - Semester 5 (Advanced courses)
-  // Section A: First three days
-  // Software Engineering (3 credits) - Days 1-3
-  { id: 'cs_s5_se_1', semesterId: 'sem1', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts4', day: 'Monday', room: 'CS-401' },
-  { id: 'cs_s5_se_2', semesterId: 'sem1', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts4', day: 'Tuesday', room: 'CS-401' },
-  { id: 'cs_s5_se_3', semesterId: 'sem1', subjectId: 'cs501', teacherId: 't3', timeSlotId: 'ts4', day: 'Wednesday', room: 'CS-401' },
-  
-  // Database Systems (3 credits) - Days 1-3
-  { id: 'cs_s5_db_1', semesterId: 'sem1', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts5', day: 'Monday', room: 'CS-402' },
-  { id: 'cs_s5_db_2', semesterId: 'sem1', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts5', day: 'Tuesday', room: 'CS-402' },
-  { id: 'cs_s5_db_3', semesterId: 'sem1', subjectId: 'cs502', teacherId: 't4', timeSlotId: 'ts5', day: 'Wednesday', room: 'CS-402' },
-  
-  // Computer Networks (3 credits) - Days 1-3
-  { id: 'cs_s5_net_1', semesterId: 'sem1', subjectId: 'cs503', teacherId: 't5', timeSlotId: 'ts6', day: 'Monday', room: 'CS-403' },
-  { id: 'cs_s5_net_2', semesterId: 'sem1', subjectId: 'cs503', teacherId: 't5', timeSlotId: 'ts6', day: 'Tuesday', room: 'CS-403' },
-  { id: 'cs_s5_net_3', semesterId: 'sem1', subjectId: 'cs503', teacherId: 't5', timeSlotId: 'ts6', day: 'Wednesday', room: 'CS-403' },
-  
-  // Operating Systems Lab (1 credit) - Friday only
-  { id: 'cs_s5_os_lab', semesterId: 'sem1', subjectId: 'cs504', teacherId: 't6', timeSlotId: 'ts7', day: 'Friday', room: 'CS-Lab3', isLab: true },
-
-  // Chemistry - Semester 5 (Advanced courses)
-  // Section A: First three days  
-  // Physical Chemistry (3 credits) - Days 1-3
-  { id: 'chem_s5_phys_1', semesterId: 'sem1', subjectId: 'chem501', teacherId: 't10', timeSlotId: 'ts4', day: 'Monday', room: 'Chem-501' },
-  { id: 'chem_s5_phys_2', semesterId: 'sem1', subjectId: 'chem501', teacherId: 't10', timeSlotId: 'ts4', day: 'Tuesday', room: 'Chem-501' },
-  { id: 'chem_s5_phys_3', semesterId: 'sem1', subjectId: 'chem501', teacherId: 't10', timeSlotId: 'ts4', day: 'Wednesday', room: 'Chem-501' },
-  
-  // Analytical Chemistry (3 credits) - Days 1-3
-  { id: 'chem_s5_anal_1', semesterId: 'sem1', subjectId: 'chem502', teacherId: 't11', timeSlotId: 'ts5', day: 'Monday', room: 'Chem-502' },
-  { id: 'chem_s5_anal_2', semesterId: 'sem1', subjectId: 'chem502', teacherId: 't11', timeSlotId: 'ts5', day: 'Tuesday', room: 'Chem-502' },
-  { id: 'chem_s5_anal_3', semesterId: 'sem1', subjectId: 'chem502', teacherId: 't11', timeSlotId: 'ts5', day: 'Wednesday', room: 'Chem-502' },
-  
-  // Instrumental Analysis (2 credits) - Days 1-2
-  { id: 'chem_s5_inst_1', semesterId: 'sem1', subjectId: 'chem503', teacherId: 't12', timeSlotId: 'ts6', day: 'Monday', room: 'Chem-503' },
-  { id: 'chem_s5_inst_2', semesterId: 'sem1', subjectId: 'chem503', teacherId: 't12', timeSlotId: 'ts6', day: 'Tuesday', room: 'Chem-503' },
-  
-  // Advanced Chemistry Lab (1 credit) - Thursday only
-  { id: 'chem_s5_adv_lab', semesterId: 'sem1', subjectId: 'chem504', teacherId: 't13', timeSlotId: 'ts7', day: 'Thursday', room: 'Chem-Lab2', isLab: true },
-
-  // Economics - Semester 5 (Advanced courses)
-  // Section A: First three days
-  // International Economics (3 credits) - Days 1-3
-  { id: 'econ_s5_intl_1', semesterId: 'sem1', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts4', day: 'Monday', room: 'R-501' },
-  { id: 'econ_s5_intl_2', semesterId: 'sem1', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-501' },
-  { id: 'econ_s5_intl_3', semesterId: 'sem1', subjectId: 'econ501', teacherId: 't27', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-501' },
-  
-  // Development Economics (3 credits) - Days 1-3
-  { id: 'econ_s5_dev_1', semesterId: 'sem1', subjectId: 'econ502', teacherId: 't28', timeSlotId: 'ts5', day: 'Monday', room: 'R-502' },
-  { id: 'econ_s5_dev_2', semesterId: 'sem1', subjectId: 'econ502', teacherId: 't28', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-502' },
-  { id: 'econ_s5_dev_3', semesterId: 'sem1', subjectId: 'econ502', teacherId: 't28', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-502' },
-  
-  // Econometrics (2 credits) - Days 1-2
-  { id: 'econ_s5_econom_1', semesterId: 'sem1', subjectId: 'econ503', teacherId: 't29', timeSlotId: 'ts6', day: 'Monday', room: 'R-503' },
-  { id: 'econ_s5_econom_2', semesterId: 'sem1', subjectId: 'econ503', teacherId: 't29', timeSlotId: 'ts6', day: 'Tuesday', room: 'R-503' },
-
-  // English - Semester 5 (Advanced courses)
-  // Section A: First three days
-  // Contemporary Literature (3 credits) - Days 1-3
-  { id: 'eng_s5_contemp_1', semesterId: 'sem1', subjectId: 'eng501', teacherId: 't40', timeSlotId: 'ts4', day: 'Monday', room: 'R-601' },
-  { id: 'eng_s5_contemp_2', semesterId: 'sem1', subjectId: 'eng501', teacherId: 't40', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-601' },
-  { id: 'eng_s5_contemp_3', semesterId: 'sem1', subjectId: 'eng501', teacherId: 't40', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-601' },
-  
-  // Literary Criticism (3 credits) - Days 1-3
-  { id: 'eng_s5_crit_1', semesterId: 'sem1', subjectId: 'eng502', teacherId: 't41', timeSlotId: 'ts5', day: 'Monday', room: 'R-602' },
-  { id: 'eng_s5_crit_2', semesterId: 'sem1', subjectId: 'eng502', teacherId: 't41', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-602' },
-  { id: 'eng_s5_crit_3', semesterId: 'sem1', subjectId: 'eng502', teacherId: 't41', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-602' },
-  
-  // Creative Writing (2 credits) - Days 1-2
-  { id: 'eng_s5_creative_1', semesterId: 'sem1', subjectId: 'eng503', teacherId: 't42', timeSlotId: 'ts6', day: 'Monday', room: 'R-603' },
-  { id: 'eng_s5_creative_2', semesterId: 'sem1', subjectId: 'eng503', teacherId: 't42', timeSlotId: 'ts6', day: 'Tuesday', room: 'R-603' },
-
-  // Mathematics - Semester 5 (Advanced courses)
-  // Section A: First three days
-  // Real Analysis (3 credits) - Days 1-3
-  { id: 'math_s5_real_1', semesterId: 'sem1', subjectId: 'math501', teacherId: 't60', timeSlotId: 'ts4', day: 'Monday', room: 'R-701' },
-  { id: 'math_s5_real_2', semesterId: 'sem1', subjectId: 'math501', teacherId: 't60', timeSlotId: 'ts4', day: 'Tuesday', room: 'R-701' },
-  { id: 'math_s5_real_3', semesterId: 'sem1', subjectId: 'math501', teacherId: 't60', timeSlotId: 'ts4', day: 'Wednesday', room: 'R-701' },
-  
-  // Abstract Algebra (3 credits) - Days 1-3
-  { id: 'math_s5_abstract_1', semesterId: 'sem1', subjectId: 'math502', teacherId: 't61', timeSlotId: 'ts5', day: 'Monday', room: 'R-702' },
-  { id: 'math_s5_abstract_2', semesterId: 'sem1', subjectId: 'math502', teacherId: 't61', timeSlotId: 'ts5', day: 'Tuesday', room: 'R-702' },
-  { id: 'math_s5_abstract_3', semesterId: 'sem1', subjectId: 'math502', teacherId: 't61', timeSlotId: 'ts5', day: 'Wednesday', room: 'R-702' },
-  
-  // Numerical Methods (2 credits) - Days 1-2
-  { id: 'math_s5_numerical_1', semesterId: 'sem1', subjectId: 'math503', teacherId: 't62', timeSlotId: 'ts6', day: 'Monday', room: 'R-703' },
-  { id: 'math_s5_numerical_2', semesterId: 'sem1', subjectId: 'math503', teacherId: 't62', timeSlotId: 'ts6', day: 'Tuesday', room: 'R-703' },
-
-  // Physics - Semester 5 (Advanced courses)
-  // Section A: First three days
-  // Quantum Mechanics (3 credits) - Days 1-3
-  { id: 'phys_s5_quantum_1', semesterId: 'sem1', subjectId: 'phys501', teacherId: 't100', timeSlotId: 'ts4', day: 'Monday', room: 'Physics-501' },
-  { id: 'phys_s5_quantum_2', semesterId: 'sem1', subjectId: 'phys501', teacherId: 't100', timeSlotId: 'ts4', day: 'Tuesday', room: 'Physics-501' },
-  { id: 'phys_s5_quantum_3', semesterId: 'sem1', subjectId: 'phys501', teacherId: 't100', timeSlotId: 'ts4', day: 'Wednesday', room: 'Physics-501' },
-  
-  // Thermodynamics (3 credits) - Days 1-3
-  { id: 'phys_s5_thermo_1', semesterId: 'sem1', subjectId: 'phys502', teacherId: 't101', timeSlotId: 'ts5', day: 'Monday', room: 'Physics-502' },
-  { id: 'phys_s5_thermo_2', semesterId: 'sem1', subjectId: 'phys502', teacherId: 't101', timeSlotId: 'ts5', day: 'Tuesday', room: 'Physics-502' },
-  { id: 'phys_s5_thermo_3', semesterId: 'sem1', subjectId: 'phys502', teacherId: 't101', timeSlotId: 'ts5', day: 'Wednesday', room: 'Physics-502' },
-  
-  // Solid State Physics (2 credits) - Days 1-2
-  { id: 'phys_s5_solid_1', semesterId: 'sem1', subjectId: 'phys503', teacherId: 't102', timeSlotId: 'ts6', day: 'Monday', room: 'Physics-503' },
-  { id: 'phys_s5_solid_2', semesterId: 'sem1', subjectId: 'phys503', teacherId: 't102', timeSlotId: 'ts6', day: 'Tuesday', room: 'Physics-503' },
-  
-  // Advanced Physics Lab (1 credit) - Thursday only
-  { id: 'phys_s5_adv_lab', semesterId: 'sem1', subjectId: 'phys504', teacherId: 't103', timeSlotId: 'ts7', day: 'Thursday', room: 'Physics-Lab2', isLab: true },
-
-  // Business Administration - Semester 5 (Advanced courses)
-  // Section A: First three days
-  // Strategic Management (3 credits) - Days 1-3
-  { id: 'bba_s5_strategy_1', semesterId: 'sem1', subjectId: 'bba501', teacherId: 't70', timeSlotId: 'ts4', day: 'Monday', room: 'BBA-501' },
-  { id: 'bba_s5_strategy_2', semesterId: 'sem1', subjectId: 'bba501', teacherId: 't70', timeSlotId: 'ts4', day: 'Tuesday', room: 'BBA-501' },
-  { id: 'bba_s5_strategy_3', semesterId: 'sem1', subjectId: 'bba501', teacherId: 't70', timeSlotId: 'ts4', day: 'Wednesday', room: 'BBA-501' },
-  
-  // International Business (3 credits) - Days 1-3
-  { id: 'bba_s5_intl_1', semesterId: 'sem1', subjectId: 'bba502', teacherId: 't71', timeSlotId: 'ts5', day: 'Monday', room: 'BBA-502' },
-  { id: 'bba_s5_intl_2', semesterId: 'sem1', subjectId: 'bba502', teacherId: 't71', timeSlotId: 'ts5', day: 'Tuesday', room: 'BBA-502' },
-  { id: 'bba_s5_intl_3', semesterId: 'sem1', subjectId: 'bba502', teacherId: 't71', timeSlotId: 'ts5', day: 'Wednesday', room: 'BBA-502' },
-  
-  // Business Ethics (2 credits) - Days 1-2
-  { id: 'bba_s5_ethics_1', semesterId: 'sem1', subjectId: 'bba503', teacherId: 't72', timeSlotId: 'ts6', day: 'Monday', room: 'BBA-503' },
-  { id: 'bba_s5_ethics_2', semesterId: 'sem1', subjectId: 'bba503', teacherId: 't72', timeSlotId: 'ts6', day: 'Tuesday', room: 'BBA-503' },
-
-  // ========= CONFLICT ENTRIES - INTENTIONALLY ADDED FOR TESTING =========
-
-  // TEACHER CONFLICT 1: Teacher 't1' double-booked on Monday 8:00-9:00
-  // Already has: cs_s1_prog_1 at ts1 (8:00-9:00) on Monday
-  { id: 'conflict_teacher_1', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't1', timeSlotId: 'ts1', day: 'Monday', room: 'R-401', note: 'CONFLICT: Teacher t1 also teaching cs_s1_prog_1 at same time' },
-
-  // ========= QA TEST CONFLICTS - FOR MANUAL TESTING =========
-  
-  // TEACHER CONFLICT - CROSS-SEMESTER: Same teacher, different semesters, different days
-  // Teacher 't70' (Dr. Hassan Raza) teaching Subject A in Semester 1 on Monday and Subject B in Semester 3 on Wednesday
-  { id: 'qa_teacher_conflict_1', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't70', timeSlotId: 'ts2', day: 'Monday', room: 'QA-Room1', note: 'QA TEST: Cross-semester teacher conflict' },
-  { id: 'qa_teacher_conflict_2', semesterId: 'sem3', subjectId: 'bba201', teacherId: 't70', timeSlotId: 'ts2', day: 'Wednesday', room: 'QA-Room2', note: 'QA TEST: Cross-semester teacher conflict' },
-  
-  // ROOM CONFLICT - CROSS-SEMESTER: Same room, different semesters, different teachers
-  // Room 'QA-TestRoom' booked for Subject C (Semester 5) with Dr. Jane Doe on Tuesday
-  { id: 'qa_room_conflict_1', semesterId: 'sem5', subjectId: 'cs501', teacherId: 't71', timeSlotId: 'ts3', day: 'Tuesday', room: 'QA-TestRoom', note: 'QA TEST: Cross-semester room conflict' },
-  { id: 'qa_room_conflict_2', semesterId: 'sem1', subjectId: 'math101', teacherId: 't85', timeSlotId: 'ts3', day: 'Tuesday', room: 'QA-TestRoom', note: 'QA TEST: Cross-semester room conflict' },
-  
-  // UNKNOWN SEMESTER FALLBACK TEST: Conflict with non-existent semester
-  { id: 'qa_unknown_semester', semesterId: 'unknown_sem', subjectId: 'test101', teacherId: 't1', timeSlotId: 'ts4', day: 'Friday', room: 'Unknown-Room', note: 'QA TEST: Unknown semester fallback' },
-
-  // TEACHER CONFLICT 2: Teacher 't85' triple-booked on Monday 9:00-10:00
-  // Already has multiple entries at ts2 (9:00-10:00) on Monday
-  { id: 'conflict_teacher_2a', semesterId: 'sem1', subjectId: 'math101', teacherId: 't85', timeSlotId: 'ts2', day: 'Monday', room: 'R-501', note: 'CONFLICT: Teacher t85 also teaching cs_s1_math_1, chem_s1_math_1, econ_s1_math_1 at same time' },
-  { id: 'conflict_teacher_2b', semesterId: 'sem1', subjectId: 'phys101', teacherId: 't85', timeSlotId: 'ts2', day: 'Monday', room: 'R-502', note: 'CONFLICT: Teacher t85 also teaching multiple courses at same time' },
-
-  // ROOM CONFLICT 1: Room 'CS-Lab1' double-booked on Monday 8:00-9:00
-  // Already has: cs_s1_prog_1 at ts1 (8:00-9:00) on Monday
-  { id: 'conflict_room_1', semesterId: 'sem1', subjectId: 'phys101', teacherId: 't57', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab1', note: 'CONFLICT: Room CS-Lab1 also booked for cs_s1_prog_1 at same time' },
-
-  // ROOM CONFLICT 2: Room 'R-301' triple-booked on Monday
-  // Already has: econ_s1_prin_1 at ts4 (11:15-12:15) on Monday
-  { id: 'conflict_room_2a', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't70', timeSlotId: 'ts4', day: 'Monday', room: 'R-301', note: 'CONFLICT: Room R-301 also booked for econ_s1_prin_1 at same time' },
-  { id: 'conflict_room_2b', semesterId: 'sem1', subjectId: 'eng101', teacherId: 't37', timeSlotId: 'ts4', day: 'Monday', room: 'R-301', note: 'CONFLICT: Room R-301 also triple-booked' },
-
-  // TEACHER CONFLICT 3: Teacher 't37' double-booked on Monday
-  // Already has: cs_s1_eng_1 at ts3 (10:00-11:00) on Monday
-  { id: 'conflict_teacher_3', semesterId: 'sem1', subjectId: 'math102', teacherId: 't37', timeSlotId: 'ts3', day: 'Monday', room: 'R-601', note: 'CONFLICT: Teacher t37 also teaching cs_s1_eng_1 at same time' },
-
-  // ROOM CONFLICT 3: Room 'Chem-301' double-booked on Monday
-  // Already has: chem_s1_gen_1 at ts1 (8:00-9:00) on Monday
-  { id: 'conflict_room_3', semesterId: 'sem1', subjectId: 'phys102', teacherId: 't99', timeSlotId: 'ts1', day: 'Monday', room: 'Chem-301', note: 'CONFLICT: Room Chem-301 also booked for chem_s1_gen_1 at same time', isLab: true },
-
-  // COMPLEX CONFLICT: Both teacher and room conflict
-  // Teacher 't6' and Room 'CS-Lab1' both conflicted
-  { id: 'conflict_complex_1', semesterId: 'sem1', subjectId: 'chem201', teacherId: 't6', timeSlotId: 'ts1', day: 'Monday', room: 'CS-Lab1', note: 'COMPLEX CONFLICT: Teacher t6 teaching chem_s1_gen_1, Room CS-Lab1 also booked for cs_s1_prog_1' },
-
-  // ========= DEMONSTRATION ENTRIES FOR DAY DISPLAY FORMATTING =========
-  
-  // BBA course demonstration - showing consecutive days (1-3) pattern
-  { id: 'demo_consecutive_1', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't78', timeSlotId: 'ts7', day: 'Monday', room: 'Demo-101' },
-  { id: 'demo_consecutive_2', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't78', timeSlotId: 'ts7', day: 'Tuesday', room: 'Demo-101' },
-  { id: 'demo_consecutive_3', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't78', timeSlotId: 'ts7', day: 'Wednesday', room: 'Demo-101' },
-
-  // Math course demonstration - showing non-consecutive days (2,5) pattern
-  { id: 'demo_non_consecutive_1', semesterId: 'sem1', subjectId: 'math101', teacherId: 't56', timeSlotId: 'ts7', day: 'Tuesday', room: 'Demo-201' },
-  { id: 'demo_non_consecutive_2', semesterId: 'sem1', subjectId: 'math101', teacherId: 't56', timeSlotId: 'ts7', day: 'Friday', room: 'Demo-201' },
-
-  // Physics course demonstration - showing single day (3) pattern
-  { id: 'demo_single_day', semesterId: 'sem1', subjectId: 'phys101', teacherId: 't57', timeSlotId: 'ts7', day: 'Wednesday', room: 'Demo-301' },
-];
+// Timetable entries are now managed through the allocations.json file
+// This export is kept for backward compatibility and initial fallback data
+export const timetableEntries: TimetableEntry[] = [];
 
 export const daysOfWeek = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+// Helper functions for semester availability
+export const getSemesterLevel = (semOrId: string | Semester): number => {
+  const sem = typeof semOrId === 'string' ? semesters.find(s => s.id === semOrId) : semOrId;
+  if (!sem) return NaN;
+  const m = sem.name ? sem.name.match(/\d+/) : null;
+  return m ? parseInt(m[0], 10) : NaN;
+};
+
+export const departmentOffersInSemester = (dept: Department, semOrId: string | Semester): boolean => {
+  if (!dept.offersBSDegree) return false;
+  const level = getSemesterLevel(semOrId);
+  if (!Number.isFinite(level)) {
+    // Fallback: if semester level cannot be parsed, do not filter out the department
+    return dept.offersBSDegree;
+  }
+  const av = dept.bsSemesterAvailability;
+  if (av && Array.isArray(av.offeredLevels) && av.offeredLevels.length) {
+    return av.offeredLevels.includes(level);
+  }
+  if (av && Array.isArray(av.excludedLevels) && av.excludedLevels.length) {
+    return !av.excludedLevels.includes(level);
+  }
+  // Default: if availability not specified, allow all semesters for BS departments
+  return dept.offersBSDegree;
+};
+
+export const getActiveDepartmentsForSemester = (semOrId: string | Semester): Department[] => {
+  return departments.filter(d => departmentOffersInSemester(d, semOrId));
+};
+
+// Semester availability normalization utilities
+const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
+
+/**
+ * Returns offered levels array for a department by normalizing bsSemesterAvailability.
+ * - If offeredLevels exists, use it.
+ * - Else if excludedLevels exists, offered levels are LEVELS minus excludedLevels.
+ * - Else if offersBSDegree true, return all LEVELS; otherwise return empty array.
+ */
+export const getOfferedLevelsForDept = (dept: Department): number[] => {
+  const availability = dept.bsSemesterAvailability;
+  
+  // If offeredLevels exists, use it
+  if (availability?.offeredLevels && Array.isArray(availability.offeredLevels)) {
+    return [...availability.offeredLevels];
+  }
+  
+  // Else if excludedLevels exists, offered levels are LEVELS minus excludedLevels
+  if (availability?.excludedLevels && Array.isArray(availability.excludedLevels)) {
+    return LEVELS.filter(level => !availability.excludedLevels!.includes(level));
+  }
+  
+  // Else if offersBSDegree true, return all LEVELS; otherwise return empty array
+  return dept.offersBSDegree ? [...LEVELS] : [];
+};
+
+/**
+ * Returns the updated department object with bsSemesterAvailability.offeredLevels set to the provided array
+ * and removes excludedLevels to standardize storage going forward.
+ */
+export const setOfferedLevelsForDept = (dept: Department, offeredLevels: number[]): Department => {
+  return {
+    ...dept,
+    bsSemesterAvailability: {
+      offeredLevels: [...offeredLevels]
+      // excludedLevels is intentionally omitted to remove it
+    }
+  };
+};
+
+/**
+ * Counts subjects for given departmentId and semester level.
+ */
+export const countSubjectsForDeptLevel = (departmentId: string, semesterLevel: number): number => {
+  return subjects.filter(subject => 
+    subject.departmentId === departmentId && subject.semesterLevel === semesterLevel
+  ).length;
+};
+
+/**
+ * Computes the next offeredLevels array when a level is toggled.
+ * If the level is currently offered, it will be removed.
+ * If the level is not currently offered, it will be added.
+ */
+export const computeNextOfferedLevels = (dept: Department, toggledLevel: number): number[] => {
+  const currentLevels = getOfferedLevelsForDept(dept);
+  
+  if (currentLevels.includes(toggledLevel)) {
+    // Remove the level
+    return currentLevels.filter(level => level !== toggledLevel);
+  } else {
+    // Add the level
+    return [...currentLevels, toggledLevel].sort((a, b) => a - b);
+  }
+};
+
+/**
+ * Checks if a department has any subjects across all levels or any offered levels configured.
+ * Used for warning when toggling offersBSDegree off.
+ */
+export const departmentHasSubjectsOrLevels = (dept: Department): boolean => {
+  const hasSubjects = subjects.some(subject => subject.departmentId === dept.id);
+  const currentLevels = getOfferedLevelsForDept(dept);
+  const hasConfiguredLevels = currentLevels.length > 0;
+  
+  return hasSubjects || hasConfiguredLevels;
+};
