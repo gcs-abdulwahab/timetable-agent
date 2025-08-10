@@ -52,20 +52,22 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   // Load rooms from localStorage after component mounts
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsedRooms = JSON.parse(stored);
-        setRooms(parsedRooms);
-      } catch (error) {
-        console.error('Error parsing stored room data:', error);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsedRooms = JSON.parse(stored);
+          setRooms(parsedRooms);
+        } catch (error) {
+          console.error('Error parsing stored room data:', error);
+        }
       }
     }
   }, []);
 
   // Save to localStorage whenever rooms change
   useEffect(() => {
-    if (mounted) {
+    if (mounted && typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(rooms));
     }
   }, [rooms, mounted]);

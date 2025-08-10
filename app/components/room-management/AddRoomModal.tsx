@@ -305,8 +305,13 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleClose}
+              title="Press ESC to cancel"
+            >
+              Cancel (ESC)
             </Button>
             <Button type="submit">
               {editingRoom ? 'Update Room' : 'Add Room'}
