@@ -88,3 +88,137 @@ const groupKey = createGroupKey(subjectId, teacherId);
 ```
 
 See `utils/dnd.ts` for complete API documentation and defensive programming patterns.
+
+## Bulk Import System
+
+The timetable application includes a comprehensive bulk import system for subjects. Here's how to use it:
+
+### Supported File Types
+
+- **CSV files** (`.csv`) - Comma-separated values with header row
+- **Excel files** (`.xlsx`, `.xls`) - First worksheet is used
+- **JSON files** (`.json`) - Array of subject objects
+
+### Quick Start Guide
+
+1. **Access Import**: Navigate to Department Courses page and click "Bulk Import"
+2. **Choose File**: Select your CSV, Excel, or JSON file (max 10MB)
+3. **Preview**: Review the parsed data and field mapping
+4. **Resolve Conflicts**: Handle any duplicate IDs or codes
+5. **Import**: Execute the import with your chosen conflict resolution strategy
+
+### File Format Requirements
+
+#### Required Fields
+- `name` - Subject name (max 200 chars)
+- `shortName` - Short name/abbreviation (max 50 chars)
+- `code` - Subject code (max 20 chars)
+- `creditHours` - Credit hours (1-10)
+- `departmentId` - Department ID
+
+#### Optional Fields
+- `id` - Auto-generated if not provided
+- `color` - Auto-assigned if not provided (Tailwind classes or hex)
+- `semesterLevel` - Inferred from semesterId if not provided (1-8)
+- `semesterId` - Format: 'sem1', 'sem2', ..., 'sem8'
+- `isCore` - Boolean (default: true)
+- `isMajor` - Boolean (default: true)
+
+### Example CSV Format
+
+```csv
+name,shortName,code,creditHours,departmentId,semesterLevel,isCore
+Calculus I,Calc 1,MATH101,4,dept-math,1,true
+Physics I,Phys 1,PHYS101,3,dept-physics,1,true
+Programming,Prog,CS101,4,dept-cs,1,true
+```
+
+### Example JSON Format
+
+```json
+[
+  {
+    "name": "Calculus I",
+    "shortName": "Calc 1",
+    "code": "MATH101",
+    "creditHours": 4,
+    "departmentId": "dept-math",
+    "semesterLevel": 1,
+    "isCore": true
+  }
+]
+```
+
+### Conflict Resolution Strategies
+
+**When importing subjects with duplicate IDs or codes:**
+
+- **Overwrite**: Replace existing data with imported data
+- **Skip**: Keep existing data, ignore import
+- **User Decision**: Review each conflict individually
+
+**Default Behavior:**
+- Duplicate ID → Overwrite (assumes update intent)
+- Duplicate Code → Skip (preserves existing subjects)
+- Both conflicts → User Decision required
+
+### Performance Guidelines
+
+- **Recommended**: Under 5,000 subjects per file
+- **Maximum**: 10,000 subjects per file
+- **File size limit**: 10MB
+- Large files may cause browser performance issues
+
+### Environment Notes
+
+#### Windows Compatibility
+- All file paths use Node.js `path.join()` for cross-platform compatibility
+- Safe atomic write operations with temporary files
+- Automatic backup creation with timestamps
+- Data directory: `./data/` relative to project root
+
+#### Development Environment
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Run tests (including import system)
+npm test
+
+# Build for production
+npm run build
+```
+
+#### Production Environment
+- Ensure `data/` directory is writable
+- File system permissions for backup creation
+- Consider disk space for backup files
+- Monitor memory usage with large imports
+
+#### Error Handling
+- Comprehensive validation with detailed error messages
+- Automatic rollback on import failures
+- Backup files preserved for recovery
+- User-friendly error feedback in UI
+
+### Troubleshooting
+
+**Import fails with "Invalid file format":**
+- Check file extension matches content type
+- Ensure CSV has proper headers
+- Validate JSON array structure
+
+**Memory issues with large files:**
+- Split files into smaller chunks
+- Use streaming for very large datasets
+- Consider server-side processing for enterprise use
+
+**Validation errors:**
+- Check required fields are present
+- Verify data types (numbers, booleans)
+- Ensure department IDs exist in system
+
+For technical details, see the import system documentation in `app/lib/import/README.md`.

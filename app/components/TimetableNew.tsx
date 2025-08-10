@@ -1,5 +1,5 @@
 'use client';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState, useMemo } from 'react';
 import {
   departments,
   rooms,
@@ -10,7 +10,8 @@ import {
   Teacher,
   teachers,
   timeSlots,
-  TimetableEntry
+  TimetableEntry,
+  getActiveDepartmentsForSemester
 } from './data';
 import { buildDragId, parseDragId, createGroupKey } from '../../utils/dnd';
 
@@ -81,10 +82,22 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     subject: Subject;
     teacher: Teacher;
   } | null>(null);
+  const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
+
+  // Derive the semester-scoped department list whenever activeSemesterTab changes
+  const visibleDepartments = useMemo(
+    () => activeSemesterTab ? getActiveDepartmentsForSemester(activeSemesterTab) : departments.filter(d => d.offersBSDegree),
+    [activeSemesterTab]
+  );
 
   // Mark as mounted after hydration
   useEffect(() => {
     setMounted(true);
+    // Set the first active semester as default tab
+    const activeSems = getActiveSemesters();
+    if (activeSems.length > 0 && !activeSemesterTab) {
+      setActiveSemesterTab(activeSems[0].id);
+    }
   }, []);
 
   // Sync props with local state
@@ -103,32 +116,180 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     }
   }, [editingEntry, editingData, updateCounter]);
 
-  // ESC key handling to close modals
+  // ESC key handling to close modals and cancel drag operations
+  // ENTER key handling to complete drag operations
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        let closed = false;
+        let actionTaken = false;
+
+        // Cancel drag operation if in progress
+        if (dragData || draftData || dragOverlay?.show) {
+          console.log('🔄 [ESC] Cancelling drag operation and resetting to original state');
+          
+          // Clear all drag-related state
+          setDragData(null);
+          setDraftData(null);
+          setDragOverlay(null);
+          setCurrentDropTarget(null);
+          
+          // Show cancellation notification
+          setNotification({ 
+            message: 'Drag operation cancelled', 
+            type: 'success' 
+          });
+          setTimeout(() => setNotification(null), 2000);
+          
+          actionTaken = true;
+        }
 
         // Close Edit Entry modal if open
         if (editingEntry || editingData) {
           setEditingEntry(null);
           setEditingData(null);
-          closed = true;
+          actionTaken = true;
         }
 
         // Close Add New Entry modal if open
         if (showAddEntry) {
           setShowAddEntry(false);
-          closed = true;
+          actionTaken = true;
         }
 
         // Close Delete Confirmation modal if open
         if (deleteConfirmation) {
           setDeleteConfirmation(null);
-          closed = true;
+          actionTaken = true;
         }
 
-        if (closed) {
+        // Close conflict tooltip if open
+        if (conflictTooltip.show) {
+          setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
+          actionTaken = true;
+        }
+
+        if (actionTaken) {
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      } else if (e.key === 'Enter') {
+        let actionTaken = false;
+
+        // Complete drag operation if in progress and we have draft data
+        if (dragData && draftData && dragOverlay?.show) {
+          console.log('⏎ [ENTER] Completing drag operation at current location');
+          
+          // Use the provisional time slot from draftData as the drop target
+          const targetDepartmentId = draftData.departmentId;
+          const targetTimeSlotId = draftData.provisionalTimeSlotId;
+          
+          console.log('⏎ [ENTER] Drop target:', {
+            targetDepartmentId,
+            targetTimeSlotId,
+            dragData: {
+              groupKey: dragData.groupKey,
+              departmentId: dragData.departmentId,
+              sourceTimeSlotId: dragData.sourceTimeSlotId
+            }
+          });
+          
+          // Validate drop is in same department
+          if (dragData.departmentId !== targetDepartmentId) {
+            console.log('❌ [ENTER] Cannot drop in different department');
+            setNotification({ 
+              message: 'Cannot move to different department! Drops are only allowed within the same row.', 
+              type: 'error' 
+            });
+            setTimeout(() => setNotification(null), 4000);
+            actionTaken = true;
+          } 
+          // Check if dropping on same cell (no change needed)
+          else if (dragData.sourceTimeSlotId === targetTimeSlotId) {
+            console.log('❌ [ENTER] Dropping on same cell - no change needed');
+            setNotification({ 
+              message: 'Entry is already in this time slot', 
+              type: 'error' 
+            });
+            setTimeout(() => setNotification(null), 2000);
+            actionTaken = true;
+          }
+          else {
+            // Check for conflicts before dropping
+            const draggedDays = dragData.entries.map(e => e.day);
+            
+            // Check for room conflicts
+            const roomConflicts = dragData.entries[0]?.room ? localTimetableEntries.filter(entry => {
+              return entry.room === dragData.entries[0].room && 
+                     entry.timeSlotId === targetTimeSlotId &&
+                     draggedDays.includes(entry.day) && // Only conflict if on same day
+                     !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id);
+            }) : [];
+            
+            // Check for teacher conflicts
+            const teacherConflicts = localTimetableEntries.filter(entry => 
+              entry.teacherId === dragData.teacher.id && 
+              entry.timeSlotId === targetTimeSlotId &&
+              draggedDays.includes(entry.day) && // Only conflict if on same day
+              !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)
+            );
+            
+            if (roomConflicts.length > 0 || teacherConflicts.length > 0) {
+              console.log('❌ [ENTER] Conflicts detected, cannot drop');
+              const conflictMessage = `Cannot complete move: Conflict detected!\n` +
+                    `${roomConflicts.length > 0 ? '- Room conflict\n' : ''}` +
+                    `${teacherConflicts.length > 0 ? '- Teacher conflict\n' : ''}` +
+                    `Please choose a different time slot.`;
+              
+              setNotification({ message: conflictMessage, type: 'error' });
+              setTimeout(() => setNotification(null), 4000);
+              actionTaken = true;
+            } else {
+              console.log('✅ [ENTER] No conflicts, proceeding with move');
+              
+              // Update the entries to the new time slot
+              const newEntries = localTimetableEntries.map(entry => {
+                if (dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)) {
+                  const updatedEntry = {
+                    ...entry,
+                    timeSlotId: targetTimeSlotId
+                  };
+                  
+                  console.log('⏎ [ENTER] Updating entry:', {
+                    originalTimeSlot: entry.timeSlotId,
+                    newTimeSlot: targetTimeSlotId,
+                    updatedEntry
+                  });
+                  
+                  return updatedEntry;
+                }
+                return entry;
+              });
+              
+              // Apply the update
+              updateEntries([...newEntries]);
+              setUpdateCounter(prev => prev + 1);
+              
+              // Show success notification
+              const targetDepartmentName = departments.find(d => d.id === targetDepartmentId)?.shortName || 'Unknown';
+              const targetTimeSlot = timeSlots.find(ts => ts.id === targetTimeSlotId);
+              const successMessage = `✅ Moved ${dragData.subject.shortName} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
+              
+              console.log('✅ [ENTER] Move completed successfully:', successMessage);
+              setNotification({ message: successMessage, type: 'success' });
+              setTimeout(() => setNotification(null), 3000);
+              
+              actionTaken = true;
+            }
+          }
+          
+          // Clear all drag-related state after processing
+          setDragData(null);
+          setDraftData(null);
+          setDragOverlay(null);
+          setCurrentDropTarget(null);
+        }
+
+        if (actionTaken) {
           e.preventDefault();
           e.stopPropagation();
         }
@@ -137,7 +298,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
 
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editingEntry, editingData, showAddEntry, deleteConfirmation]);
+  }, [editingEntry, editingData, showAddEntry, deleteConfirmation, dragData, draftData, dragOverlay?.show, conflictTooltip.show, localTimetableEntries]);
 
   // Mouse tracking for drag overlay
   useEffect(() => {
@@ -721,6 +882,21 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
       >
         {/* Drag area - excludes the edit button */}
         <div className="w-full h-full">
+          {/* Drag handle icon */}
+          <div className="absolute top-1 left-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing z-10">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" className="opacity-60">
+              <circle cx="2" cy="2" r="1"/>
+              <circle cx="6" cy="2" r="1"/>
+              <circle cx="10" cy="2" r="1"/>
+              <circle cx="2" cy="6" r="1"/>
+              <circle cx="6" cy="6" r="1"/>
+              <circle cx="10" cy="6" r="1"/>
+              <circle cx="2" cy="10" r="1"/>
+              <circle cx="6" cy="10" r="1"/>
+              <circle cx="10" cy="10" r="1"/>
+            </svg>
+          </div>
+          
           {/* Conflict danger icon */}
           {isConflicted && (
             <div 
@@ -764,9 +940,12 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
               onMouseDown={(e) => {
                 e.stopPropagation(); // Prevent drag from starting
               }}
-              title="Click for conflict details"
+              title="Scheduling conflict detected - click for details"
+              aria-label="Scheduling conflict detected, click for details"
+              role="button"
             >
-              <span className="text-white font-bold">!</span>
+              <span className="text-white font-bold" aria-hidden="true">!</span>
+              <span className="sr-only">Conflict warning</span>
             </div>
           )}
           
@@ -787,7 +966,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         <div className="absolute top-0 right-0 flex gap-1 z-30">
           {/* Delete button */}
           <button
-            className="bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 shadow-md"
+            className="bg-white text-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-50 hover:text-red-700 shadow-md border border-red-200 hover:border-red-400"
             onClick={(e) => {
               e.stopPropagation();
               e.preventDefault();
@@ -807,7 +986,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
             style={{ pointerEvents: 'all' }} // Ensure button receives clicks
             title="Delete this entry"
           >
-            🗑️
+            ×
           </button>
           
           {/* Edit button */}
@@ -862,34 +1041,10 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     // Check if being dragged over
     const isOver = dragData && dragData.departmentId === departmentId;
 
-    // Handle click on empty cell
+    // Handle click on empty cell - disabled, only + button should add entries
     const handleCellClick = (e: React.MouseEvent) => {
-      // Only handle click if the cell is empty and we're not dragging
-      if (isEmpty && !dragData && e.target === e.currentTarget) {
-        e.preventDefault();
-        e.stopPropagation();
-        
-        // Find the department to get its name
-        const department = departments.find(dept => dept.id === departmentId);
-        const timeSlot = timeSlots.find(slot => slot.id === timeSlotId);
-        
-        if (department && timeSlot) {
-          // Get the first active semester as default
-          const defaultSemester = getActiveSemesters()[0];
-          
-          // Pre-fill the modal with department and time slot information
-          setAddEntryData(prev => ({
-            ...prev,
-            selectedSemester: defaultSemester?.name || '',
-            selectedDepartment: department.id, // Use department ID, not name
-            selectedTimeSlot: timeSlotId,
-            selectedDays: [] // Let user select days
-          }));
-          
-          // Open the add entry modal
-          setShowAddEntry(true);
-        }
-      }
+      // No action on cell click - only the + button should trigger add entry
+      // This prevents accidental modal opening when clicking on empty cells
     };
 
     // Check for potential conflicts when hovering
@@ -923,9 +1078,9 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
 
 let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]`;
     
-    // Add hover effect for empty cells
+    // Remove hover effects - only plus button should be interactive
     if (isEmpty) {
-      cellClasses += ' hover:bg-blue-50 cursor-pointer';
+      cellClasses += ' cursor-default';
     }
     
     // Show cursor-not-allowed for different department when dragging
@@ -945,7 +1100,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
       <td
         className={cellClasses}
         style={{ minHeight: '60px', verticalAlign: 'top' }}
-        title={isEmpty ? 'Click to add new entry' : hasConflict ? `${conflictType} Conflict - Cannot drop here` : ''}
+        title={isEmpty ? 'Use + button to add new entry' : hasConflict ? `${conflictType} Conflict - Cannot drop here` : ''}
         onClick={handleCellClick}
         onDragOver={(e) => handleDragOver(e, departmentId, timeSlotId)}
         onDrop={(e) => handleDrop(e, departmentId, timeSlotId)}
@@ -957,7 +1112,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
         {isEmpty && (
           <div className="flex items-center justify-center h-full">
             <button
-              className="w-8 h-8 rounded-full bg-white hover:bg-blue-100 text-gray-400 hover:text-blue-500 flex items-center justify-center transition-all duration-200 opacity-0 hover:opacity-100 group-hover:opacity-100 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md"
+              className="w-8 h-8 rounded-full bg-white hover:bg-blue-100 text-gray-400 hover:text-blue-500 flex items-center justify-center transition-all duration-200 opacity-100 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -967,13 +1122,13 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 const timeSlot = timeSlots.find(slot => slot.id === timeSlotId);
                 
                 if (department && timeSlot) {
-                  // Get the first active semester as default
-                  const defaultSemester = getActiveSemesters()[0];
+                  // Use the currently active semester tab instead of first active semester
+                  const activeSemester = semesters.find(s => s.id === activeSemesterTab);
                   
                   // Pre-fill the modal with department and time slot information
                   setAddEntryData(prev => ({
                     ...prev,
-                    selectedSemester: defaultSemester?.name || '',
+                    selectedSemester: activeSemester?.name || '',
                     selectedDepartment: department.id, // Use department ID, not name
                     selectedTimeSlot: timeSlotId,
                     selectedDays: [] // Let user select days
@@ -1047,7 +1202,15 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
             </div>
           </div>
           <button
-            onClick={() => setShowAddEntry(true)}
+            onClick={() => {
+              // Pre-fill with the currently active semester tab
+              const activeSemester = semesters.find(s => s.id === activeSemesterTab);
+              setAddEntryData(prev => ({
+                ...prev,
+                selectedSemester: activeSemester?.name || ''
+              }));
+              setShowAddEntry(true);
+            }}
             className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
           >
             + Add Entry
@@ -1055,16 +1218,39 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
         </div>
       </div>
 
-      <div>
+      {/* Semester Tabs - Centered */}
+      <div className="mb-6">
+        <div className="border-b border-gray-200">
+          <nav className="-mb-px flex justify-center space-x-8">
+            {getActiveSemesters().map((semester) => (
+              <button
+                key={semester.id}
+                onClick={() => setActiveSemesterTab(semester.id)}
+                className={`py-3 px-6 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
+                  activeSemesterTab === semester.id
+                    ? 'border-emerald-500 text-emerald-700 bg-emerald-50 shadow-md transform scale-105'
+                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                {formatSemesterLabel(semester)}
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+
+      {/* Timetable Content */}
+      <div role="region" aria-label="Weekly timetable grid">
       <div className="w-full overflow-x-auto bg-white rounded-lg shadow-lg">
-      <table className="w-full border-collapse">
+      <table className="w-full border-collapse" role="table" aria-label="Timetable showing subjects by department and time slots">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border border-gray-300 p-2 text-xs font-bold text-gray-700 w-32">
+            <th className="border border-gray-300 p-2 text-xs font-bold text-gray-700 w-32" scope="col" aria-label="Department column">
+              <span className="sr-only">Department</span>
               Department
             </th>
             {timeSlots.map(slot => (
-              <th key={slot.id} className="border border-gray-300 p-2 text-xs font-bold text-gray-700 min-w-[150px]">
+              <th key={slot.id} className="border border-gray-300 p-2 text-xs font-bold text-gray-700 min-w-[150px]" scope="col" aria-label={`Time slot period ${slot.period} from ${slot.start} to ${slot.end}`}>
                 Period {slot.period}<br/>
                 {slot.start}-{slot.end}
               </th>
@@ -1072,33 +1258,104 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
           </tr>
         </thead>
         <tbody>
-          {departments.map((department) => (
-            <tr key={department.id} className="hover:bg-gray-50">
+          {visibleDepartments.map((department) => (
+            <tr key={department.id} className="hover:bg-gray-50" role="row">
               {/* Department column */}
-              <td className="border border-gray-300 p-2 text-center bg-gray-50">
+              <th className="border border-gray-300 p-2 text-center bg-gray-50" scope="row" role="rowheader" aria-label={`${department.name} department`}>
                 <div className="text-xs font-semibold text-gray-700">
                   {department.shortName}
                 </div>
                 <div className="text-xs text-gray-500 mt-1">
                   {department.name}
                 </div>
-              </td>
+              </th>
               
               {/* Time slot columns */}
               {timeSlots.map(timeSlot => {
-                // Get all entries for this department and time slot across all days
-                const departmentEntries = localTimetableEntries.filter(entry => {
+                // Filter entries by active semester tab
+                const semesterFilteredEntries = localTimetableEntries.filter(entry => entry.semesterId === activeSemesterTab);
+                
+                // Get all entries for this department and time slot for the active semester
+                const departmentEntries = semesterFilteredEntries.filter(entry => {
                   const subject = getSubject(entry.subjectId);
                   return subject?.departmentId === department.id && entry.timeSlotId === timeSlot.id;
                 });
+                
+                // Enhanced debugging - run for first time slot only to avoid spam
+                if (timeSlot.id === 'ts1' && department.id === 'd1') {
+                  console.log('🔍 [COMPREHENSIVE DEBUG] Overall filtering analysis:', {
+                    activeSemesterTab,
+                    totalEntries: localTimetableEntries.length,
+                    semesterFilteredCount: semesterFilteredEntries.length,
+                    
+                    // Analyze semester distribution
+                    semesterDistribution: localTimetableEntries.reduce((acc, entry) => {
+                      acc[entry.semesterId] = (acc[entry.semesterId] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>),
+                    
+                    // Analyze department distribution for current semester
+                    departmentDistribution: semesterFilteredEntries.reduce((acc, entry) => {
+                      const subject = getSubject(entry.subjectId);
+                      const deptId = subject?.departmentId || 'unknown';
+                      acc[deptId] = (acc[deptId] || 0) + 1;
+                      return acc;
+                    }, {} as Record<string, number>),
+                    
+                    // Check for missing subjects/teachers
+                    missingSubjects: localTimetableEntries.filter(entry => !getSubject(entry.subjectId)).length,
+                    missingTeachers: localTimetableEntries.filter(entry => !getTeacher(entry.teacherId)).length,
+                    
+                    // Sample entries for current semester
+                    sampleSemesterEntries: semesterFilteredEntries.slice(0, 5).map(entry => ({
+                      id: entry.id,
+                      subjectId: entry.subjectId,
+                      subject: getSubject(entry.subjectId),
+                      teacherId: entry.teacherId,
+                      teacher: getTeacher(entry.teacherId),
+                      timeSlotId: entry.timeSlotId,
+                      day: entry.day,
+                      semesterId: entry.semesterId
+                    })),
+                    
+                    // Check visible departments
+                    visibleDepartmentIds: visibleDepartments.map(d => d.id),
+                    allDepartmentIds: departments.map(d => d.id)
+                  });
+                }
 
                 // Debug logging after departmentEntries is initialized
                 if (department.id === 'd6' && timeSlot.id === 'ts1') { // Debug for Computer Science, Period 1
-                  console.log(`Filtering entries for ${department.shortName} Period ${timeSlot.period}:`, {
+                  console.log(`Filtering entries for ${department.shortName} Period ${timeSlot.period} (${formatSemesterLabel(getSemester(activeSemesterTab))}):`, {
+                    activeSemesterTab,
                     totalEntries: localTimetableEntries.length,
+                    semesterFilteredEntriesCount: semesterFilteredEntries.length,
                     departmentEntriesCount: departmentEntries.length,
                     firstEntry: localTimetableEntries[0],
                     filteredEntries: departmentEntries
+                  });
+                }
+
+                // Special debug for Semester 7 - check why entries aren't showing
+                if (activeSemesterTab === 'sem7' && department.id === 'd6') {
+                  console.log(`🔍 [SEM7 DEBUG] CS Department - TimeSlot ${timeSlot.id}:`, {
+                    activeSemesterTab,
+                    department: department.shortName,
+                    timeSlot: timeSlot.id,
+                    totalEntries: localTimetableEntries.length,
+                    semesterFilteredEntries: semesterFilteredEntries.length,
+                    departmentEntries: departmentEntries.length,
+                    allSem7Entries: localTimetableEntries.filter(e => e.semesterId === 'sem7'),
+                    csEntriesForThisSlot: semesterFilteredEntries.filter(entry => {
+                      const subject = getSubject(entry.subjectId);
+                      return subject?.departmentId === department.id && entry.timeSlotId === timeSlot.id;
+                    }),
+                    subjectsFound: departmentEntries.map(e => ({
+                      subjectId: e.subjectId,
+                      subject: getSubject(e.subjectId),
+                      teacherId: e.teacherId,
+                      teacher: getTeacher(e.teacherId)
+                    }))
                   });
                 }
 
@@ -1169,8 +1426,18 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
             <div className="text-sm font-semibold mb-1">
               📋 Preview Move
             </div>
-            <div className="text-xs">
+            <div className="text-xs mb-2">
               Moving <span className="font-bold">{draftData.subject.shortName}</span> to {timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.start}-{timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.end}
+            </div>
+            <div className="text-xs border-t border-blue-400 pt-2">
+              <div className="flex items-center gap-2">
+                <kbd className="px-1 py-0.5 bg-blue-700 rounded text-xs">ENTER</kbd>
+                <span>Drop here</span>
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <kbd className="px-1 py-0.5 bg-blue-700 rounded text-xs">ESC</kbd>
+                <span>Cancel</span>
+              </div>
             </div>
           </div>
         </div>
@@ -1473,7 +1740,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                 >
                   <option value="">Select Department</option>
-                  {departments.map(dept => (
+                  {visibleDepartments.map(dept => (
                     <option key={dept.id} value={dept.id}>
                       {dept.name}
                     </option>
@@ -1792,6 +2059,13 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
           <div 
             className="fixed inset-0 z-[8000]"
             onClick={() => setConflictTooltip({ show: false, content: '', x: 0, y: 0 })}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
+              }
+            }}
           />
           
           {/* Tooltip content */}
@@ -1802,23 +2076,31 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
               top: `${conflictTooltip.y}px`,
               transform: 'translate(-50%, -100%)'
             }}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="conflict-details-title"
+            aria-describedby="conflict-details-content"
+            tabIndex={-1}
           >
             <div className="flex justify-between items-center mb-2">
-              <div className="text-sm font-semibold">⚠️ Conflict Details</div>
+              <div id="conflict-details-title" className="text-sm font-semibold">⚠️ Conflict Details</div>
               <button
                 className="text-white hover:text-red-200 text-lg leading-none"
                 onClick={() => setConflictTooltip({ show: false, content: '', x: 0, y: 0 })}
+                aria-label="Close conflict details"
+                title="Close (ESC)"
               >
                 ×
               </button>
             </div>
-            <div className="text-xs whitespace-pre-line">
+            <div id="conflict-details-content" className="text-xs whitespace-pre-line">
               {conflictTooltip.content}
             </div>
             
             {/* Arrow pointing down */}
             <div 
               className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-600"
+              aria-hidden="true"
             />
           </div>
         </>

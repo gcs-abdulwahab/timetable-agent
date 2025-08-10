@@ -5,8 +5,6 @@ import { Room, departments, rooms as initialRooms } from '../data';
 import { Button } from '../ui/button';
 import AddRoomModal from './AddRoomModal';
 
-const STORAGE_KEY = 'room-data';
-
 // Function to generate background colors for different rooms
 const getRoomBackgroundColor = (index: number, roomType: string) => {
   const colorVariations = [
@@ -41,7 +39,8 @@ interface RoomManagementComponentProps {
 
 const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoomSelect }) => {
   const [mounted, setMounted] = useState(false);
-  const [rooms, setRooms] = useState<Room[]>(initialRooms);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
   const [filterProgram, setFilterProgram] = useState<string>('all');
@@ -49,28 +48,41 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
 
-  // Load rooms from localStorage after component mounts
+  // Load rooms from API
+  const fetchRooms = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/rooms');
+      if (response.ok) {
+        const roomsData = await response.json();
+        // Validate and ensure each room has required properties
+        const validatedRooms = roomsData.map((room: Partial<Room>) => ({
+          ...room,
+          programTypes: room.programTypes || [], // Ensure programTypes is always an array
+          type: room.type || 'Other',
+          capacity: room.capacity || 0,
+          hasProjector: room.hasProjector || false,
+          hasAC: room.hasAC || false,
+          availableForOtherDepartments: room.availableForOtherDepartments || false
+        } as Room));
+        setRooms(validatedRooms);
+      } else {
+        console.error('Failed to fetch rooms');
+        setRooms(initialRooms); // Fallback to initial data
+      }
+    } catch (error) {
+      console.error('Error fetching rooms:', error);
+      setRooms(initialRooms); // Fallback to initial data
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load rooms when component mounts
   useEffect(() => {
     setMounted(true);
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored) {
-        try {
-          const parsedRooms = JSON.parse(stored);
-          setRooms(parsedRooms);
-        } catch (error) {
-          console.error('Error parsing stored room data:', error);
-        }
-      }
-    }
+    fetchRooms();
   }, []);
-
-  // Save to localStorage whenever rooms change
-  useEffect(() => {
-    if (mounted && typeof window !== 'undefined') {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(rooms));
-    }
-  }, [rooms, mounted]);
 
   const generateRoomId = (name: string) => {
     return `room-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
@@ -87,46 +99,83 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   };
 
   // Save room (add or update)
-  const handleSaveRoom = (roomData: Omit<Room, 'id'>) => {
-    if (editingRoom) {
-      // Update existing room
-      setRooms(prev => prev.map(room => 
-        room.id === editingRoom.id 
-          ? { ...roomData, id: editingRoom.id } as Room
-          : room
-      ));
-    } else {
-      // Add new room
-      const newRoom: Room = {
-        ...roomData,
-        id: generateRoomId(roomData.name),
-      };
+  const handleSaveRoom = async (roomData: Omit<Room, 'id'>) => {
+    try {
+      if (editingRoom) {
+        // Update existing room
+        const updatedRoom = { ...roomData, id: editingRoom.id } as Room;
+        const response = await fetch('/api/rooms', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(updatedRoom),
+        });
 
-      // Check if room with same name already exists
-      if (rooms.some(room => room.name.toLowerCase() === newRoom.name.toLowerCase())) {
-        alert('A room with this name already exists');
-        return;
+        if (response.ok) {
+          await fetchRooms(); // Refresh rooms list
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to update room');
+          return;
+        }
+      } else {
+        // Add new room
+        const newRoom = {
+          ...roomData,
+          id: generateRoomId(roomData.name),
+        };
+
+        const response = await fetch('/api/rooms', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(newRoom),
+        });
+
+        if (response.ok) {
+          await fetchRooms(); // Refresh rooms list
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to add room');
+          return;
+        }
       }
 
-      setRooms(prev => [...prev, newRoom]);
+      setEditingRoom(null);
+    } catch (error) {
+      console.error('Error saving room:', error);
+      alert('Failed to save room');
     }
-
-    setEditingRoom(null);
   };
 
-  const handleDelete = (roomId: string) => {
+  const handleDelete = async (roomId: string) => {
     if (confirm('Are you sure you want to delete this room?')) {
-      setRooms(prev => prev.filter(room => room.id !== roomId));
-    }
-  };
+      try {
+        const response = await fetch(`/api/rooms?id=${roomId}`, {
+          method: 'DELETE',
+        });
 
-  const filteredRooms = rooms.filter(room => {
+        if (response.ok) {
+          await fetchRooms(); // Refresh rooms list
+        } else {
+          const error = await response.json();
+          alert(error.error || 'Failed to delete room');
+        }
+        } catch (error) {
+        console.error('Error deleting room:', error);
+        alert('Failed to delete room');
+      }
+    }
+  };  const filteredRooms = rooms.filter(room => {
     const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          room.building?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          room.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesType = filterType === 'all' || room.type === filterType;
-    const matchesProgram = filterProgram === 'all' || room.programTypes.includes(filterProgram as 'Inter' | 'BS');
+    const roomProgramTypes = room.programTypes || []; // Safe fallback
+    const matchesProgram = filterProgram === 'all' || roomProgramTypes.includes(filterProgram as 'Inter' | 'BS');
     const matchesDepartment = filterDepartment === 'all' || room.primaryDepartmentId === filterDepartment;
     
     return matchesSearch && matchesType && matchesProgram && matchesDepartment;
@@ -141,7 +190,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
     return dept?.shortName || 'Unknown';
   };
 
-  if (!mounted) {
+  if (!mounted || loading) {
     return <div className="p-6">Loading rooms...</div>;
   }
 
@@ -283,7 +332,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
                 <td className="border border-gray-300 px-4 py-2">{room.capacity}</td>
                 <td className="border border-gray-300 px-4 py-2">
                   <div className="flex space-x-1">
-                    {room.programTypes.map(program => (
+                    {(room.programTypes || []).map(program => (
                       <span key={program} className={`px-2 py-1 rounded text-xs ${
                         program === 'Inter' ? 'bg-orange-100 text-orange-800' : 'bg-indigo-100 text-indigo-800'
                       }`}>
