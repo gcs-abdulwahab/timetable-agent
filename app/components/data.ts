@@ -311,7 +311,7 @@ export const teachers: Teacher[] = [
   
   // Business Administration Department (d20)
   { id: 't70', name: 'Dr. Hassan Raza', shortName: 'Dr. Hassan Raza', departmentId: 'd20' },
-  { id: 't71', name: 'Ms. Ayesha Khan', shortName: 'Ms. Ayesha Khan', departmentId: 'd20' },
+  { id: 't71', name: 'Dr. Jane Doe', shortName: 'Dr. Jane Doe', departmentId: 'd20' },
   { id: 't72', name: 'Mr. Ali Ahmed', shortName: 'Mr. Ali Ahmed', departmentId: 'd20' },
   { id: 't77', name: 'Shahzada Shahab Khan', shortName: 'Shahzada Shahab Khan', departmentId: 'd20' },
   { id: 't78', name: 'Hifsa Farooq', shortName: 'Hifsa Farooq', departmentId: 'd20' },
@@ -523,6 +523,31 @@ export const subjects: Subject[] = [
   { id: 'zoo703', name: 'Research Methodology', shortName: 'Research', code: 'ZOO-703', creditHours: 3, color: 'bg-green-200', departmentId: 'd16', semesterLevel: 7, isCore: true },
   { id: 'zoo704', name: 'Wildlife Management', shortName: 'Wildlife', code: 'ZOO-704', creditHours: 3, color: 'bg-green-250', departmentId: 'd16', semesterLevel: 7, isCore: true },
   { id: 'zoo705', name: 'Zoology Thesis', shortName: 'Thesis', code: 'ZOO-705', creditHours: 6, color: 'bg-green-300', departmentId: 'd16', semesterLevel: 7, isCore: true },
+
+  // Business Administration Department (d20) - 5 subjects per semester
+  // Semester 1
+  { id: 'bba101', name: 'Subject A', shortName: 'Subject A', code: 'BBA-101', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 1, isCore: true },
+  { id: 'bba102', name: 'Business Communication', shortName: 'Bus Comm', code: 'BBA-102', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 1, isCore: true },
+  { id: 'bba103', name: 'Introduction to Business', shortName: 'Intro Bus', code: 'BBA-103', creditHours: 3, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 1, isCore: true },
+  { id: 'bba104', name: 'Principles of Management', shortName: 'Mgmt', code: 'BBA-104', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 1, isCore: true },
+  { id: 'bba105', name: 'Business Mathematics', shortName: 'Bus Math', code: 'BBA-105', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 1, isCore: true },
+  
+  // Semester 3
+  { id: 'bba201', name: 'Subject B', shortName: 'Subject B', code: 'BBA-201', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 3, isCore: true },
+  { id: 'bba202', name: 'Marketing Management', shortName: 'Marketing', code: 'BBA-202', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 3, isCore: true },
+  { id: 'bba203', name: 'Financial Management', shortName: 'Finance', code: 'BBA-203', creditHours: 3, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 3, isCore: true },
+  { id: 'bba204', name: 'Human Resource Management', shortName: 'HRM', code: 'BBA-204', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 3, isCore: true },
+  { id: 'bba205', name: 'Operations Management', shortName: 'Operations', code: 'BBA-205', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 3, isCore: true },
+  
+  // Semester 5
+  { id: 'bba501', name: 'Subject C', shortName: 'Subject C', code: 'BBA-501', creditHours: 3, color: 'bg-blue-100', departmentId: 'd20', semesterLevel: 5, isCore: true },
+  { id: 'bba502', name: 'International Business', shortName: 'Intl Bus', code: 'BBA-502', creditHours: 3, color: 'bg-blue-150', departmentId: 'd20', semesterLevel: 5, isCore: true },
+  { id: 'bba503', name: 'Business Ethics', shortName: 'Ethics', code: 'BBA-503', creditHours: 2, color: 'bg-blue-200', departmentId: 'd20', semesterLevel: 5, isCore: true },
+  { id: 'bba504', name: 'Strategic Management', shortName: 'Strategy', code: 'BBA-504', creditHours: 3, color: 'bg-blue-250', departmentId: 'd20', semesterLevel: 5, isCore: true },
+  { id: 'bba505', name: 'Entrepreneurship', shortName: 'Entrepreneur', code: 'BBA-505', creditHours: 3, color: 'bg-blue-300', departmentId: 'd20', semesterLevel: 5, isCore: true },
+  
+  // Test subject for unknown semester fallback
+  { id: 'test101', name: 'Test Subject', shortName: 'Test', code: 'TEST-101', creditHours: 3, color: 'bg-gray-100', departmentId: 'd6', semesterLevel: 1, isCore: true },
 ];
 
 export const timeSlots: TimeSlot[] = [
@@ -765,6 +790,21 @@ export const timetableEntries: TimetableEntry[] = [
   // TEACHER CONFLICT 1: Teacher 't1' double-booked on Monday 8:00-9:00
   // Already has: cs_s1_prog_1 at ts1 (8:00-9:00) on Monday
   { id: 'conflict_teacher_1', semesterId: 'sem1', subjectId: 'cs102', teacherId: 't1', timeSlotId: 'ts1', day: 'Monday', room: 'R-401', note: 'CONFLICT: Teacher t1 also teaching cs_s1_prog_1 at same time' },
+
+  // ========= QA TEST CONFLICTS - FOR MANUAL TESTING =========
+  
+  // TEACHER CONFLICT - CROSS-SEMESTER: Same teacher, different semesters, different days
+  // Teacher 't70' (Dr. Hassan Raza) teaching Subject A in Semester 1 on Monday and Subject B in Semester 3 on Wednesday
+  { id: 'qa_teacher_conflict_1', semesterId: 'sem1', subjectId: 'bba101', teacherId: 't70', timeSlotId: 'ts2', day: 'Monday', room: 'QA-Room1', note: 'QA TEST: Cross-semester teacher conflict' },
+  { id: 'qa_teacher_conflict_2', semesterId: 'sem3', subjectId: 'bba201', teacherId: 't70', timeSlotId: 'ts2', day: 'Wednesday', room: 'QA-Room2', note: 'QA TEST: Cross-semester teacher conflict' },
+  
+  // ROOM CONFLICT - CROSS-SEMESTER: Same room, different semesters, different teachers
+  // Room 'QA-TestRoom' booked for Subject C (Semester 5) with Dr. Jane Doe on Tuesday
+  { id: 'qa_room_conflict_1', semesterId: 'sem5', subjectId: 'cs501', teacherId: 't71', timeSlotId: 'ts3', day: 'Tuesday', room: 'QA-TestRoom', note: 'QA TEST: Cross-semester room conflict' },
+  { id: 'qa_room_conflict_2', semesterId: 'sem1', subjectId: 'math101', teacherId: 't85', timeSlotId: 'ts3', day: 'Tuesday', room: 'QA-TestRoom', note: 'QA TEST: Cross-semester room conflict' },
+  
+  // UNKNOWN SEMESTER FALLBACK TEST: Conflict with non-existent semester
+  { id: 'qa_unknown_semester', semesterId: 'unknown_sem', subjectId: 'test101', teacherId: 't1', timeSlotId: 'ts4', day: 'Friday', room: 'Unknown-Room', note: 'QA TEST: Unknown semester fallback' },
 
   // TEACHER CONFLICT 2: Teacher 't85' triple-booked on Monday 9:00-10:00
   // Already has multiple entries at ts2 (9:00-10:00) on Monday

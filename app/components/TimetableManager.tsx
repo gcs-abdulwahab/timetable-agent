@@ -24,20 +24,22 @@ const TimetableManager: React.FC = () => {
   // Load from localStorage after component mounts (client-side only)
   useEffect(() => {
     setMounted(true);
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsedEntries = JSON.parse(stored);
-        setEntries(parsedEntries);
-      } catch (error) {
-        console.error('Error parsing stored timetable entries:', error);
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsedEntries = JSON.parse(stored);
+          setEntries(parsedEntries);
+        } catch (error) {
+          console.error('Error parsing stored timetable entries:', error);
+        }
       }
     }
   }, []);
 
   // Save to localStorage whenever entries change
   useEffect(() => {
-    if (mounted) {
+    if (mounted && typeof window !== 'undefined') {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(entries));
     }
   }, [entries, mounted]);

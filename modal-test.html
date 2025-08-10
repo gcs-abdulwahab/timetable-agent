@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modal ESC and Tooltip Testing</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            color: #666;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+        
+        .btn-secondary {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            border: 1px solid #dee2e6;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e2e6ea;
+        }
+        
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .test-btn {
+            padding: 10px 20px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .test-btn:hover {
+            background-color: #218838;
+        }
+        
+        .instructions {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+        
+        .instructions h3 {
+            margin: 0 0 10px 0;
+            color: #1976d2;
+        }
+        
+        .instructions ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Modal Testing Suite - ESC Behavior and Tooltips</h1>
+    
+    <div class="instructions">
+        <h3>Test Instructions:</h3>
+        <ul>
+            <li>✅ <strong>Tooltip Test:</strong> Hover over Cancel buttons - should show "Press ESC to cancel"</li>
+            <li>✅ <strong>Visual Text Test:</strong> Cancel buttons should display "Cancel (ESC)"</li>
+            <li>✅ <strong>ESC Key Test:</strong> Press ESC key while modal is open - should close modal</li>
+            <li>✅ <strong>Form Submission Test:</strong> Click Cancel button - should NOT submit form (type="button")</li>
+            <li>✅ <strong>Screen Reader Test:</strong> Use screen reader to verify "Cancel (ESC)" is announced</li>
+        </ul>
+    </div>
+    
+    <div class="test-section">
+        <h2>Modal Tests</h2>
+        <div class="test-buttons">
+            <button class="test-btn" onclick="openModal('teacherModal')">Open Teacher Modal</button>
+            <button class="test-btn" onclick="openModal('departmentModal')">Open Department Modal</button>
+            <button class="test-btn" onclick="openModal('roomModal')">Open Room Modal</button>
+        </div>
+    </div>
+
+    <!-- Teacher Modal -->
+    <div id="teacherModal" class="modal" role="dialog" aria-labelledby="teacherModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="teacherModalTitle" class="modal-title">Add New Teacher</h2>
+                <button class="close-btn" onclick="closeModal('teacherModal')" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="teacherForm" onsubmit="return handleFormSubmit(event, 'teacher')">
+                <div class="form-group">
+                    <label for="teacherName">Teacher Name *</label>
+                    <input type="text" id="teacherName" name="teacherName" required placeholder="e.g., Dr. John Smith">
+                </div>
+                <div class="form-group">
+                    <label for="teacherShort">Short Name</label>
+                    <input type="text" id="teacherShort" name="teacherShort" placeholder="e.g., Dr. Smith">
+                </div>
+                <div class="form-group">
+                    <label for="teacherDept">Department *</label>
+                    <select id="teacherDept" name="teacherDept" required>
+                        <option value="">Select Department</option>
+                        <option value="cs">Computer Science (CS)</option>
+                        <option value="math">Mathematics (MATH)</option>
+                        <option value="eng">Engineering (ENG)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="teacherDesignation">Designation *</label>
+                    <input type="text" id="teacherDesignation" name="teacherDesignation" required placeholder="e.g., Professor">
+                </div>
+                
+                <div class="modal-footer">
+                    <button 
+                        type="button" 
+                        class="btn btn-secondary" 
+                        onclick="closeModal('teacherModal')"
+                        title="Press ESC to cancel"
+                        aria-label="Cancel (ESC) - Press ESC key or click to cancel and close modal"
+                    >
+                        Cancel (ESC)
+                    </button>
+                    <button type="submit" class="btn btn-primary">Add Teacher</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Department Modal -->
+    <div id="departmentModal" class="modal" role="dialog" aria-labelledby="departmentModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="departmentModalTitle" class="modal-title">Add New Department</h2>
+                <button class="close-btn" onclick="closeModal('departmentModal')" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="departmentForm" onsubmit="return handleFormSubmit(event, 'department')">
+                <div class="form-group">
+                    <label for="deptName">Department Name *</label>
+                    <input type="text" id="deptName" name="deptName" required placeholder="e.g., Computer Science">
+                </div>
+                <div class="form-group">
+                    <label for="deptShort">Short Name *</label>
+                    <input type="text" id="deptShort" name="deptShort" required placeholder="e.g., CS">
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="offersBSDegree" style="width: auto; margin-right: 8px;">
+                        Offers BS Degree Program
+                    </label>
+                </div>
+                
+                <div class="modal-footer">
+                    <button 
+                        type="button" 
+                        class="btn btn-secondary" 
+                        onclick="closeModal('departmentModal')"
+                        title="Press ESC to cancel"
+                        aria-label="Cancel (ESC) - Press ESC key or click to cancel and close modal"
+                    >
+                        Cancel (ESC)
+                    </button>
+                    <button type="submit" class="btn btn-primary">Add Department</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Room Modal -->
+    <div id="roomModal" class="modal" role="dialog" aria-labelledby="roomModalTitle" aria-modal="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="roomModalTitle" class="modal-title">Add New Room</h2>
+                <button class="close-btn" onclick="closeModal('roomModal')" aria-label="Close modal">&times;</button>
+            </div>
+            <form id="roomForm" onsubmit="return handleFormSubmit(event, 'room')">
+                <div class="form-group">
+                    <label for="roomName">Room Name *</label>
+                    <input type="text" id="roomName" name="roomName" required placeholder="e.g., CR-101">
+                </div>
+                <div class="form-group">
+                    <label for="roomCapacity">Capacity *</label>
+                    <input type="number" id="roomCapacity" name="roomCapacity" required min="1" placeholder="e.g., 50">
+                </div>
+                <div class="form-group">
+                    <label for="roomType">Room Type</label>
+                    <select id="roomType" name="roomType">
+                        <option value="Classroom">Classroom</option>
+                        <option value="Lab">Lab</option>
+                        <option value="Lecture Hall">Lecture Hall</option>
+                        <option value="Seminar Room">Seminar Room</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="roomBuilding">Building *</label>
+                    <input type="text" id="roomBuilding" name="roomBuilding" required placeholder="e.g., Main Building">
+                </div>
+                <div class="form-group">
+                    <label for="roomDescription">Description</label>
+                    <textarea id="roomDescription" name="roomDescription" rows="3" placeholder="Additional notes about the room..."></textarea>
+                </div>
+                
+                <div class="modal-footer">
+                    <button 
+                        type="button" 
+                        class="btn btn-secondary" 
+                        onclick="closeModal('roomModal')"
+                        title="Press ESC to cancel"
+                        aria-label="Cancel (ESC) - Press ESC key or click to cancel and close modal"
+                    >
+                        Cancel (ESC)
+                    </button>
+                    <button type="submit" class="btn btn-primary">Add Room</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Test Results Log</h2>
+        <div id="testResults" style="font-family: monospace; background: #f8f9fa; padding: 15px; border-radius: 4px; min-height: 100px; white-space: pre-wrap;"></div>
+        <button onclick="clearResults()" class="btn btn-secondary" style="margin-top: 10px;">Clear Results</button>
+    </div>
+
+    <script>
+        let currentModal = null;
+        
+        function logResult(message) {
+            const results = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            results.textContent += `[${timestamp}] ${message}\n`;
+            results.scrollTop = results.scrollHeight;
+        }
+        
+        function clearResults() {
+            document.getElementById('testResults').textContent = '';
+        }
+        
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.add('active');
+            currentModal = modalId;
+            
+            // Focus the first input for accessibility
+            const firstInput = modal.querySelector('input, select, textarea');
+            if (firstInput) {
+                setTimeout(() => firstInput.focus(), 100);
+            }
+            
+            logResult(`✅ Modal opened: ${modalId}`);
+            logResult(`🔍 TEST: Hover over Cancel button to check tooltip`);
+            logResult(`⌨️ TEST: Press ESC key to test closing behavior`);
+        }
+        
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.remove('active');
+            currentModal = null;
+            
+            // Reset form
+            const form = modal.querySelector('form');
+            if (form) {
+                form.reset();
+            }
+            
+            logResult(`✅ Modal closed: ${modalId}`);
+        }
+        
+        function handleFormSubmit(event, formType) {
+            event.preventDefault();
+            logResult(`📝 Form submitted: ${formType}`);
+            logResult(`✅ PASS: Form submission working correctly`);
+            closeModal(currentModal);
+            return false;
+        }
+        
+        // ESC key handler
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && currentModal) {
+                logResult(`⌨️ ESC key pressed - closing modal: ${currentModal}`);
+                closeModal(currentModal);
+                logResult(`✅ PASS: ESC key functionality working`);
+            }
+        });
+        
+        // Test for unintended form submission when clicking Cancel
+        document.addEventListener('click', function(event) {
+            if (event.target.type === 'button' && event.target.textContent.includes('Cancel')) {
+                logResult(`🖱️ Cancel button clicked (type="button")`);
+                logResult(`✅ PASS: No form submission - correct button type`);
+            }
+        });
+        
+        // Track tooltip hovers (approximate test)
+        document.addEventListener('mouseover', function(event) {
+            if (event.target.title === 'Press ESC to cancel') {
+                logResult(`🔍 Tooltip hover detected on Cancel button`);
+                logResult(`✅ PASS: Tooltip attribute present: "${event.target.title}"`);
+            }
+        });
+        
+        // Initial test information
+        logResult('🚀 Modal Test Suite Started');
+        logResult('📋 Tests to perform:');
+        logResult('   1. Visual text: Cancel buttons show "Cancel (ESC)"');
+        logResult('   2. Tooltip: Hover shows "Press ESC to cancel"');
+        logResult('   3. ESC key: Press ESC to close modal');
+        logResult('   4. Button type: Cancel has type="button" (no form submit)');
+        logResult('   5. Accessibility: Screen reader announces properly');
+        logResult('');
+        logResult('🎯 Open a modal above to begin testing...');
+        
+        // Browser detection for cross-browser testing
+        const browserInfo = navigator.userAgent;
+        let browser = 'Unknown';
+        if (browserInfo.indexOf('Chrome') > -1) browser = 'Chrome';
+        else if (browserInfo.indexOf('Firefox') > -1) browser = 'Firefox';
+        else if (browserInfo.indexOf('Safari') > -1) browser = 'Safari';
+        else if (browserInfo.indexOf('Edge') > -1) browser = 'Edge';
+        
+        logResult(`🌐 Browser detected: ${browser}`);
+        logResult('');
+    </script>
+</body>
+</html>

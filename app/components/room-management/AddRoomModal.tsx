@@ -173,10 +173,10 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
                 className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
               >
                 <option value="Classroom">Classroom</option>
-                <option value="Lab">Lab</option>
-                <option value="Lecture Hall">Lecture Hall</option>
-                <option value="Seminar Room">Seminar Room</option>
-                <option value="Conference Room">Conference Room</option>
+                <option value="Laboratory">Laboratory</option>
+                <option value="Auditorium">Auditorium</option>
+                <option value="Conference">Conference</option>
+                <option value="Other">Other</option>
               </select>
             </div>
 
@@ -305,8 +305,13 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={handleClose}>
-              Cancel
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={handleClose}
+              title="Press ESC to cancel"
+            >
+              Cancel (ESC)
             </Button>
             <Button type="submit">
               {editingRoom ? 'Update Room' : 'Add Room'}

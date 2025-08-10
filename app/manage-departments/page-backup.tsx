@@ -2,34 +2,13 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Department, Semester, Subject, Teacher } from '../components/data';
-import AddDepartmentModal from '../components/ui/AddDepartmentModal';
-import AddTeacherModal from '../components/ui/AddTeacherModal';
+import { Department, Subject, Teacher } from '../components/data';
 
 const ManageDepartmentsPage = () => {
   const [departmentList, setDepartmentList] = useState<Department[]>([]);
   const [teacherList, setTeacherList] = useState<Teacher[]>([]);
   const [subjectList, setSubjectList] = useState<Subject[]>([]);
-  const [semesterList, setSemesterList] = useState<Semester[]>([]);
   const [activeTab, setActiveTab] = useState<'departments' | 'subjects'>('departments');
-  
-  // Department management states
-  const [isEditingDepartment, setIsEditingDepartment] = useState<string | null>(null);
-  const [isEditingTeacher, setIsEditingTeacher] = useState<string | null>(null);
-  const [selectedDepartmentFilter, setSelectedDepartmentFilter] = useState<string>('all');
-  const [showAddDepartmentModal, setShowAddDepartmentModal] = useState(false);
-  const [showAddTeacherModal, setShowAddTeacherModal] = useState(false);
-  const [editingDepartmentData, setEditingDepartmentData] = useState<{name: string, shortName: string, offersBSDegree: boolean}>({name: '', shortName: '', offersBSDegree: false});
-  const [editingTeacherData, setEditingTeacherData] = useState<{name: string, shortName: string, departmentId: string, designation?: string, contactNumber?: string, email?: string, dateOfBirth?: string, seniority?: number, cnic?: string, personnelNumber?: string}>({name: '', shortName: '', departmentId: '', designation: '', contactNumber: '', email: '', dateOfBirth: '', seniority: 0, cnic: '', personnelNumber: ''});
-  
-  // Subject management states
-  const [selectedSubjectDepartment, setSelectedSubjectDepartment] = useState<string>('all');
-  const [selectedSemesterLevel, setSelectedSemesterLevel] = useState<number>(1);
-  const [isEditingSubject, setIsEditingSubject] = useState<string | null>(null);
-  const [editingSubjectData, setEditingSubjectData] = useState<{name: string, shortName: string, code: string, creditHours: number, color: string, departmentId: string, semesterLevel: number, isCore: boolean}>({name: '', shortName: '', code: '', creditHours: 3, color: 'bg-gray-100', departmentId: '', semesterLevel: 1, isCore: true});
-  
-  // Overview editing states
-  const [editingOverviewDept, setEditingOverviewDept] = useState<string | null>(null);
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -44,11 +23,10 @@ const ManageDepartmentsPage = () => {
       setLoading(true);
       setError(null);
       
-      const [departmentsRes, teachersRes, subjectsRes, semestersRes] = await Promise.all([
+      const [departmentsRes, teachersRes, subjectsRes] = await Promise.all([
         fetch('/api/departments'),
         fetch('/api/teachers'),
-        fetch('/api/subjects'),
-        fetch('/api/semesters')
+        fetch('/api/subjects')
       ]);
 
       if (!departmentsRes.ok || !teachersRes.ok) {
@@ -57,20 +35,18 @@ const ManageDepartmentsPage = () => {
           const initRes = await fetch('/api/init-data', { method: 'POST' });
           if (initRes.ok) {
             // Retry loading after initialization
-            const [newDepartmentsRes, newTeachersRes, newSubjectsRes, newSemestersRes] = await Promise.all([
+            const [newDepartmentsRes, newTeachersRes, newSubjectsRes] = await Promise.all([
               fetch('/api/departments'),
               fetch('/api/teachers'),
-              fetch('/api/subjects'),
-              fetch('/api/semesters')
+              fetch('/api/subjects')
             ]);
             const departmentsData = await newDepartmentsRes.json();
             const teachersData = await newTeachersRes.json();
             const subjectsData = await newSubjectsRes.json();
-            const semestersData = await newSemestersRes.json();
             setDepartmentList(departmentsData);
             setTeacherList(teachersData);
             setSubjectList(subjectsData);
-            setSemesterList(semestersData);
+            // Note: semestersData fetched but not used for this simplified version
           } else {
             throw new Error('Failed to initialize data');
           }
@@ -81,11 +57,10 @@ const ManageDepartmentsPage = () => {
         const departmentsData = await departmentsRes.json();
         const teachersData = await teachersRes.json();
         const subjectsData = subjectsRes.ok ? await subjectsRes.json() : [];
-        const semestersData = semestersRes.ok ? await semestersRes.json() : [];
         setDepartmentList(departmentsData);
         setTeacherList(teachersData);
         setSubjectList(subjectsData);
-        setSemesterList(semestersData);
+        // Note: semestersData fetched but not used for this simplified version
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
@@ -216,44 +191,11 @@ const ManageDepartmentsPage = () => {
                 <div>
                   <h2 className="text-xl font-semibold mb-4">Subject Management</h2>
                   
-                  {/* Filters */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Department</label>
-                      <select
-                        value={selectedSubjectDepartment}
-                        onChange={(e) => setSelectedSubjectDepartment(e.target.value)}
-                        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        <option value="all">All Departments</option>
-                        {departmentList.map(dept => (
-                          <option key={dept.id} value={dept.id}>{dept.name}</option>
-                        ))}
-                      </select>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-1">Semester Level</label>
-                      <select
-                        value={selectedSemesterLevel}
-                        onChange={(e) => setSelectedSemesterLevel(parseInt(e.target.value))}
-                        className="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                      >
-                        {[1, 2, 3, 4, 5, 6, 7, 8].map(level => (
-                          <option key={level} value={level}>Semester {level}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
+                  {/* Note: Filters removed for simplification */}
 
                   {/* Subjects List */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {subjectList
-                      .filter(subject => {
-                        const deptMatch = selectedSubjectDepartment === 'all' || subject.departmentId === selectedSubjectDepartment;
-                        const semesterMatch = subject.semesterLevel === selectedSemesterLevel;
-                        return deptMatch && semesterMatch;
-                      })
-                      .map((subject) => (
+                    {subjectList.map((subject) => (
                         <div key={subject.id} className="bg-white border rounded-lg p-4">
                           <div className="font-medium text-gray-800">{subject.name}</div>
                           <div className="text-sm text-gray-600">({subject.shortName})</div>
@@ -269,13 +211,9 @@ const ManageDepartmentsPage = () => {
                       ))}
                   </div>
 
-                  {subjectList.filter(subject => {
-                    const deptMatch = selectedSubjectDepartment === 'all' || subject.departmentId === selectedSubjectDepartment;
-                    const semesterMatch = subject.semesterLevel === selectedSemesterLevel;
-                    return deptMatch && semesterMatch;
-                  }).length === 0 && (
+                  {subjectList.length === 0 && (
                     <div className="text-center py-8 text-gray-500">
-                      No subjects found for the selected filters.
+                      No subjects found.
                     </div>
                   )}
                 </div>
@@ -312,42 +250,7 @@ const ManageDepartmentsPage = () => {
         )}
       </div>
 
-      {/* Modals */}
-      <AddDepartmentModal
-        isOpen={showAddDepartmentModal}
-        onClose={() => setShowAddDepartmentModal(false)}
-        onAdd={(newDept) => {
-          const newDepartment: Department = {
-            id: `d${Date.now()}`,
-            name: newDept.name,
-            shortName: newDept.shortName,
-            offersBSDegree: newDept.offersBSDegree
-          };
-          setDepartmentList([...departmentList, newDepartment]);
-        }}
-      />
-      
-      <AddTeacherModal
-        isOpen={showAddTeacherModal}
-        onClose={() => setShowAddTeacherModal(false)}
-        onAdd={(newTeacher) => {
-          const newTeacherObj: Teacher = {
-            id: `t${Date.now()}`,
-            name: newTeacher.name,
-            shortName: newTeacher.shortName,
-            departmentId: newTeacher.departmentId,
-            designation: newTeacher.designation,
-            contactNumber: newTeacher.contactNumber,
-            email: newTeacher.email,
-            dateOfBirth: newTeacher.dateOfBirth,
-            seniority: newTeacher.seniority,
-            cnic: newTeacher.cnic,
-            personnelNumber: newTeacher.personnelNumber
-          };
-          setTeacherList([...teacherList, newTeacherObj]);
-        }}
-        departments={departmentList}
-      />
+      {/* Note: Modals removed for simplification */}
     </div>
   );
 };
