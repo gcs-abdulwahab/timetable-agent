@@ -222,3 +222,49 @@ npm run build
 - Ensure department IDs exist in system
 
 For technical details, see the import system documentation in `app/lib/import/README.md`.
+
+## Timetable Validation System
+
+This application includes a comprehensive validation system to ensure data integrity and prevent scheduling conflicts.
+
+### Features
+
+- **Automated Conflict Detection**: Prevents double-booking of rooms and teachers
+- **Data Integrity Checks**: Validates references between data files
+- **Constraint Validation**: Enforces day patterns, period ranges, and department-specific rules
+- **Snapshot Testing**: Guards against unintentional data structure changes
+- **CI/CD Integration**: Automatic validation in GitHub Actions
+
+### Quick Commands
+
+```bash
+# Run basic validation
+npm run validate
+
+# Generate detailed validation report
+npm run validate:report
+
+# Run snapshot tests
+npm run test:snapshot
+
+# Run full validation suite
+npm run test:validation
+```
+
+### Validation Rules
+
+- **Room Conflicts**: No two classes in same room at same time
+- **Teacher Conflicts**: No teacher teaches multiple classes simultaneously  
+- **Day Patterns**: Only Monday-Saturday allowed
+- **Period Ranges**: Periods 1-7 (ts1-ts7) allowed
+- **Chemistry Restriction**: Chemistry subjects only in periods 3-6
+- **Data References**: All IDs must reference existing entities
+
+### CI/CD Integration
+
+Validation runs automatically on:
+- Pushes to main/develop branches
+- Pull requests to main/develop branches
+- Changes to data/, scripts/, or __tests__ directories
+
+For detailed documentation, see `docs/validation.md`.
