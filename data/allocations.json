@@ -63,11 +63,35 @@
     "semesterId": "sem1"
   },
   {
-    "id": "new-1",
+    "id": "edited-2",
     "subjectId": "bba102",
     "teacherId": "t70",
-    "timeSlotId": "ts3",
+    "timeSlotId": "ts4",
     "day": "Monday",
+    "semesterId": "sem1"
+  },
+  {
+    "id": "edited-3",
+    "subjectId": "bba102",
+    "teacherId": "t70",
+    "timeSlotId": "ts4",
+    "day": "Tuesday",
+    "semesterId": "sem1"
+  },
+  {
+    "id": "edited-0",
+    "subjectId": "bba101",
+    "teacherId": "t70",
+    "timeSlotId": "ts2",
+    "day": "Monday",
+    "semesterId": "sem1"
+  },
+  {
+    "id": "edited-1",
+    "subjectId": "bba101",
+    "teacherId": "t70",
+    "timeSlotId": "ts2",
+    "day": "Tuesday",
     "semesterId": "sem1"
   }
 ]
