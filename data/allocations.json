@@ -36,28 +36,28 @@
     "semesterId": "sem3"
   },
   {
-    "id": "edited-13",
+    "id": "edited-4",
     "subjectId": "cs101",
     "teacherId": "t2",
-    "timeSlotId": "ts2",
+    "timeSlotId": "ts4",
     "day": "Monday",
     "room": "R-44",
     "semesterId": "sem1"
   },
   {
-    "id": "edited-14",
+    "id": "edited-5",
     "subjectId": "cs101",
     "teacherId": "t2",
-    "timeSlotId": "ts2",
+    "timeSlotId": "ts4",
     "day": "Tuesday",
     "room": "R-44",
     "semesterId": "sem1"
   },
   {
-    "id": "edited-15",
+    "id": "edited-6",
     "subjectId": "cs101",
     "teacherId": "t2",
-    "timeSlotId": "ts2",
+    "timeSlotId": "ts4",
     "day": "Wednesday",
     "room": "R-44",
     "semesterId": "sem1"
@@ -68,32 +68,7 @@
     "teacherId": "t70",
     "timeSlotId": "ts4",
     "day": "Monday",
-    "semesterId": "sem1"
-  },
-  {
-    "id": "edited-3",
-    "subjectId": "bba102",
-    "teacherId": "t70",
-    "timeSlotId": "ts4",
-    "day": "Tuesday",
-    "semesterId": "sem1"
-  },
-  {
-    "id": "edited-0",
-    "subjectId": "bba101",
-    "teacherId": "t70",
-    "timeSlotId": "ts2",
-    "day": "Monday",
-    "room": "136",
-    "semesterId": "sem1"
-  },
-  {
-    "id": "edited-1",
-    "subjectId": "bba101",
-    "teacherId": "t70",
-    "timeSlotId": "ts2",
-    "day": "Tuesday",
-    "room": "136",
+    "room": "R-39",
     "semesterId": "sem1"
   }
 ]

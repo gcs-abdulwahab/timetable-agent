@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Navigation from '../components/Navigation';
 import RoomAvailability from '../components/room-management/RoomAvailability';
 import RoomManagementComponent from '../components/room-management/RoomManagementComponent';
 
@@ -15,6 +16,7 @@ export default function RoomManagement() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <Navigation />
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -50,7 +52,7 @@ export default function RoomManagement() {
               >
                 Room Availability
               </button>
-            </nav>
+            </nav>  
           </div>
         </div>
 

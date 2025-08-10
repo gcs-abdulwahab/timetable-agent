@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { Department } from '../data';
+import { useState, useEffect } from 'react';
+import { Department, Teacher } from '../data';
 import Modal from './Modal';
 
 interface AddTeacherModalProps {
@@ -11,18 +11,29 @@ interface AddTeacherModalProps {
     name: string; 
     shortName?: string; 
     departmentId: string;
-    designation: string;
+    designation?: string;
     contactNumber?: string;
     email?: string;
     dateOfBirth?: string;
     seniority?: number;
     cnic?: string;
     personnelNumber?: string;
-  }) => void;
+  } | Teacher) => void;
   departments: Department[];
+  mode?: 'add' | 'edit';
+  initialTeacher?: Teacher | null;
+  preSelectedDepartmentId?: string;
 }
 
-const AddTeacherModal = ({ isOpen, onClose, onAdd, departments }: AddTeacherModalProps) => {
+const AddTeacherModal = ({ 
+  isOpen, 
+  onClose, 
+  onAdd, 
+  departments, 
+  mode = 'add', 
+  initialTeacher = null, 
+  preSelectedDepartmentId 
+}: AddTeacherModalProps) => {
   const [name, setName] = useState('');
   const [shortName, setShortName] = useState('');
   const [departmentId, setDepartmentId] = useState('');
@@ -33,6 +44,24 @@ const AddTeacherModal = ({ isOpen, onClose, onAdd, departments }: AddTeacherModa
   const [seniority, setSeniority] = useState<number>(0);
   const [cnic, setCnic] = useState('');
   const [personnelNumber, setPersonnelNumber] = useState('');
+
+  // Initialize form with existing teacher data or pre-selected department
+  useEffect(() => {
+    if (mode === 'edit' && initialTeacher) {
+      setName(initialTeacher.name || '');
+      setShortName(initialTeacher.shortName || '');
+      setDepartmentId(initialTeacher.departmentId || '');
+      setDesignation(initialTeacher.designation || '');
+      setContactNumber(initialTeacher.contactNumber || '');
+      setEmail(initialTeacher.email || '');
+      setDateOfBirth(initialTeacher.dateOfBirth || '');
+      setSeniority(initialTeacher.seniority || 0);
+      setCnic(initialTeacher.cnic || '');
+      setPersonnelNumber(initialTeacher.personnelNumber || '');
+    } else if (mode === 'add' && preSelectedDepartmentId) {
+      setDepartmentId(preSelectedDepartmentId);
+    }
+  }, [mode, initialTeacher, preSelectedDepartmentId]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -78,7 +107,7 @@ const AddTeacherModal = ({ isOpen, onClose, onAdd, departments }: AddTeacherModa
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Add New Teacher">
+    <Modal isOpen={isOpen} onClose={handleClose} title={mode === 'edit' ? 'Edit Teacher' : 'Add New Teacher'}>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label htmlFor="teacher-name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -241,7 +270,7 @@ const AddTeacherModal = ({ isOpen, onClose, onAdd, departments }: AddTeacherModa
             type="submit"
             className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors"
           >
-            Add Teacher
+            {mode === 'edit' ? 'Update Teacher' : 'Add Teacher'}
           </button>
         </div>
       </form>

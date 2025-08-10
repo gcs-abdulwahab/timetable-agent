@@ -105,6 +105,19 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     setLocalTimetableEntries(entries || []);
   }, [entries]);
 
+  // Initialize semester when modal opens
+  useEffect(() => {
+    if (showAddEntry && activeSemesterTab && !addEntryData.selectedSemester) {
+      const activeSemester = semesters.find(s => s.id === activeSemesterTab);
+      if (activeSemester) {
+        setAddEntryData(prev => ({
+          ...prev,
+          selectedSemester: activeSemester.id
+        }));
+      }
+    }
+  }, [showAddEntry, activeSemesterTab, addEntryData.selectedSemester]);
+
   // Debug modal state changes (can be removed in production)
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -864,6 +877,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   }) => {
     const daysDisplay = formatDaysDisplay(entries);
     const isConflicted = hasConflicts(entries);
+    const hasRoom = entries[0]?.room && entries[0].room.trim() !== '';
     
     // Use parseDragId helper for consistent ID comparison
     const isDragging = dragData && (() => {
@@ -874,12 +888,19 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
              dragData.sourceTimeSlotId === parsedId.timeSlotId;
     })();
     
+    // Determine background color: yellow if no room, otherwise subject color or default
+    let bgColor = subject.color || 'bg-gray-100';
+    if (!hasRoom) {
+      bgColor = 'bg-yellow-200';
+    }
+    
     return (
       <div
         draggable="true"
         onDragStart={(e) => handleDragStart(e, groupKey, departmentId, timeSlotId, entries)}
         onDragEnd={handleDragEnd}
-        className={`p-1 rounded text-xs border ${subject.color || 'bg-gray-100'} cursor-grab hover:shadow-md hover:scale-105 transition-all duration-200 relative group ${isDragging ? 'opacity-50 z-50' : ''} ${isConflicted ? 'border-red-500 border-2' : ''}`}
+        className={`p-1 rounded text-xs border ${bgColor} cursor-grab hover:shadow-md hover:scale-105 transition-all duration-200 relative group ${isDragging ? 'opacity-50 z-50' : ''} ${isConflicted ? 'border-red-500 border-2' : ''} ${!hasRoom ? 'border-yellow-400 border-2' : ''}`}
+        title={!hasRoom ? 'Room not assigned' : undefined}
       >
         {/* Drag area - excludes the edit button */}
         <div className="w-full h-full">
@@ -956,9 +977,13 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
           <div className="text-gray-600 truncate" style={{ fontSize: '8px', lineHeight: '1.1' }}>
             {teacher.shortName}
           </div>
-          {entries[0].room && (
+          {entries[0].room ? (
             <div className="text-gray-500 text-xs" style={{ fontSize: '8px', lineHeight: '1.1' }}>
               {entries[0].room}
+            </div>
+          ) : (
+            <div className="text-yellow-700 text-xs font-medium" style={{ fontSize: '8px', lineHeight: '1.1' }}>
+              No room assigned
             </div>
           )}
         </div>
@@ -1129,7 +1154,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                   // Pre-fill the modal with department and time slot information
                   setAddEntryData(prev => ({
                     ...prev,
-                    selectedSemester: activeSemester?.name || '',
+                    selectedSemester: activeSemester?.id || '', // Use semester ID, not name
                     selectedDepartment: department.id, // Use department ID, not name
                     selectedTimeSlot: timeSlotId,
                     selectedDays: [] // Let user select days
@@ -1195,27 +1220,11 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
       )}
 
       <div className="mb-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold mb-4 text-gray-800">Timetable</h1>
-            <div className="text-xs text-gray-500">
-              Updates: {updateCounter} | Total Entries: {mounted ? (localTimetableEntries?.length || 0) : '...'}
-            </div>
+        <div>
+          <h1 className="text-3xl font-bold mb-4 text-gray-800">Timetable</h1>
+          <div className="text-xs text-gray-500">
+            Updates: {updateCounter} | Total Entries: {mounted ? (localTimetableEntries?.length || 0) : '...'}
           </div>
-          <button
-            onClick={() => {
-              // Pre-fill with the currently active semester tab
-              const activeSemester = semesters.find(s => s.id === activeSemesterTab);
-              setAddEntryData(prev => ({
-                ...prev,
-                selectedSemester: activeSemester?.name || ''
-              }));
-              setShowAddEntry(true);
-            }}
-            className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors"
-          >
-            + Add Entry
-          </button>
         </div>
       </div>
 
@@ -1486,11 +1495,59 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                   }}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 >
-                  {subjects.map(subject => (
-                    <option key={subject.id} value={subject.id}>
-                      {subject.name}
-                    </option>
-                  ))}
+                  {(() => {
+                    // Get the editing entry's program/department and semester context
+                    const editingEntry = editingData?.entries[0];
+                    const entryDepartment = editingEntry ? 
+                      departments.find(d => visibleDepartments.some(vd => vd.id === d.id)) : null;
+                    const entrySemesterId = editingEntry?.semesterId || activeSemesterTab;
+                    
+                    // Filter subjects based on the relevant program and semester
+                    let filteredSubjects = subjects;
+                    
+                    // Filter by semester if available
+                    if (entrySemesterId) {
+                      filteredSubjects = filteredSubjects.filter(subject => 
+                        subject.semesterId === entrySemesterId
+                      );
+                    }
+                    
+                    // For department-specific filtering, we need to consider which department
+                    // this timetable entry belongs to. Since entries are organized by department columns,
+                    // we filter subjects that could be offered by departments in the current semester view
+                    if (visibleDepartments.length > 0) {
+                      filteredSubjects = filteredSubjects.filter(subject =>
+                        visibleDepartments.some(dept => dept.id === subject.departmentId) ||
+                        // Also include subjects that are taught by departments in the visible list
+                        (subject.teachingDepartmentIds && 
+                         subject.teachingDepartmentIds.some(teachingDeptId => 
+                           visibleDepartments.some(dept => dept.id === teachingDeptId)
+                         ))
+                      );
+                    }
+                    
+                    // Ensure current subject is always included even if it doesn't match filters
+                    const currentSubject = subjects.find(s => s.id === editFormData.subjectId);
+                    if (currentSubject && !filteredSubjects.some(s => s.id === currentSubject.id)) {
+                      filteredSubjects = [currentSubject, ...filteredSubjects];
+                    }
+                    
+                    return filteredSubjects.map(subject => (
+                      <option key={subject.id} value={subject.id}>
+                        {subject.name}{subject.id === editFormData.subjectId && 
+                         !subjects.filter(s => 
+                           (entrySemesterId ? s.semesterId === entrySemesterId : true) &&
+                           (visibleDepartments.length > 0 ? 
+                             visibleDepartments.some(dept => dept.id === s.departmentId) ||
+                             (s.teachingDepartmentIds && 
+                              s.teachingDepartmentIds.some(teachingDeptId => 
+                                visibleDepartments.some(dept => dept.id === teachingDeptId)
+                              ))
+                             : true)
+                         ).some(s => s.id === subject.id) ? ' (Current)' : ''}
+                      </option>
+                    ));
+                  })()}
                 </select>
               </div>
               
@@ -1702,27 +1759,20 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
             </div>
             
             <div className="space-y-4">
-              {/* Semester Selection */}
+              {/* Semester Selection - Read Only */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Semester</label>
-                <select
-                  value={addEntryData.selectedSemester}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedSemester: e.target.value,
-                      selectedSubject: '', // Reset subject when semester changes
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Semester</option>
-                  {getActiveSemesters().map(semester => (
-                    <option key={semester.id} value={semester.name}>
-                      {semester.name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={(() => {
+                    const semester = semesters.find(s => s.id === addEntryData.selectedSemester);
+                    return semester ? formatSemesterLabel(semester) : 'No semester selected';
+                  })()}
+                  readOnly
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-50 cursor-not-allowed"
+                  placeholder="Semester will be set automatically"
+                />
+                <p className="text-xs text-gray-500 mt-1">Semester is automatically set based on the current active tab</p>
               </div>
 
               {/* Department Selection */}

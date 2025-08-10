@@ -63,8 +63,8 @@ export interface Room {
   type?: 'Classroom' | 'Laboratory' | 'Auditorium' | 'Conference' | 'Other';
   building?: string;
   floor?: number;
-  hasProjector?: boolean;
-  hasAC?: boolean;
+  hasProjector?: boolean; // Default: false (only rooms "2" and "3" should have projector)
+  hasAC?: boolean; // Default: false (only rooms "2" and "3" should have AC)
   description?: string;
   programTypes: ('Inter' | 'BS')[]; // Which programs can use this room
   primaryDepartmentId?: string; // Primary department for BS rooms

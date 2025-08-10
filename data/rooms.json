@@ -6,13 +6,13 @@
     "building": "Main Academic Block",
     "floor": 1,
     "hasProjector": true,
-    "hasAC": false,
+    "hasAC": true,
     "description": "",
     "programTypes": [
       "BS"
     ],
     "primaryDepartmentId": "d12",
-    "availableForOtherDepartments": true,
+    "availableForOtherDepartments": false,
     "id": "r-6"
   },
   {
@@ -22,8 +22,8 @@
     "type": "Classroom",
     "building": "Intermediate Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -37,8 +37,8 @@
     "type": "Classroom",
     "building": "Intermediate Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -52,8 +52,8 @@
     "type": "Classroom",
     "building": "Intermediate Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -67,8 +67,8 @@
     "type": "Classroom",
     "building": "Intermediate Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -82,8 +82,8 @@
     "type": "Classroom",
     "building": "Intermediate Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -97,8 +97,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -112,8 +112,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -127,8 +127,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -142,8 +142,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -157,8 +157,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -172,8 +172,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -187,8 +187,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -202,8 +202,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -217,8 +217,8 @@
     "type": "Classroom",
     "building": "Intermediate Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -232,8 +232,8 @@
     "type": "Classroom",
     "building": "Intermediate Block C",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -247,8 +247,8 @@
     "type": "Classroom",
     "building": "Intermediate Block C",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -262,8 +262,8 @@
     "type": "Classroom",
     "building": "Intermediate Block C",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -277,8 +277,8 @@
     "type": "Classroom",
     "building": "Intermediate Block C",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -292,8 +292,8 @@
     "type": "Classroom",
     "building": "Intermediate Block D",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -307,8 +307,8 @@
     "type": "Classroom",
     "building": "Intermediate Block D",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -322,8 +322,8 @@
     "type": "Classroom",
     "building": "Intermediate Block D",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -337,8 +337,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -352,8 +352,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -367,8 +367,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -382,8 +382,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -397,8 +397,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -412,8 +412,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -427,8 +427,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -442,8 +442,8 @@
     "type": "Classroom",
     "building": "Intermediate Block E",
     "floor": 5,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "Intermediate classroom",
     "programTypes": [
       "Inter"
@@ -457,8 +457,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -472,8 +472,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -487,8 +487,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -502,8 +502,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -517,8 +517,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -532,8 +532,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -547,8 +547,8 @@
     "type": "Classroom",
     "building": "BS Block A",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -562,8 +562,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -577,8 +577,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -592,8 +592,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -607,8 +607,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -622,8 +622,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -637,8 +637,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -652,8 +652,8 @@
     "type": "Classroom",
     "building": "BS Block B",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -667,8 +667,8 @@
     "type": "Classroom",
     "building": "BS Block C",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -712,8 +712,8 @@
     "type": "Classroom",
     "building": "BS Block C",
     "floor": 1,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -727,8 +727,8 @@
     "type": "Classroom",
     "building": "BS Block D",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -742,8 +742,8 @@
     "type": "Classroom",
     "building": "BS Block D",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -757,8 +757,8 @@
     "type": "Classroom",
     "building": "BS Block D",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -772,8 +772,8 @@
     "type": "Classroom",
     "building": "BS Block D",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -787,8 +787,8 @@
     "type": "Classroom",
     "building": "BS Block D",
     "floor": 2,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -802,8 +802,8 @@
     "type": "Classroom",
     "building": "BS Block E",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -817,8 +817,8 @@
     "type": "Classroom",
     "building": "BS Block E",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -832,8 +832,8 @@
     "type": "Classroom",
     "building": "BS Block E",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -847,8 +847,8 @@
     "type": "Classroom",
     "building": "BS Block E",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -862,8 +862,8 @@
     "type": "Classroom",
     "building": "BS Block E",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -877,8 +877,8 @@
     "type": "Classroom",
     "building": "BS Block E",
     "floor": 3,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -892,8 +892,8 @@
     "type": "Classroom",
     "building": "BS Block F",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -907,8 +907,8 @@
     "type": "Classroom",
     "building": "BS Block F",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -922,8 +922,8 @@
     "type": "Classroom",
     "building": "BS Block F",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -937,8 +937,8 @@
     "type": "Classroom",
     "building": "BS Block F",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -952,8 +952,8 @@
     "type": "Classroom",
     "building": "BS Block F",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"
@@ -967,8 +967,8 @@
     "type": "Classroom",
     "building": "BS Block F",
     "floor": 4,
-    "hasProjector": true,
-    "hasAC": true,
+    "hasProjector": false,
+    "hasAC": false,
     "description": "BS program classroom",
     "programTypes": [
       "BS"

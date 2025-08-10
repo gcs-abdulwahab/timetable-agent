@@ -11,6 +11,7 @@ import AddTeacherModal from '../components/ui/AddTeacherModal';
 import DepartmentSemesterModal from '../components/ui/DepartmentSemesterModal';
 import SemesterChipsManager from '../components/ui/SemesterChipsManager';
 import SubjectModal from '../components/ui/SubjectModal';
+import ConfirmationDialog from '../components/ui/ConfirmationDialog';
 import { Badge } from '../components/ui/badge';
 import { Toggle } from '@/components/ui/toggle';
 
@@ -43,6 +44,23 @@ const ManageDepartmentsPage = () => {
   // Toggle states for semester management
   const [evenSemestersToggle, setEvenSemestersToggle] = useState(false);
   const [oddSemestersToggle, setOddSemestersToggle] = useState(false);
+  
+  // Confirmation dialog state
+  const [confirmationDialog, setConfirmationDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+    type: 'even' | 'odd';
+    pressed: boolean;
+  }>({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: () => {},
+    type: 'even',
+    pressed: false
+  });
   
   
   const [loading, setLoading] = useState(true);
@@ -317,15 +335,22 @@ const ManageDepartmentsPage = () => {
     
     const confirmMessage = `Are you sure you want to ${action} ${typeLabel.toLowerCase()} semesters (${targetSemesters.join(', ')}) for all ${bsDepartments.length} BS degree departments?\n\nDepartments affected:\n${bsDepartments.map(d => `• ${d.name}`).join('\n')}\n\nThis will ${action} the selected semester levels across all these departments.`;
     
-    if (!confirm(confirmMessage)) {
-      // Reset toggle state if user cancels
-      if (type === 'even') {
-        setEvenSemestersToggle(!pressed);
-      } else {
-        setOddSemestersToggle(!pressed);
-      }
-      return;
-    }
+    // Show custom confirmation dialog
+    setConfirmationDialog({
+      isOpen: true,
+      title: `${action.charAt(0).toUpperCase() + action.slice(1)} ${typeLabel} Semesters`,
+      message: confirmMessage,
+      type,
+      pressed,
+      onConfirm: () => performBulkSemesterToggle(type, pressed)
+    });
+  };
+  
+  // Perform the actual bulk semester toggle operation
+  const performBulkSemesterToggle = async (type: 'even' | 'odd', pressed: boolean) => {
+    const bsDepartments = departmentList.filter(d => d.offersBSDegree);
+    const targetSemesters = type === 'even' ? [2, 4, 6, 8] : [1, 3, 5, 7];
+    const typeLabel = type.charAt(0).toUpperCase() + type.slice(1);
 
     const originalDepartments = [...departmentList];
     
@@ -385,11 +410,25 @@ const ManageDepartmentsPage = () => {
           <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-800">Manage Departments & Subjects</h1>
             <div className="flex items-center space-x-2">
-              {/* Bulk Semester Toggle Buttons */}
+              {/* Bulk Semester Toggle Section */}
               {departmentList.filter(d => d.offersBSDegree).length > 1 && (
-                <>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">📊 Even (2,4,6,8):</span>
+                <div className="flex flex-col lg:flex-row lg:items-center gap-4 bg-gradient-to-r from-blue-50 to-green-50 px-4 py-3 rounded-lg border border-blue-200">
+                  <div className="flex items-center space-x-2 text-sm text-gray-700 font-medium">
+                    <span className="text-blue-600">🎯</span>
+                    <span>Bulk Semester Management:</span>
+                  </div>
+                  
+                  {/* Even Semesters Toggle */}
+                  <div className="flex items-center space-x-3 bg-white px-3 py-2 rounded-md shadow-sm border">
+                    <div className="flex flex-col items-center">
+                      <span className="text-xs font-medium text-indigo-700 mb-1">EVEN</span>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-mono">2</span>
+                        <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-mono">4</span>
+                        <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-mono">6</span>
+                        <span className="text-xs text-indigo-600 bg-indigo-100 px-2 py-1 rounded-full font-mono">8</span>
+                      </div>
+                    </div>
                     <Toggle
                       pressed={evenSemestersToggle}
                       onPressedChange={(pressed) => {
@@ -397,13 +436,24 @@ const ManageDepartmentsPage = () => {
                         handleBulkSemesterToggle('even', pressed);
                       }}
                       aria-label="Toggle even semesters for all BS departments"
-                      className="data-[state=on]:bg-indigo-600"
+                      className="data-[state=on]:bg-indigo-600 data-[state=on]:border-indigo-600 transition-all duration-200"
+                      size="sm"
                     >
-                      Even
+                      {evenSemestersToggle ? '✓ ON' : 'OFF'}
                     </Toggle>
                   </div>
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">📊 Odd (1,3,5,7):</span>
+                  
+                  {/* Odd Semesters Toggle */}
+                  <div className="flex items-center space-x-3 bg-white px-3 py-2 rounded-md shadow-sm border">
+                    <div className="flex flex-col items-center">
+                      <span className="text-xs font-medium text-teal-700 mb-1">ODD</span>
+                      <div className="flex items-center space-x-1">
+                        <span className="text-xs text-teal-600 bg-teal-100 px-2 py-1 rounded-full font-mono">1</span>
+                        <span className="text-xs text-teal-600 bg-teal-100 px-2 py-1 rounded-full font-mono">3</span>
+                        <span className="text-xs text-teal-600 bg-teal-100 px-2 py-1 rounded-full font-mono">5</span>
+                        <span className="text-xs text-teal-600 bg-teal-100 px-2 py-1 rounded-full font-mono">7</span>
+                      </div>
+                    </div>
                     <Toggle
                       pressed={oddSemestersToggle}
                       onPressedChange={(pressed) => {
@@ -411,12 +461,18 @@ const ManageDepartmentsPage = () => {
                         handleBulkSemesterToggle('odd', pressed);
                       }}
                       aria-label="Toggle odd semesters for all BS departments"
-                      className="data-[state=on]:bg-teal-600"
+                      className="data-[state=on]:bg-teal-600 data-[state=on]:border-teal-600 transition-all duration-200"
+                      size="sm"
                     >
-                      Odd
+                      {oddSemestersToggle ? '✓ ON' : 'OFF'}
                     </Toggle>
                   </div>
-                </>
+                  
+                  {/* Info text */}
+                  <div className="text-xs text-gray-600 lg:ml-auto">
+                    Affects {departmentList.filter(d => d.offersBSDegree).length} BS departments
+                  </div>
+                </div>
               )}
               {/* Manage Semesters Button */}
               {departmentList.length > 0 && (
@@ -562,7 +618,7 @@ Enter department number:`);
                     </button>
                   </div>
                   
-                  <p className="text-gray-600 mb-4">Click on department cards below to view their courses in active semesters on a separate page:</p>
+                  <p className="text-gray-600 mb-4">Click on department cards to view their courses, or click on the teacher count (📚) to manage teachers for that department:</p>
                   
                   {/* Editable Department Cards */}
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -599,8 +655,15 @@ Enter department number:`);
                               )}
                             </div>
                             <div className="text-sm text-gray-600">({dept.shortName})</div>
-                            <div className="text-sm text-blue-600 mt-1">
-                              {teacherCount} teacher{teacherCount !== 1 ? 's' : ''}
+                            <div 
+                              className="text-sm text-blue-600 mt-1 cursor-pointer hover:text-blue-800 hover:underline transition-colors"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                window.location.href = `/manage-teachers?departmentId=${dept.id}`;
+                              }}
+                              title="Click to manage teachers for this department"
+                            >
+                              📚 {teacherCount} teacher{teacherCount !== 1 ? 's' : ''}
                             </div>
                             <div className="text-sm text-green-600">
                               {subjectCount} subject{subjectCount !== 1 ? 's' : ''}
@@ -997,6 +1060,50 @@ Enter department number:`);
           }
         }}
       />
+      
+      {/* Confirmation Dialog for Bulk Semester Toggles */}
+      <ConfirmationDialog
+        isOpen={confirmationDialog.isOpen}
+        onClose={() => {
+          // Reset toggle state if user cancels
+          if (confirmationDialog.type === 'even') {
+            setEvenSemestersToggle(!confirmationDialog.pressed);
+          } else {
+            setOddSemestersToggle(!confirmationDialog.pressed);
+          }
+          setConfirmationDialog({ ...confirmationDialog, isOpen: false });
+        }}
+        onConfirm={confirmationDialog.onConfirm}
+        title={confirmationDialog.title}
+        message={confirmationDialog.message}
+        confirmText={confirmationDialog.pressed ? 'Enable' : 'Disable'}
+        cancelText="Cancel"
+        variant={confirmationDialog.pressed ? 'default' : 'destructive'}
+        icon={
+          <div className={`mx-auto flex h-12 w-12 items-center justify-center rounded-full ${
+            confirmationDialog.pressed ? 'bg-green-100' : 'bg-orange-100'
+          }`}>
+            <span className={`text-2xl ${
+              confirmationDialog.pressed ? 'text-green-600' : 'text-orange-600'
+            }`}>
+              {confirmationDialog.pressed ? '✓' : '⚠️'}
+            </span>
+          </div>
+        }
+      >
+        {/* Additional content showing affected departments */}
+        <div className="bg-gray-50 rounded-lg p-3 max-h-32 overflow-y-auto">
+          <p className="text-sm font-medium text-gray-700 mb-2">Departments affected:</p>
+          <div className="space-y-1">
+            {departmentList.filter(d => d.offersBSDegree).map(dept => (
+              <div key={dept.id} className="text-sm text-gray-600 flex items-center">
+                <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                {dept.name} ({dept.shortName})
+              </div>
+            ))}
+          </div>
+        </div>
+      </ConfirmationDialog>
     </div>
   );
 };

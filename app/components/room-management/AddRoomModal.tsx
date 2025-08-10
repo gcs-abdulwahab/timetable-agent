@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Room, departments } from '../data';
 import BuildingSelect from '../ui/BuildingSelect';
 import { Button } from '../ui/button';
@@ -22,20 +22,56 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
   editingRoom
 }) => {
   const [formData, setFormData] = useState<Omit<Room, 'id'>>({
-    name: editingRoom?.name || '',
-    capacity: editingRoom?.capacity || 0,
-    type: editingRoom?.type || 'Classroom',
-    building: editingRoom?.building || '',
-    floor: editingRoom?.floor || 1,
-    hasProjector: editingRoom?.hasProjector || false,
-    hasAC: editingRoom?.hasAC || false,
-    description: editingRoom?.description || '',
-    programTypes: editingRoom?.programTypes || ['BS'],
-    primaryDepartmentId: editingRoom?.primaryDepartmentId || '',
-    availableForOtherDepartments: editingRoom?.availableForOtherDepartments ?? true
+    name: '',
+    capacity: 0,
+    type: 'Classroom',
+    building: '',
+    floor: 1,
+    hasProjector: false,
+    hasAC: false,
+    description: '',
+    programTypes: ['BS'],
+    primaryDepartmentId: '',
+    availableForOtherDepartments: true
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Populate form when editingRoom changes
+  useEffect(() => {
+    if (editingRoom) {
+      setFormData({
+        name: editingRoom.name || '',
+        capacity: editingRoom.capacity || 0,
+        type: editingRoom.type || 'Classroom',
+        building: editingRoom.building || '',
+        floor: editingRoom.floor || 1,
+        hasProjector: editingRoom.hasProjector || false,
+        hasAC: editingRoom.hasAC || false,
+        description: editingRoom.description || '',
+        programTypes: editingRoom.programTypes || ['BS'],
+        primaryDepartmentId: editingRoom.primaryDepartmentId || '',
+        availableForOtherDepartments: editingRoom.availableForOtherDepartments ?? true
+      });
+      setErrors({});
+    } else {
+      // Reset form for new room
+      setFormData({
+        name: '',
+        capacity: 0,
+        type: 'Classroom',
+        building: '',
+        floor: 1,
+        hasProjector: false, // Only rooms "2" and "3" should have projector by default
+        hasAC: false, // Only rooms "2" and "3" should have AC by default
+        description: '',
+        programTypes: ['BS'],
+        primaryDepartmentId: '',
+        availableForOtherDepartments: true
+      });
+      setErrors({});
+    }
+  }, [editingRoom, isOpen]);
 
   const handleInputChange = (field: keyof typeof formData, value: string | number | boolean | string[]) => {
     setFormData(prev => ({

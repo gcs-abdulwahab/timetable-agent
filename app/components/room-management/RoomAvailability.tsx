@@ -1,9 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Room, TimetableEntry, subjects, teachers, timeSlots, timetableEntries } from '../data';
-
-const STORAGE_KEY = 'room-data';
+import { Room, TimetableEntry, semesters, subjects, teachers, timeSlots } from '../data';
 
 // Function to get room type color
 const getRoomTypeColor = (roomType: string) => {
@@ -25,55 +23,58 @@ interface RoomAvailabilityProps {
 const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) => {
   const [mounted, setMounted] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [allocations, setAllocations] = useState<TimetableEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<string>(selectedRoomId || '');
-  const [selectedDay, setSelectedDay] = useState<string>('Monday');
+  const [selectedDay, setSelectedDay] = useState<string>('all');
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  // Load rooms from rooms.json or localStorage
+  // Load rooms and allocations from API (always fetch fresh data)
   useEffect(() => {
-    const loadRooms = async () => {
+    const loadData = async () => {
       try {
         setMounted(true);
         setLoading(true);
-        console.log('Loading rooms data...');
+        console.log('Loading rooms and allocation data from API...');
         
-        // First try to load from localStorage
-        const stored = localStorage.getItem(STORAGE_KEY);
-        if (stored) {
-          console.log('Found stored rooms in localStorage');
-          const parsedRooms = JSON.parse(stored);
-          console.log('Parsed rooms from localStorage:', parsedRooms.length, 'rooms');
-          setRooms(parsedRooms);
-          setLoading(false);
-          return;
+        // Fetch both rooms and allocations in parallel
+        const [roomsResponse, allocationsResponse] = await Promise.all([
+          fetch('/api/rooms'),
+          fetch('/api/allocations')
+        ]);
+        
+        console.log('Rooms fetch response status:', roomsResponse.status);
+        console.log('Allocations fetch response status:', allocationsResponse.status);
+        
+        if (!roomsResponse.ok) {
+          throw new Error(`Failed to fetch rooms data: ${roomsResponse.status} ${roomsResponse.statusText}`);
         }
         
-        console.log('No stored rooms found, fetching from /api/rooms');
-        // If not in localStorage, load from API
-        const response = await fetch('/api/rooms');
-        console.log('Fetch response status:', response.status);
-        if (!response.ok) {
-          throw new Error(`Failed to fetch rooms data: ${response.status} ${response.statusText}`);
+        if (!allocationsResponse.ok) {
+          throw new Error(`Failed to fetch allocations data: ${allocationsResponse.status} ${allocationsResponse.statusText}`);
         }
-        const roomsData = await response.json();
+        
+        const roomsData = await roomsResponse.json();
+        const allocationsData = await allocationsResponse.json();
+        
         console.log('Fetched rooms data:', roomsData.length, 'rooms');
+        console.log('Fetched allocations data:', allocationsData.length, 'allocations');
         console.log('First room:', roomsData[0]);
+        console.log('First allocation:', allocationsData[0]);
+        
         setRooms(roomsData);
-        // Save to localStorage for future use
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(roomsData));
+        setAllocations(allocationsData);
       } catch (error) {
-        console.error('Error loading rooms data:', error);
-        console.log('Attempting to clear localStorage cache...');
-        localStorage.removeItem(STORAGE_KEY);
+        console.error('Error loading data:', error);
         setRooms([]);
+        setAllocations([]);
       } finally {
         setLoading(false);
       }
     };
     
-    loadRooms();
+    loadData();
   }, []);
 
   // Set initial selected room if provided
@@ -84,7 +85,7 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
   }, [selectedRoomId, rooms]);
 
   const getRoomOccupancy = (roomName: string, timeSlotId: string, day: string): TimetableEntry[] => {
-    return timetableEntries.filter(entry => 
+    return allocations.filter(entry => 
       entry.room === roomName && 
       entry.timeSlotId === timeSlotId && 
       entry.day === day
@@ -101,6 +102,11 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
     return teacher?.shortName || teacherId;
   };
 
+  const getSemesterName = (semesterId: string) => {
+    const semester = semesters.find(s => s.id === semesterId);
+    return semester?.name || semesterId;
+  };
+
   const isRoomAvailable = (roomName: string, timeSlotId: string, day: string): boolean => {
     return getRoomOccupancy(roomName, timeSlotId, day).length === 0;
   };
@@ -110,7 +116,7 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
   };
 
   if (!mounted || loading) {
-    return <div className="p-6">Loading room availability...</div>;
+    return <div className="p-6">Loading room availability and allocation data...</div>;
   }
 
   const currentRoom = getCurrentRoom();
@@ -120,9 +126,9 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
       <div className="mb-6">
         <h2 className="text-2xl font-bold text-gray-800 mb-4">Room Availability</h2>
         
-        {/* Room and Day Selection */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-          <div>
+        {/* Room Selection */}
+        <div className="mb-6">
+          <div className="max-w-md">
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Select Room
             </label>
@@ -135,23 +141,6 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
               {rooms.map(room => (
                 <option key={room.id} value={room.id}>
                   {room.name} - {room.type} (Capacity: {room.capacity})
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Select Day
-            </label>
-            <select
-              value={selectedDay}
-              onChange={(e) => setSelectedDay(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              {days.map(day => (
-                <option key={day} value={day}>
-                  {day}
                 </option>
               ))}
             </select>
@@ -199,198 +188,77 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
 
       {selectedRoom && currentRoom ? (
         <div>
-          {/* Weekly View Toggle */}
-          <div className="mb-4 flex space-x-2">
-            <button
-              onClick={() => setSelectedDay('all')}
-              className={`px-4 py-2 rounded-md transition-colors ${
-                selectedDay === 'all'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              Weekly View
-            </button>
-            {days.map(day => (
-              <button
-                key={day}
-                onClick={() => setSelectedDay(day)}
-                className={`px-3 py-2 rounded-md transition-colors text-sm ${
-                  selectedDay === day
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                }`}
-              >
-                {day.substring(0, 3)}
-              </button>
-            ))}
+
+          {/* Weekly Time Slot Availability */}
+          <div className="overflow-x-auto">
+            <table className="w-full border-collapse border border-gray-300">
+              <thead>
+                <tr className="bg-gray-100">
+                  <th className="border border-gray-300 px-4 py-2 text-left">Time Slot</th>
+                  {days.map(day => (
+                    <th key={day} className="border border-gray-300 px-4 py-2 text-center">
+                      {day}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {timeSlots.map(slot => (
+                  <tr key={slot.id}>
+                    <td className="border border-gray-300 px-4 py-2 font-medium">
+                      Period {slot.period}<br/>
+                      <span className="text-sm text-gray-600">{slot.start} - {slot.end}</span>
+                    </td>
+                    {days.map(day => {
+                      const isAvailable = isRoomAvailable(currentRoom.name, slot.id, day);
+                      const occupancy = getRoomOccupancy(currentRoom.name, slot.id, day);
+                      
+                      return (
+                        <td key={day} className={`border border-gray-300 px-2 py-2 text-center text-xs ${
+                          isAvailable ? 'bg-green-100' : 'bg-red-100'
+                        }`}>
+                          {isAvailable ? (
+                            <span className="text-green-800 font-medium">Available</span>
+                          ) : (
+                            <div className="space-y-1">
+                              {occupancy.map((entry, index) => (
+                                <div key={index} className="text-red-800">
+                                  <div className="font-medium">{getSubjectName(entry.subjectId)}</div>
+                                  <div>{getTeacherName(entry.teacherId)}</div>
+                                  <div className="text-xs text-red-600 mt-1">{getSemesterName(entry.semesterId)}</div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          {/* Time Slot Availability */}
-          {selectedDay === 'all' ? (
-            // Weekly view
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse border border-gray-300">
-                <thead>
-                  <tr className="bg-gray-100">
-                    <th className="border border-gray-300 px-4 py-2 text-left">Time Slot</th>
-                    {days.map(day => (
-                      <th key={day} className="border border-gray-300 px-4 py-2 text-center">
-                        {day}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {timeSlots.map(slot => (
-                    <tr key={slot.id}>
-                      <td className="border border-gray-300 px-4 py-2 font-medium">
-                        Period {slot.period}<br/>
-                        <span className="text-sm text-gray-600">{slot.start} - {slot.end}</span>
-                      </td>
-                      {days.map(day => {
-                        const isAvailable = isRoomAvailable(currentRoom.name, slot.id, day);
-                        const occupancy = getRoomOccupancy(currentRoom.name, slot.id, day);
-                        
-                        return (
-                          <td key={day} className={`border border-gray-300 px-2 py-2 text-center text-xs ${
-                            isAvailable ? 'bg-green-100' : 'bg-red-100'
-                          }`}>
-                            {isAvailable ? (
-                              <span className="text-green-800 font-medium">Available</span>
-                            ) : (
-                              <div className="space-y-1">
-                                {occupancy.map((entry, index) => (
-                                  <div key={index} className="text-red-800">
-                                    <div className="font-medium">{getSubjectName(entry.subjectId)}</div>
-                                    <div>{getTeacherName(entry.teacherId)}</div>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            // Single day view
-            <div className="space-y-3">
-              <h3 className="text-lg font-semibold">
-                {currentRoom.name} - {selectedDay}
-              </h3>
-              
-              <div className="grid gap-3">
-                {timeSlots.map(slot => {
-                  const isAvailable = isRoomAvailable(currentRoom.name, slot.id, selectedDay);
-                  const occupancy = getRoomOccupancy(currentRoom.name, slot.id, selectedDay);
-                  
-                  return (
-                    <div key={slot.id} className={`p-4 rounded-lg border-2 ${
-                      isAvailable 
-                        ? 'border-green-200 bg-green-50' 
-                        : 'border-red-200 bg-red-50'
-                    }`}>
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h4 className="font-medium">
-                            Period {slot.period} ({slot.start} - {slot.end})
-                          </h4>
-                          <div className={`mt-1 inline-flex items-center px-2 py-1 rounded-full text-sm font-medium ${
-                            isAvailable
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {isAvailable ? (
-                              <>
-                                <div className="w-2 h-2 bg-green-400 rounded-full mr-2"></div>
-                                Available
-                              </>
-                            ) : (
-                              <>
-                                <div className="w-2 h-2 bg-red-400 rounded-full mr-2"></div>
-                                Occupied
-                              </>
-                            )}
-                          </div>
-                        </div>
-                        
-                        {!isAvailable && (
-                          <div className="text-right">
-                            <div className="text-sm text-gray-600 mb-1">Currently scheduled:</div>
-                            {occupancy.map((entry, index) => (
-                              <div key={index} className="text-sm">
-                                <div className="font-medium">{getSubjectName(entry.subjectId)}</div>
-                                <div className="text-gray-600">Teacher: {getTeacherName(entry.teacherId)}</div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Availability Summary */}
+          {/* Weekly Availability Summary */}
           <div className="mt-6 bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-medium text-blue-800 mb-2">Availability Summary for {selectedDay === 'all' ? 'This Week' : selectedDay}</h4>
-            {selectedDay === 'all' ? (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                {days.map(day => {
-                  const availableSlots = timeSlots.filter(slot => 
-                    isRoomAvailable(currentRoom.name, slot.id, day)
-                  ).length;
-                  const totalSlots = timeSlots.length;
-                  const occupiedSlots = totalSlots - availableSlots;
-                  
-                  return (
-                    <div key={day} className="text-center">
-                      <div className="font-medium text-blue-800">{day}</div>
-                      <div className="text-green-600">{availableSlots} Available</div>
-                      <div className="text-red-600">{occupiedSlots} Occupied</div>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-4 text-sm">
-                {(() => {
-                  const availableSlots = timeSlots.filter(slot => 
-                    isRoomAvailable(currentRoom.name, slot.id, selectedDay)
-                  ).length;
-                  const totalSlots = timeSlots.length;
-                  const occupiedSlots = totalSlots - availableSlots;
-                  const utilizationRate = Math.round((occupiedSlots / totalSlots) * 100);
-                  
-                  return (
-                    <>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-green-600">{availableSlots}</div>
-                        <div className="text-blue-800">Available Slots</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-red-600">{occupiedSlots}</div>
-                        <div className="text-blue-800">Occupied Slots</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-blue-600">{utilizationRate}%</div>
-                        <div className="text-blue-800">Utilization Rate</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-2xl font-bold text-gray-600">{totalSlots}</div>
-                        <div className="text-blue-800">Total Slots</div>
-                      </div>
-                    </>
-                  );
-                })()}
-              </div>
-            )}
+            <h4 className="font-medium text-blue-800 mb-2">Weekly Availability Summary</h4>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+              {days.map(day => {
+                const availableSlots = timeSlots.filter(slot => 
+                  isRoomAvailable(currentRoom.name, slot.id, day)
+                ).length;
+                const totalSlots = timeSlots.length;
+                const occupiedSlots = totalSlots - availableSlots;
+                
+                return (
+                  <div key={day} className="text-center">
+                    <div className="font-medium text-blue-800">{day}</div>
+                    <div className="text-green-600">{availableSlots} Available</div>
+                    <div className="text-red-600">{occupiedSlots} Occupied</div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       ) : (
