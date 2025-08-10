@@ -34,9 +34,9 @@ export function checkScheduleConflicts(): ConflictInfo[] {
       teacherMap.get(entry.teacherId)!.push(entry.id);
     });
 
-    teacherMap.forEach((entryIds, teacherId) => {
+    teacherMap.forEach((entryIds) => {
       if (entryIds.length > 1) {
-        const teacher = teachers.find(t => t.id === teacherId);
+        // const teacher = teachers.find(t => t.id === teacherId);
         
         // Generate detailed conflict message for QA testing
         const conflictEntries = entryIds.map(entryId => {
@@ -75,9 +75,9 @@ export function checkScheduleConflicts(): ConflictInfo[] {
       }
     });
 
-    roomMap.forEach((entryIds, room) => {
+    roomMap.forEach((entryIds) => {
       if (entryIds.length > 1) {
-        
+        // const room = rooms.find(r => r.name === roomName);
         // Generate detailed room conflict message for QA testing
         const conflictEntries = entryIds.map(entryId => {
           const entry = timetableEntries.find(e => e.id === entryId);
