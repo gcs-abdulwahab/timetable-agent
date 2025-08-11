@@ -225,9 +225,9 @@
     "departmentId": "d20",
     "semesterLevel": 1,
     "isCore": true,
-    "isMajor": true,
+    "isMajor": false,
     "teachingDepartmentIds": [
-      "d20"
+      "d1"
     ]
   },
   {

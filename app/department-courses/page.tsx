@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Department, getOfferedLevelsForDept, Subject } from '../components/data';
+import SubjectModal from '../components/ui/SubjectModal';
 
 const DepartmentCoursesPage = () => {
   const searchParams = useSearchParams();

@@ -276,23 +276,25 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
             </div>
           </div>
 
-            {/* Bulk Add Section */}
-            <div className="space-y-1">
-              <Label htmlFor="bulkCodes" className="text-sm">Bulk Course Codes (comma separated)</Label>
-              <div className="flex gap-2">
-                <Input
-                  id="bulkCodes"
-                  value={bulkCodes}
-                  onChange={e => setBulkCodes(e.target.value)}
-                  placeholder="e.g. ECON-101, ECON-102, ECON-103"
-                  className="text-sm"
-                />
-                <Button type="button" onClick={handleBulkAdd} disabled={isSubmitting || !bulkCodes.trim()} className="text-sm bg-green-600 text-white">
-                  Add Bulk
-                </Button>
+            {/* Bulk Add Section - only show in add mode */}
+            {mode === 'add' && (
+              <div className="space-y-1">
+                <Label htmlFor="bulkCodes" className="text-sm">Bulk Course Codes (comma separated)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="bulkCodes"
+                    value={bulkCodes}
+                    onChange={e => setBulkCodes(e.target.value)}
+                    placeholder="e.g. ECON-101, ECON-102, ECON-103"
+                    className="text-sm"
+                  />
+                  <Button type="button" onClick={handleBulkAdd} disabled={isSubmitting || !bulkCodes.trim()} className="text-sm bg-green-600 text-white">
+                    Add Bulk
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500">Subject name and short name will be set to each code.</p>
               </div>
-              <p className="text-xs text-gray-500">Subject name and short name will be set to each code.</p>
-            </div>
+            )}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="code" className="text-sm">Subject Code *</Label>

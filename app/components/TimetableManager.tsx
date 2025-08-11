@@ -13,6 +13,7 @@ import { generateStats } from './timetableUtils';
 const TimetableManager: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
   
   // Load data from APIs
   const { data: departments } = useDepartments();
@@ -32,6 +33,16 @@ const TimetableManager: React.FC = () => {
     setMounted(true);
     loadAllocations();
   }, []);
+
+  // Set first active semester tab on load
+  useEffect(() => {
+    if (semesters && semesters.length > 0) {
+      const firstActive = semesters.find(s => s.isActive);
+      if (firstActive && !activeSemesterTab) {
+        setActiveSemesterTab(firstActive.id);
+      }
+    }
+  }, [semesters, activeSemesterTab]);
 
   const loadAllocations = async () => {
     try {
@@ -88,9 +99,8 @@ const TimetableManager: React.FC = () => {
 
   // Clear allocations data
   const handleClearStorage = async () => {
-    const emptyEntries: TimetableEntry[] = [];
-    setEntries(emptyEntries);
-    await saveAllocations(emptyEntries);
+    setEntries([]);
+    await saveAllocations([]);
   };
 
   const validation = (entries.length > 0 && teachers.length > 0 && subjects.length > 0 && semesters.length > 0) 
@@ -229,7 +239,12 @@ const TimetableManager: React.FC = () => {
         )}
 
         {/* Main Timetable */}
-        <TimetableNew entries={entries} onUpdateEntries={handleUpdateEntries} />
+        <TimetableNew
+          entries={entries.filter(e => e.semesterId === activeSemesterTab)}
+          onUpdateEntries={handleUpdateEntries}
+          activeSemesterTab={activeSemesterTab}
+          setActiveSemesterTab={setActiveSemesterTab}
+        />
       </div>
     </div>
   );

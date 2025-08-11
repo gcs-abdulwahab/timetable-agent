@@ -100,7 +100,7 @@ export interface Room {
   id: string;
   name: string;
   capacity: number;
-  type?: 'Classroom' | 'Laboratory' | 'Auditorium' | 'Conference' | 'Other';
+  type?: 'Classroom' | 'Laboratory' | 'Auditorium' | 'Other';
   building?: string;
   floor?: number;
   hasProjector?: boolean;
@@ -142,11 +142,14 @@ export const timeSlots: TimeSlot[] = [
 ];
 
 // Helper function to get departments that offer degrees for a specific semester
-export function getActiveDepartmentsForSemester(semesterId: string): Department[] {
-  // For now, return all departments that offer BS degrees
-  // This can be enhanced later with semester-specific logic
-  return [];
-}
+// Accept semesterLevel (number) instead of semesterId
+export function getActiveDepartmentsForSemester(semesterLevel: number, departments: Department[]): Department[] {
+  return departments.filter(
+    d =>
+      d.offersBSDegree &&
+      d.bsSemesterAvailability?.offeredLevels?.includes(semesterLevel)
+  );
+  }
 
 // Placeholder rooms array - this should be replaced with API calls
 export const rooms: Room[] = [];

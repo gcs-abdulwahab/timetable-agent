@@ -19,9 +19,11 @@ const ESC_LABEL_SUFFIX = ' (ESC)';
 interface TimetableProps {
   entries: TimetableEntry[];
   onUpdateEntries: (entries: TimetableEntry[]) => void;
+  activeSemesterTab: string;
+  setActiveSemesterTab: (id: string) => void;
 }
 
-const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
+const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries, activeSemesterTab, setActiveSemesterTab }) => {
   const { data: semesters, loading: loadingSemesters, error: errorSemesters } = useSemesters();
   const { data: timeSlots, loading: loadingTimeSlots, error: errorTimeSlots } = useTimeSlots();
   const { data: rooms, loading: loadingRooms, error: errorRooms } = useRooms();
@@ -83,7 +85,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     subject: Subject;
     teacher: Teacher;
   } | null>(null);
-const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
+  // const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
   const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
   
   // State for JSON data
@@ -93,10 +95,15 @@ const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
   const [isDataLoading, setIsDataLoading] = useState(true);
 
   // Derive the semester-scoped department list whenever activeSemesterTab changes
-  const visibleDepartments = useMemo(
-    () => activeSemesterTab ? getActiveDepartmentsForSemester(activeSemesterTab) : departments.filter(d => d.offersBSDegree),
-    [activeSemesterTab, departments]
-  );
+  const visibleDepartments = useMemo(() => {
+    if (!activeSemesterTab || !departments.length || !semesters.length) return [];
+    const semesterObj = semesters.find(s => s.id === activeSemesterTab);
+    if (!semesterObj) return [];
+    // Extract semester level from name, e.g. "Semester 1" => 1
+    const match = semesterObj.name.match(/\d+/);
+    const semesterLevel = match ? parseInt(match[0], 10) : 1;
+    return getActiveDepartmentsForSemester(semesterLevel, departments);
+  }, [activeSemesterTab, departments, semesters]);
 
   // Load data from JSON files on mount
   useEffect(() => {
@@ -133,11 +140,6 @@ const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
   // Mark as mounted after hydration
   useEffect(() => {
     setMounted(true);
-    // Set the first active semester as default tab
-    const activeSems = getActiveSemesters();
-    if (activeSems.length > 0 && !activeSemesterTab) {
-      setActiveSemesterTab(activeSems[0].id);
-    }
   }, []);
 
   // Sync props with local state
@@ -378,7 +380,7 @@ const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
   };
 
   // Helper function to get subject by ID
-  const getSubject = (id: string) => subjects.find(s => s.id === id);
+  const getSubject = (id: string | number) => subjects.find(s => s.id === id);
   
   // Helper function to get teacher by ID
   const getTeacher = (id: string) => teachers.find(t => t.id === id);
@@ -1072,8 +1074,8 @@ const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
                 setEditingEntry(groupKey);
                 // Populate form data with current values
                 setEditFormData({
-                  subjectId: subject.id,
-                  teacherId: teacher.id,
+                  subjectId: String(subject.id),
+                  teacherId: String(teacher.id),
                   room: entries[0]?.room || '',
                   timeSlotId: entries[0]?.timeSlotId || '',
                   selectedDays: entries.map(e => e.day)
@@ -1290,14 +1292,15 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
             {getActiveSemesters().map((semester) => (
               <button
                 key={semester.id}
-                onClick={() => setActiveSemesterTab(semester.id)}
-                className={`py-3 px-6 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium border-b-2 focus:outline-none transition-colors duration-200 ${
                   activeSemesterTab === semester.id
-                    ? 'border-emerald-500 text-emerald-700 bg-emerald-50 shadow-md transform scale-105'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-blue-600 text-blue-700 bg-blue-50'
+                    : 'border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-300'
                 }`}
+                onClick={() => setActiveSemesterTab(semester.id)}
+                type="button"
               >
-                {formatSemesterLabel(semester)}
+                {semester.name}
               </button>
             ))}
           </nav>
@@ -1427,7 +1430,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 // Group entries by subject and teacher to show days together
                 const groupedEntries = departmentEntries.reduce((groups, entry) => {
                   // Use the createGroupKey helper for consistent group key generation
-                  const baseGroupKey = createGroupKey(entry.subjectId, entry.teacherId);
+                  const baseGroupKey = createGroupKey(String(entry.subjectId), String(entry.teacherId));
                   const key = buildDragId(baseGroupKey, department.id, timeSlot.id);
                   
                   // If buildDragId fails, skip this entry
@@ -1699,7 +1702,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
               </div>
             </div>
             
-            <div className="flex gap-2 mt-6">
+            <div className="flex gap-2">
               <button 
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
                 onClick={() => {
