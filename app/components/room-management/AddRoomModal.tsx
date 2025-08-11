@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Room, departments } from '../data';
+import React, { useEffect, useState } from 'react';
+import { Room } from '../TimetableNew';
 import BuildingSelect from '../ui/BuildingSelect';
 import { Button } from '../ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '../ui/dialog';
@@ -36,6 +36,7 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [departments, setDepartments] = useState([]);
 
   // Populate form when editingRoom changes
   useEffect(() => {
@@ -72,6 +73,23 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
       setErrors({});
     }
   }, [editingRoom, isOpen]);
+
+  useEffect(() => {
+    async function fetchDepartments() {
+      try {
+        const res = await fetch('/api/departments');
+        if (res.ok) {
+          const data = await res.json();
+          setDepartments(data);
+        } else {
+          setDepartments([]);
+        }
+      } catch {
+        setDepartments([]);
+      }
+    }
+    fetchDepartments();
+  }, []);
 
   const handleInputChange = (field: keyof typeof formData, value: string | number | boolean | string[]) => {
     setFormData(prev => ({

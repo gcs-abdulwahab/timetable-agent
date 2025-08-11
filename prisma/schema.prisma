@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+  model Teacher {
+    id           String   @id
+    name         String
+    shortName    String
+    departmentId String
+    designation  String?
+  }
+
+  model Department {
+    id           String   @id
+    name         String
+    shortName    String
+    offersBSDegree Boolean
+    bsSemesterAvailability Json?
+  }
+
+  model Semester {
+    id        String   @id
+    name      String
+    year      Int
+    term      String
+    isActive  Boolean
+    startDate String
+    endDate   String
+  }
+
+  model Subject {
+    id              String   @id
+    name            String
+    code            String
+    creditHours     Int
+    color           String
+    departmentId    String
+    semesterLevel   Int
+    isCore          Boolean
+    semesterId      String?
+  }
+
+  model Room {
+    id                     String   @id
+    name                   String
+    capacity               Int
+    type                   String
+    building               String?
+    floor                  Int?
+    hasProjector           Boolean?
+    hasAC                  Boolean?
+    description            String?
+    programTypes           Json
+    primaryDepartmentId    String?
+    availableForOtherDepartments Boolean?
+  }
+
+  model TimeSlot {
+    id     String   @id
+    start  String
+    end    String
+    period Int
+  }
+
+  model TimetableEntry {
+    id           String   @id
+    subjectId    String
+    teacherId    String
+    timeSlotId   String
+    day          String
+    room         String
+    semesterId   String
+    departmentId String
+  }

@@ -1,19 +1,18 @@
 'use client';
 
+import { Toggle } from '@/components/ui/toggle';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ConflictViewer from '../components/ConflictViewer';
-import { validateTimetable } from '../components/conflictChecker';
-import { Department, Subject, Teacher, departmentHasSubjectsOrLevels, getOfferedLevelsForDept, setOfferedLevelsForDept } from '../components/data';
+import { Department, Subject, Teacher, getOfferedLevelsForDept, setOfferedLevelsForDept } from '../components/data';
 import AddDepartmentModal from '../components/ui/AddDepartmentModal';
 import AddTeacherModal from '../components/ui/AddTeacherModal';
+import ConfirmationDialog from '../components/ui/ConfirmationDialog';
 import DepartmentSemesterModal from '../components/ui/DepartmentSemesterModal';
 import SemesterChipsManager from '../components/ui/SemesterChipsManager';
 import SubjectModal from '../components/ui/SubjectModal';
-import ConfirmationDialog from '../components/ui/ConfirmationDialog';
 import { Badge } from '../components/ui/badge';
-import { Toggle } from '@/components/ui/toggle';
 
 const ManageDepartmentsPage = () => {
   const searchParams = useSearchParams();
@@ -96,8 +95,7 @@ const ManageDepartmentsPage = () => {
     }
   }, [alertError]);
 
-  // Check for conflicts
-  const validation = validateTimetable();
+  const [validation, setValidation] = useState<{ isValid: boolean; conflicts: { details: string }[] }>({ isValid: true, conflicts: [] });
   const hasConflicts = validation.conflicts.length > 0;
 
   // Load data from API on component mount and handle URL parameters
@@ -129,24 +127,20 @@ const ManageDepartmentsPage = () => {
     try {
       setLoading(true);
       setError(null);
-      
       // GET from api/departments and api/subjects in parallel
       const [departmentsRes, subjectsRes, teachersRes] = await Promise.all([
         fetch('/api/departments'),
         fetch('/api/subjects'),
         fetch('/api/teachers')
       ]);
-
-      // Both routes return empty arrays when files are missing
-      const departmentsData = departmentsRes.ok ? await departmentsRes.json() : [];
-      const subjectsData = subjectsRes.ok ? await subjectsRes.json() : [];
-      const teachersData = teachersRes.ok ? await teachersRes.json() : [];
-      
-      // Update local state
+      // Always fallback to empty array if not an array
+      const safeArray = (data: unknown) => Array.isArray(data) ? data : [];
+      const departmentsData = safeArray(departmentsRes.ok ? await departmentsRes.json() : []);
+      const subjectsData = safeArray(subjectsRes.ok ? await subjectsRes.json() : []);
+      const teachersData = safeArray(teachersRes.ok ? await teachersRes.json() : []);
       setDepartmentList(departmentsData);
       setSubjectList(subjectsData);
       setTeacherList(teachersData);
-      
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load data');
       console.error('Error loading data:', err);
@@ -205,55 +199,6 @@ const ManageDepartmentsPage = () => {
     }
   };
 
-  // Update department with prompt-based editing
-  const handleDepartmentEdit = async (dept: Department) => {
-    const newName = prompt('Department Name:', dept.name);
-    if (!newName || newName === dept.name) return;
-    
-    const newShortName = prompt('Short Name:', dept.shortName);
-    if (!newShortName) return;
-    
-    let newOffersBSDegree = dept.offersBSDegree;
-    if (confirm(`Currently offers BS degree: ${dept.offersBSDegree}. Change this?`)) {
-      newOffersBSDegree = !dept.offersBSDegree;
-      
-      // If turning off BS degree, show warning if department has subjects or levels
-      if (!newOffersBSDegree && departmentHasSubjectsOrLevels(dept)) {
-        const subjectCount = subjectList.filter(s => s.departmentId === dept.id).length;
-        const proceed = confirm(
-          `Warning: This department has ${subjectCount} subject${subjectCount !== 1 ? 's' : ''} and/or configured semester levels. ` +
-          'Turning off BS degree will not delete subjects but will affect semester availability. Continue?'
-        );
-        if (!proceed) {
-          newOffersBSDegree = dept.offersBSDegree; // Keep original value
-        }
-      }
-    }
-    
-    const updatedDepartment = {
-      ...dept,
-      name: newName,
-      shortName: newShortName,
-      offersBSDegree: newOffersBSDegree
-    };
-    
-    const updatedDepartments = departmentList.map(d => 
-      d.id === dept.id ? updatedDepartment : d
-    );
-    
-    // Optimistic update
-    const originalDepartments = [...departmentList];
-    setDepartmentList(updatedDepartments);
-    
-    try {
-      await saveDepartments(updatedDepartments);
-    } catch (error) {
-      // Rollback on failure
-      setDepartmentList(originalDepartments);
-      setError('Failed to update department. Changes have been reverted.');
-    }
-  };
-  
   // Handle semester chip updates with optimistic updates and rollback
   const handleSemesterChipUpdate = async (updatedDepartment: Department) => {
     const originalDepartments = [...departmentList];
@@ -677,6 +622,7 @@ Enter department number:`);
                           <div className="border-t pt-3 mt-3" onClick={(e) => e.stopPropagation()}>
                             <SemesterChipsManager
                               department={dept}
+                              subjects={subjectList}
                               onUpdate={handleSemesterChipUpdate}
                               onError={(message) => setError(message)}
                             />

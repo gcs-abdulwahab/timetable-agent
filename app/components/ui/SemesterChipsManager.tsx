@@ -1,10 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import { Department, computeNextOfferedLevels, countSubjectsForDeptLevel, getOfferedLevelsForDept, setOfferedLevelsForDept } from '../data';
+import { Department, Subject, computeNextOfferedLevels, countSubjectsForDeptLevel, getOfferedLevelsForDept, setOfferedLevelsForDept } from '../data';
 
 interface SemesterChipsManagerProps {
   department: Department;
+  subjects: Subject[];
   onUpdate: (updatedDepartment: Department) => void;
   onError: (message: string) => void;
 }
@@ -48,7 +49,7 @@ const ConfirmDialog = ({ isOpen, title, message, onConfirm, onCancel, confirmTex
   );
 };
 
-const SemesterChipsManager = ({ department, onUpdate, onError }: SemesterChipsManagerProps) => {
+const SemesterChipsManager = ({ department, subjects, onUpdate, onError }: SemesterChipsManagerProps) => {
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -75,7 +76,7 @@ const SemesterChipsManager = ({ department, onUpdate, onError }: SemesterChipsMa
     
     if (isRemoving) {
       // Check if removing a level that contains subjects
-      const subjectCount = countSubjectsForDeptLevel(department.id, level);
+      const subjectCount = countSubjectsForDeptLevel(subjects, department.id, level);
       
       if (subjectCount > 0) {
         // Show confirmation dialog
@@ -115,7 +116,7 @@ const SemesterChipsManager = ({ department, onUpdate, onError }: SemesterChipsMa
         <div className="flex flex-wrap gap-2">
           {allLevels.map(level => {
             const isOffered = currentOfferedLevels.includes(level);
-            const subjectCount = countSubjectsForDeptLevel(department.id, level);
+            const subjectCount = countSubjectsForDeptLevel(subjects, department.id, level);
             
             return (
               <button

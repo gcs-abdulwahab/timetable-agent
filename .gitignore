@@ -44,3 +44,5 @@ next-env.d.ts
 # validation reports
 validation-report.json
 validation_output.txt
+
+/lib/generated/prisma

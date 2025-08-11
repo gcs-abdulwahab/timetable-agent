@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Room, departments } from '../data';
+import { Room } from '../TimetableNew';
 import { Button } from '../ui/button';
 import AddRoomModal from './AddRoomModal';
 
@@ -40,6 +40,7 @@ interface RoomManagementComponentProps {
 const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoomSelect }) => {
   const [mounted, setMounted] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
+  const [departments, setDepartments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
@@ -84,6 +85,20 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   useEffect(() => {
     setMounted(true);
     fetchRooms();
+    async function fetchDepartments() {
+      try {
+        const res = await fetch('/api/departments');
+        if (res.ok) {
+          const data = await res.json();
+          setDepartments(data);
+        } else {
+          setDepartments([]);
+        }
+      } catch {
+        setDepartments([]);
+      }
+    }
+    fetchDepartments();
   }, []);
 
   const generateRoomId = (name: string) => {
@@ -188,7 +203,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
 
   const getDepartmentName = (departmentId?: string) => {
     if (!departmentId) return 'General';
-    const dept = departments.find(d => d.id === departmentId);
+    const dept = departments.find((d: any) => d.id === departmentId);
     return dept?.shortName || 'Unknown';
   };
 
@@ -249,7 +264,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All Departments</option>
-            {departments.map(dept => (
+            {departments.map((dept: any) => (
               <option key={dept.id} value={dept.id}>
                 {dept.shortName}
               </option>

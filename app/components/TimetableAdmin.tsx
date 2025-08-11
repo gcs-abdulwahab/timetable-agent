@@ -1,20 +1,40 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-  daysOfWeek,
-  departments,
-  semesters,
-  subjects,
-  teachers,
-  timeSlots,
-  TimetableEntry,
-  getActiveDepartmentsForSemester
+    daysOfWeek,
+    getActiveDepartmentsForSemester,
+    getDepartments,
+    getSemesters,
+    getSubjects,
+    getTeachers
 } from './data';
 
+// Type definitions
+export type TimetableEntryType = {
+  id?: string;
+  semesterId: string;
+  departmentId: string;
+  subjectId: string;
+  teacherId: string;
+  timeSlotId: string;
+  day: string;
+  room: string; // made required to match TimetableEntry
+  note?: string;
+};
+
 interface TimetableAdminProps {
-  onAddEntry: (entry: Omit<TimetableEntry, 'id'>) => void;
+  onAddEntry: (entry: Omit<TimetableEntryType, 'id'>) => void;
 }
+
+const defaultTimeSlots = [
+  { id: 'ts1', period: 1, start: '08:00', end: '09:30' },
+  { id: 'ts2', period: 2, start: '09:45', end: '11:15' },
+  { id: 'ts3', period: 3, start: '11:30', end: '13:00' },
+  { id: 'ts4', period: 4, start: '13:30', end: '15:00' },
+  { id: 'ts5', period: 5, start: '15:15', end: '16:45' },
+  { id: 'ts6', period: 6, start: '17:00', end: '18:30' }
+];
 
 const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
   const [formData, setFormData] = useState({
@@ -27,12 +47,26 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
   });
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
+  // State for fetched data
+  const [departments, setDepartments] = useState<Array<{ id: string; name: string; offersBSDegree: boolean; shortName: string }>>([]);
+  const [semesters, setSemesters] = useState<Array<{ id: string; name: string; isActive: boolean }>>([]);
+  const [subjects, setSubjects] = useState<Array<{ id: string; name: string; departmentId: string; semesterLevel: number }>>([]);
+  const [teachers, setTeachers] = useState<Array<{ id: string; name: string; departmentId: string }>>([]);
+  const [timeSlotsState] = useState(defaultTimeSlots);
+
+  useEffect(() => {
+    getDepartments().then(setDepartments);
+    getSemesters().then(setSemesters);
+    getSubjects().then(setSubjects);
+    getTeachers().then(setTeachers);
+  }, []);
+
   // Get departments that offer BS degrees with semester-scoped filtering
   const getBSDepartmentsForSemester = () => {
     if (!formData.semesterId) {
       return departments.filter(d => d.offersBSDegree);
     }
-    return getActiveDepartmentsForSemester(formData.semesterId);
+    return getActiveDepartmentsForSemester(formData.semesterId, departments, semesters);
   };
 
   // Get teachers filtered by selected department
@@ -120,7 +154,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             disabled={!formData.semesterId}
           >
             <option value="">Select Department</option>
-            {getBSDepartmentsForSemester().map(department => (
+            {getBSDepartmentsForSemester().map((department: { id: string; name: string; offersBSDegree: boolean; shortName: string }) => (
               <option key={department.id} value={department.id}>
                 {department.name}
               </option>
@@ -158,7 +192,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             disabled={!formData.departmentId}
           >
             <option value="">Select Teacher</option>
-            {getFilteredTeachers().map(teacher => (
+            {getFilteredTeachers().map((teacher: { id: string; name: string; departmentId: string }) => (
               <option key={teacher.id} value={teacher.id}>
                 {teacher.name}
               </option>
@@ -234,7 +268,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             required
           >
             <option value="">Select Time Slot</option>
-            {timeSlots.map(slot => (
+            {timeSlotsState.map((slot: { id: string; period: number; start: string; end: string }) => (
               <option key={slot.id} value={slot.id}>
                 Period {slot.period} ({slot.start}-{slot.end})
               </option>

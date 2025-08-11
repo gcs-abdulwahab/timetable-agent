@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Department, Teacher } from '../data';
 import Modal from './Modal';
 
@@ -109,152 +109,142 @@ const AddTeacherModal = ({
   return (
     <Modal isOpen={isOpen} onClose={handleClose} title={mode === 'edit' ? 'Edit Teacher' : 'Add New Teacher'}>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="teacher-name" className="block text-sm font-medium text-gray-700 mb-1">
-            Teacher Name
-          </label>
-          <input
-            id="teacher-name"
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., Dr. John Smith"
-            required
-          />
-        </div>
-        
-        <div>
-          <label htmlFor="teacher-short" className="block text-sm font-medium text-gray-700 mb-1">
-            Short Name (Optional)
-          </label>
-          <input
-            id="teacher-short"
-            type="text"
-            value={shortName}
-            onChange={(e) => setShortName(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., Dr. Smith"
-          />
-        </div>
+        {/* Compact grid for teacher fields */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="teacher-name" className="block text-sm font-medium text-gray-700 mb-1">
+              Teacher Name
+            </label>
+            <input
+              id="teacher-name"
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., Dr. John Smith"
+              required
+            />
+          </div>
+          
+          <div>
+            <label htmlFor="teacher-shortname" className="block text-sm font-medium text-gray-700 mb-1">
+              Short Name (Optional)
+            </label>
+            <input
+              id="teacher-shortname"
+              type="text"
+              value={shortName}
+              onChange={(e) => setShortName(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., Dr. Smith"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="teacher-designation" className="block text-sm font-medium text-gray-700 mb-1">
-            Designation *
-          </label>
-          <input
-            id="teacher-designation"
-            type="text"
-            value={designation}
-            onChange={(e) => setDesignation(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., Professor, Associate Professor, Assistant Professor"
-            required
-          />
-        </div>
+          <div>
+            <label htmlFor="teacher-designation" className="block text-sm font-medium text-gray-700 mb-1">
+              Designation *
+            </label>
+            <select
+              id="teacher-designation"
+              value={designation}
+              onChange={(e) => setDesignation(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              required
+            >
+              <option value="">Select designation...</option>
+              <option value="Professor">Professor</option>
+              <option value="Associate Professor">Associate Professor</option>
+              <option value="Assistant Professor">Assistant Professor</option>
+              <option value="Lecturer">Lecturer</option>
+              <option value="CTI">CTI</option>
+              <option value="Visiting Faculty">Visiting Faculty</option>
+              <option value="Lab Instructor">Lab Instructor</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label htmlFor="teacher-contact" className="block text-sm font-medium text-gray-700 mb-1">
+              Contact Number
+            </label>
+            <input
+              id="teacher-contact"
+              type="text"
+              value={contactNumber}
+              onChange={(e) => setContactNumber(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., +92-XXX-XXXXXXX"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="teacher-contact" className="block text-sm font-medium text-gray-700 mb-1">
-            Contact Number
-          </label>
-          <input
-            id="teacher-contact"
-            type="text"
-            value={contactNumber}
-            onChange={(e) => setContactNumber(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., +92-XXX-XXXXXXX"
-          />
-        </div>
+          <div>
+            <label htmlFor="teacher-email" className="block text-sm font-medium text-gray-700 mb-1">
+              Email Address
+            </label>
+            <input
+              id="teacher-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., teacher@university.edu"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="teacher-email" className="block text-sm font-medium text-gray-700 mb-1">
-            Email Address
-          </label>
-          <input
-            id="teacher-email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., teacher@university.edu"
-          />
-        </div>
+          <div>
+            <label htmlFor="teacher-dob" className="block text-sm font-medium text-gray-700 mb-1">
+              Date of Birth
+            </label>
+            <input
+              id="teacher-dob"
+              type="date"
+              value={dateOfBirth}
+              onChange={(e) => setDateOfBirth(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="teacher-dob" className="block text-sm font-medium text-gray-700 mb-1">
-            Date of Birth
-          </label>
-          <input
-            id="teacher-dob"
-            type="date"
-            value={dateOfBirth}
-            onChange={(e) => setDateOfBirth(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          />
-        </div>
+          <div>
+            <label htmlFor="teacher-seniority" className="block text-sm font-medium text-gray-700 mb-1">
+              Seniority (Years)
+            </label>
+            <input
+              id="teacher-seniority"
+              type="number"
+              value={seniority}
+              onChange={(e) => setSeniority(parseInt(e.target.value) || 0)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., 10"
+              min="0"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="teacher-seniority" className="block text-sm font-medium text-gray-700 mb-1">
-            Seniority (Years)
-          </label>
-          <input
-            id="teacher-seniority"
-            type="number"
-            value={seniority}
-            onChange={(e) => setSeniority(parseInt(e.target.value) || 0)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., 10"
-            min="0"
-          />
-        </div>
+          <div>
+            <label htmlFor="teacher-cnic" className="block text-sm font-medium text-gray-700 mb-1">
+              CNIC Number
+            </label>
+            <input
+              id="teacher-cnic"
+              type="text"
+              value={cnic}
+              onChange={(e) => setCnic(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., 12345-1234567-1"
+            />
+          </div>
 
-        <div>
-          <label htmlFor="teacher-cnic" className="block text-sm font-medium text-gray-700 mb-1">
-            CNIC Number
-          </label>
-          <input
-            id="teacher-cnic"
-            type="text"
-            value={cnic}
-            onChange={(e) => setCnic(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., 12345-1234567-1"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="teacher-personnel" className="block text-sm font-medium text-gray-700 mb-1">
-            Personnel Number
-          </label>
-          <input
-            id="teacher-personnel"
-            type="text"
-            value={personnelNumber}
-            onChange={(e) => setPersonnelNumber(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            placeholder="e.g., EMP-2024-001"
-          />
-        </div>
-
-        <div>
-          <label htmlFor="teacher-dept" className="block text-sm font-medium text-gray-700 mb-1">
-            Department
-          </label>
-          <select
-            id="teacher-dept"
-            value={departmentId}
-            onChange={(e) => setDepartmentId(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            required
-          >
-            <option value="">Select Department</option>
-            {departments.map(dept => (
-              <option key={dept.id} value={dept.id}>
-                {dept.name} ({dept.shortName})
-              </option>
-            ))}
-          </select>
+          <div>
+            <label htmlFor="teacher-personnel" className="block text-sm font-medium text-gray-700 mb-1">
+              Personnel Number
+            </label>
+            <input
+              id="teacher-personnel"
+              type="text"
+              value={personnelNumber}
+              onChange={(e) => setPersonnelNumber(e.target.value)}
+              className="w-full px-2 py-1 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent"
+              placeholder="e.g., EMP-2024-001"
+            />
+          </div>
         </div>
 
         <div className="flex justify-end space-x-3 pt-4">

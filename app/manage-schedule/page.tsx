@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import Navigation from '../components/Navigation';
-import { TimeSlot, daysOfWeek, timeSlots } from '../components/data';
+import { TimeSlot } from '../components/data';
 
 interface Day {
   id: string;
@@ -21,40 +21,26 @@ const ManageSchedulePage = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Load time slots
-        const slotsResponse = await fetch('/data/timeslots.json');
+        // Load time slots from API
+        const slotsResponse = await fetch('/api/timeslots');
         if (slotsResponse.ok) {
           const slotsData = await slotsResponse.json();
           setSlots(slotsData);
         } else {
-          // Fallback to default data
-          setSlots(timeSlots);
+          setSlots([]);
         }
-
-        // Load days
-        const daysResponse = await fetch('/data/days.json');
+        // Load days from API
+        const daysResponse = await fetch('/api/days');
         if (daysResponse.ok) {
           const daysData = await daysResponse.json();
           setDays(daysData);
         } else {
-          // Fallback to default days
-          const defaultDays = daysOfWeek.map((day, index) => ({
-            id: `day${index + 1}`,
-            name: day,
-            active: true
-          }));
-          setDays(defaultDays);
+          setDays([]);
         }
       } catch (error) {
         console.error('Error loading data:', error);
-        // Fallback to default data
-        setSlots(timeSlots);
-        const defaultDays = daysOfWeek.map((day, index) => ({
-          id: `day${index + 1}`,
-          name: day,
-          active: true
-        }));
-        setDays(defaultDays);
+        setSlots([]);
+        setDays([]);
       }
     };
 

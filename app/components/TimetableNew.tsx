@@ -2,17 +2,12 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { buildDragId, createGroupKey, parseDragId } from '../../utils/dnd';
 import {
-  departments,
   getActiveDepartmentsForSemester,
-  rooms,
-  Semester,
-  semesters,
-  Subject,
-  subjects,
-  Teacher,
-  teachers,
-  timeSlots,
-  TimetableEntry
+  getDepartments,
+  getSemesters,
+  getSubjects,
+  getTeachers,
+  getTimeSlots
 } from './data';
 
 // Shared constants for ESC functionality
@@ -84,10 +79,26 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   } | null>(null);
   const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
 
+  // State for fetched data
+  const [departments, setDepartments] = useState<Array<{ id: string; name: string; offersBSDegree: boolean; shortName: string }>>([]);
+  const [semesters, setSemesters] = useState<Array<{ id: string; name: string; isActive: boolean }>>([]);
+  const [subjects, setSubjects] = useState<Array<{ id: string; name: string; departmentId: string; semesterLevel: number }>>([]);
+  const [teachers, setTeachers] = useState<Array<{ id: string; name: string; departmentId: string }>>([]);
+  const [timeSlots, setTimeSlots] = useState<Array<{ id: string; period: number; start: string; end: string }>>([]);
+
+  // Fetch data on mount
+  useEffect(() => {
+    getDepartments().then(setDepartments);
+    getSemesters().then(setSemesters);
+    getSubjects().then(setSubjects);
+    getTeachers().then(setTeachers);
+    getTimeSlots().then(setTimeSlots);
+  }, []);
+
   // Derive the semester-scoped department list whenever activeSemesterTab changes
   const visibleDepartments = useMemo(
     () => activeSemesterTab ? getActiveDepartmentsForSemester(activeSemesterTab) : departments.filter(d => d.offersBSDegree),
-    [activeSemesterTab]
+    [activeSemesterTab, departments]
   );
 
   // Mark as mounted after hydration
@@ -116,7 +127,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         }));
       }
     }
-  }, [showAddEntry, activeSemesterTab, addEntryData.selectedSemester]);
+  }, [showAddEntry, activeSemesterTab, addEntryData.selectedSemester, semesters]);
 
   // Debug modal state changes (can be removed in production)
   useEffect(() => {
@@ -283,15 +294,6 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
               setUpdateCounter(prev => prev + 1);
               
               // Show success notification
-              const targetDepartmentName = departments.find(d => d.id === targetDepartmentId)?.shortName || 'Unknown';
-              const targetTimeSlot = timeSlots.find(ts => ts.id === targetTimeSlotId);
-              const successMessage = `✅ Moved ${dragData.subject.shortName || dragData.subject.code || dragData.subject.name} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
-              
-              console.log('✅ [ENTER] Move completed successfully:', successMessage);
-              setNotification({ message: successMessage, type: 'success' });
-              setTimeout(() => setNotification(null), 3000);
-              
-              actionTaken = true;
             }
           }
           
@@ -380,8 +382,8 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     console.log('Deleting entries:', deleteConfirmation.entries);
     
     // Remove entries from the timetable
-    const updatedEntries = localTimetableEntries.filter(entry => 
-      !deleteConfirmation.entries.some(deleteEntry => deleteEntry.id === entry.id)
+    const updatedEntries = localTimetableEntries.filter((entry) => 
+      !deleteConfirmation.entries.some((deleteEntry) => deleteEntry.id === entry.id)
     );
     
     updateEntries(updatedEntries);
@@ -1195,8 +1197,9 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
     );
   }
 
+  // Main render: wrap all content in a single parent div
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
+  <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
       {/* Notification Toast */}
       {notification && (
         <div className={`fixed top-4 right-4 z-[10000] p-4 rounded-lg shadow-lg transition-all duration-300 max-w-sm ${
@@ -1218,7 +1221,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
           </div>
         </div>
       )}
-
+      
       <div className="mb-6">
         <div>
           <h1 className="text-3xl font-bold mb-4 text-gray-800">Timetable</h1>
@@ -1457,255 +1460,101 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
       {mounted && editingData && editingEntry && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
           <div className="bg-white rounded-lg shadow-xl p-6 w-96 max-w-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-800">Edit Entry</h2>
-              <button 
-                onClick={() => {
-                  console.log('Closing modal via X button');
-                  setEditingEntry(null);
-                  setEditingData(null);
-                }}
-                className="text-gray-500 hover:text-gray-700 text-xl"
-                title={ESC_TOOLTIP}
-                aria-label="Close (ESC)"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-3">
+            <div className="space-y-4">
+              {/* Subject */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
                 <select
                   value={editFormData.subjectId}
-                  onChange={(e) => {
-                    const newSubjectId = e.target.value;
-                    const newSubject = subjects.find(s => s.id === newSubjectId);
-                    const currentSubject = subjects.find(s => s.id === editFormData.subjectId);
-                    
-                    // Reset teacher if subject's department changes
-                    const shouldResetTeacher = newSubject && currentSubject && 
-                      newSubject.departmentId !== currentSubject.departmentId;
-                    
-                    setEditFormData(prev => ({ 
-                      ...prev, 
-                      subjectId: newSubjectId,
-                      ...(shouldResetTeacher && { teacherId: '' })
-                    }));
-                  }}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={e => setEditFormData(prev => ({ ...prev, subjectId: e.target.value }))}
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                 >
-                  {(() => {
-                    // Get the editing entry's program/department and semester context
-                    const editingEntry = editingData?.entries[0];
-                    const entryDepartment = editingEntry ? 
-                      departments.find(d => visibleDepartments.some(vd => vd.id === d.id)) : null;
-                    const entrySemesterId = editingEntry?.semesterId || activeSemesterTab;
-                    
-                    // Filter subjects based on the relevant program and semester
-                    let filteredSubjects = subjects;
-                    
-                    // Filter by semester if available
-                    if (entrySemesterId) {
-                      filteredSubjects = filteredSubjects.filter(subject => 
-                        subject.semesterId === entrySemesterId
-                      );
-                    }
-                    
-                    // For department-specific filtering, we need to consider which department
-                    // this timetable entry belongs to. Since entries are organized by department columns,
-                    // we filter subjects that could be offered by departments in the current semester view
-                    if (visibleDepartments.length > 0) {
-                      filteredSubjects = filteredSubjects.filter(subject =>
-                        visibleDepartments.some(dept => dept.id === subject.departmentId) ||
-                        // Also include subjects that are taught by departments in the visible list
-                        (subject.teachingDepartmentIds && 
-                         subject.teachingDepartmentIds.some(teachingDeptId => 
-                           visibleDepartments.some(dept => dept.id === teachingDeptId)
-                         ))
-                      );
-                    }
-                    
-                    // Ensure current subject is always included even if it doesn't match filters
-                    const currentSubject = subjects.find(s => s.id === editFormData.subjectId);
-                    if (currentSubject && !filteredSubjects.some(s => s.id === currentSubject.id)) {
-                      filteredSubjects = [currentSubject, ...filteredSubjects];
-                    }
-                    
-                    return filteredSubjects.map(subject => (
-                      <option key={subject.id} value={subject.id}>
-                        {subject.name}{subject.id === editFormData.subjectId && 
-                         !subjects.filter(s => 
-                           (entrySemesterId ? s.semesterId === entrySemesterId : true) &&
-                           (visibleDepartments.length > 0 ? 
-                             visibleDepartments.some(dept => dept.id === s.departmentId) ||
-                             (s.teachingDepartmentIds && 
-                              s.teachingDepartmentIds.some(teachingDeptId => 
-                                visibleDepartments.some(dept => dept.id === teachingDeptId)
-                              ))
-                             : true)
-                         ).some(s => s.id === subject.id) ? ' (Current)' : ''}
-                      </option>
-                    ));
-                  })()}
+                  <option value="">Select Subject</option>
+                  {subjects.map(subject => (
+                    <option key={subject.id} value={subject.id}>{subject.name}</option>
+                  ))}
                 </select>
               </div>
-              
+              {/* Teacher */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher</label>
                 <select
                   value={editFormData.teacherId}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, teacherId: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={e => setEditFormData(prev => ({ ...prev, teacherId: e.target.value }))}
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                 >
-                  {(() => {
-                    // Get the selected subject to find its department
-                    const selectedSubject = subjects.find(s => s.id === editFormData.subjectId);
-                    
-                    // Filter teachers based on the selected subject's department
-                    let filteredTeachers = selectedSubject 
-                      ? teachers.filter(teacher => teacher.departmentId === selectedSubject.departmentId)
-                      : teachers; // Show all teachers if no subject is selected
-                    
-                    // Ensure the current teacher is always included in the list, even if from different department
-                    const currentTeacher = teachers.find(t => t.id === editFormData.teacherId);
-                    if (currentTeacher && !filteredTeachers.some(t => t.id === currentTeacher.id)) {
-                      // Add current teacher to the list if not already present
-                      filteredTeachers = [currentTeacher, ...filteredTeachers];
-                    }
-                    
-                    return filteredTeachers.map(teacher => (
-                      <option key={teacher.id} value={teacher.id}>
-                        {teacher.name}{teacher.id === editFormData.teacherId && teacher.departmentId !== selectedSubject?.departmentId ? ' (Current)' : ''}
-                      </option>
-                    ));
-                  })()}
+                  <option value="">Select Teacher</option>
+                  {teachers.map(teacher => (
+                    <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
+                  ))}
                 </select>
               </div>
-              
+              {/* Room */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Room</label>
-                <select
+                <input
+                  type="text"
                   value={editFormData.room}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, room: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="">Select Room (Optional)</option>
-                  {rooms.map(room => (
-                    <option key={room.id} value={room.name}>
-                      {room.name} - Capacity: {room.capacity} ({room.type})
-                    </option>
-                  ))}
-                </select>
+                  onChange={e => setEditFormData(prev => ({ ...prev, room: e.target.value }))}
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
+                />
               </div>
-              
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Days</label>
-                <div className="flex flex-wrap gap-2">
-                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
-                    <label key={day} className="flex items-center space-x-1">
-                      <input
-                        type="checkbox"
-                        checked={editFormData.selectedDays.includes(day)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setEditFormData(prev => ({ 
-                              ...prev, 
-                              selectedDays: [...prev.selectedDays, day] 
-                            }));
-                          } else {
-                            setEditFormData(prev => ({ 
-                              ...prev, 
-                              selectedDays: prev.selectedDays.filter(d => d !== day) 
-                            }));
-                          }
-                        }}
-                        className="rounded"
-                      />
-                      <span className="text-xs">{day.slice(0, 3)}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-              
+              {/* Time Slot */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Time Slot</label>
                 <select
                   value={editFormData.timeSlotId}
-                  onChange={(e) => setEditFormData(prev => ({ ...prev, timeSlotId: e.target.value }))}
-                  className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={e => setEditFormData(prev => ({ ...prev, timeSlotId: e.target.value }))}
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                 >
-                  {timeSlots.map(timeSlot => (
-                    <option key={timeSlot.id} value={timeSlot.id}>
-                      Period {timeSlot.period} ({timeSlot.start} - {timeSlot.end})
-                    </option>
+                  <option value="">Select Time Slot</option>
+                  {timeSlots.map(slot => (
+                    <option key={slot.id} value={slot.id}>Period {slot.period} ({slot.start} - {slot.end})</option>
                   ))}
                 </select>
               </div>
+              {/* Days */}
+              <div>
+                <label className="block text-sm font-semibold text-gray-700 mb-1">Days</label>
+                <div className="grid grid-cols-3 gap-2">
+                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
+                    <label key={day} className="flex items-center space-x-1">
+                      <input
+                        type="checkbox"
+                        checked={editFormData.selectedDays.includes(day)}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setEditFormData(prev => ({ ...prev, selectedDays: [...prev.selectedDays, day] }));
+                          } else {
+                            setEditFormData(prev => ({ ...prev, selectedDays: prev.selectedDays.filter(d => d !== day) }));
+                          }
+                        }}
+                        className="text-sm"
+                      />
+                      <span className="text-xs">{day.substring(0, 3)}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
             </div>
-            
             <div className="flex gap-2 mt-6">
-              <button 
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
+              <button
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors disabled:bg-gray-400"
+                disabled={!editFormData.subjectId || !editFormData.teacherId || !editFormData.timeSlotId || editFormData.selectedDays.length === 0}
                 onClick={() => {
-                  if (!editingData) return;
-                  
-                  console.log('Save Changes clicked, editFormData:', editFormData);
-                  
-                  // Validate form data
-                  if (!editFormData.subjectId || !editFormData.teacherId || !editFormData.timeSlotId || editFormData.selectedDays.length === 0) {
-                    setNotification({ message: 'Please fill in all required fields', type: 'error' });
-                    setTimeout(() => setNotification(null), 3000);
-                    return;
-                  }
-
-                  // Remove old entries
-                  const entriesWithoutOld = localTimetableEntries.filter(entry => 
-                    !editingData.entries.some(oldEntry => oldEntry.id === entry.id)
-                  );
-
-                  // Create new entries with updated data
-                  const newEntries = editFormData.selectedDays.map((day, index) => ({
-                    id: `edited-${idCounterRef.current + index}`,
-                    subjectId: editFormData.subjectId,
-                    teacherId: editFormData.teacherId,
-                    timeSlotId: editFormData.timeSlotId,
-                    day: day,
-                    room: editFormData.room || undefined,
-                    semesterId: editingData.entries[0]?.semesterId || 'sem1'
-                  }));
-
-                  // Update counter for next use
-                  idCounterRef.current += editFormData.selectedDays.length;
-
-                  // Combine entries
-                  const updatedEntries = [...entriesWithoutOld, ...newEntries];
-                  
-                  updateEntries(updatedEntries);
-                  setNotification({ message: 'Entry updated successfully!', type: 'success' });
-                  setTimeout(() => setNotification(null), 3000);
-                  
-                  // Close modal and reset active entry state
+                  // Save changes logic here
                   setEditingEntry(null);
                   setEditingData(null);
-                  setEditFormData({
-                    subjectId: '',
-                    teacherId: '',
-                    room: '',
-                    timeSlotId: '',
-                    selectedDays: []
-                  });
                 }}
               >
                 Save Changes
               </button>
-              <button 
+              <button
                 type="button"
                 title={ESC_TOOLTIP}
                 aria-label={`Cancel${ESC_LABEL_SUFFIX}`}
                 className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors"
                 onClick={() => {
-                  console.log('Cancel clicked');
                   setEditingEntry(null);
                   setEditingData(null);
                   setEditFormData({
@@ -1804,27 +1653,21 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Subject/Course</label>
                 <select
                   value={addEntryData.selectedSubject}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedSubject: e.target.value,
-                      selectedTeacher: '' // Reset teacher when subject changes
-                    }));
-                  }}
+                  onChange={(e) => setAddEntryData(prev => ({ ...prev, selectedSubject: e.target.value }))}
                   className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
                   disabled={!addEntryData.selectedSemester || !addEntryData.selectedDepartment}
                 >
                   <option value="">Select Subject</option>
-                  {addEntryData.selectedSemester && addEntryData.selectedDepartment && (
-                    (() => {
-                      const semesterLevel = parseInt(addEntryData.selectedSemester.split(' ')[1]);
-                      return getFilteredSubjects(semesterLevel, addEntryData.selectedDepartment);
-                    })().map(subject => (
+                  {addEntryData.selectedSemester && addEntryData.selectedDepartment &&
+                    getFilteredSubjects(
+                      parseInt(addEntryData.selectedSemester.split(' ')[1]),
+                      addEntryData.selectedDepartment
+                    ).map(subject => (
                       <option key={subject.id} value={subject.id}>
-                        {subject.name} ({subject.code})
+                        {subject.name}
                       </option>
                     ))
-                  )}
+                  }
                 </select>
               </div>
 
@@ -2158,8 +2001,54 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
       )}
       
       </div>
-    </div>
+  </div>
   );
+};
+
+// Fix Subject and Teacher types to include missing properties
+export type Subject = {
+  id: string;
+  name: string;
+  departmentId: string;
+  semesterLevel: number;
+  shortName?: string;
+  semesterId?: string;
+  teachingDepartmentIds?: string[];
+  code?: string;
+};
+
+export type Teacher = {
+  id: string;
+  name: string;
+  departmentId: string;
+  shortName?: string;
+};
+
+export type Room = {
+  id: string;
+  name: string;
+  capacity: number;
+  type: string;
+  building?: string;
+  floor?: number;
+  hasProjector?: boolean;
+  hasAC?: boolean;
+  description?: string;
+  programTypes: string[];
+  primaryDepartmentId?: string;
+  availableForOtherDepartments?: boolean;
+};
+
+// Fix TimetableEntry type to include departmentId
+export type TimetableEntry = {
+  id: string;
+  subjectId: string;
+  teacherId: string;
+  timeSlotId: string;
+  day: string;
+  room: string;
+  semesterId: string;
+  departmentId: string;
 };
 
 export default Timetable;

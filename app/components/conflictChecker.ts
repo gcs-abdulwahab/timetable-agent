@@ -1,4 +1,4 @@
-import { teachers, timetableEntries, subjects, semesters } from './data';
+import { getSemesters, getSubjects, getTeachers, getTimetableEntries } from './data';
 
 export interface ConflictInfo {
   type: 'teacher' | 'room';
@@ -8,7 +8,11 @@ export interface ConflictInfo {
   details: string;
 }
 
-export function checkScheduleConflicts(): ConflictInfo[] {
+export async function checkScheduleConflicts(): Promise<ConflictInfo[]> {
+  const teachers = await getTeachers();
+  const timetableEntries = await getTimetableEntries();
+  const subjects = await getSubjects();
+  const semesters = await getSemesters();
   const conflicts: ConflictInfo[] = [];
   
   // Group entries by time slot and day
@@ -110,15 +114,16 @@ export function checkScheduleConflicts(): ConflictInfo[] {
   return conflicts;
 }
 
-export function validateTimetable(): { isValid: boolean; conflicts: ConflictInfo[] } {
-  const conflicts = checkScheduleConflicts();
+export async function validateTimetable(): Promise<{ isValid: boolean; conflicts: ConflictInfo[] }> {
+  const conflicts = await checkScheduleConflicts();
   return {
     isValid: conflicts.length === 0,
     conflicts
   };
 }
 
-export function getTeacherSchedule(teacherId: string) {
+export async function getTeacherSchedule(teacherId: string) {
+  const timetableEntries = await getTimetableEntries();
   return timetableEntries
     .filter(entry => entry.teacherId === teacherId)
     .sort((a, b) => {
@@ -129,7 +134,8 @@ export function getTeacherSchedule(teacherId: string) {
     });
 }
 
-export function getRoomSchedule(room: string) {
+export async function getRoomSchedule(room: string) {
+  const timetableEntries = await getTimetableEntries();
   return timetableEntries
     .filter(entry => entry.room === room)
     .sort((a, b) => {

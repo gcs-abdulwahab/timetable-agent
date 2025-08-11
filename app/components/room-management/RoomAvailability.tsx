@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Room, TimetableEntry, semesters, subjects, teachers, timeSlots } from '../data';
+import { Room, Subject, Teacher, TimetableEntry, timeSlots } from '../data';
 
 // Function to get room type color
 const getRoomTypeColor = (roomType: string) => {
@@ -27,6 +27,9 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
   const [loading, setLoading] = useState(true);
   const [selectedRoom, setSelectedRoom] = useState<string>(selectedRoomId || '');
   const [selectedDay, setSelectedDay] = useState<string>('all');
+  const [semesters, setSemesters] = useState<{ id: string; name: string }[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -39,9 +42,12 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
         console.log('Loading rooms and allocation data from API...');
         
         // Fetch both rooms and allocations in parallel
-        const [roomsResponse, allocationsResponse] = await Promise.all([
+        const [roomsResponse, allocationsResponse, semestersResponse, subjectsResponse, teachersResponse] = await Promise.all([
           fetch('/api/rooms'),
-          fetch('/api/allocations')
+          fetch('/api/allocations'),
+          fetch('/api/semesters'),
+          fetch('/api/subjects'),
+          fetch('/api/teachers')
         ]);
         
         console.log('Rooms fetch response status:', roomsResponse.status);
@@ -54,21 +60,37 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
         if (!allocationsResponse.ok) {
           throw new Error(`Failed to fetch allocations data: ${allocationsResponse.status} ${allocationsResponse.statusText}`);
         }
+
+        if (!semestersResponse.ok) throw new Error(`Failed to fetch semesters data: ${semestersResponse.status} ${semestersResponse.statusText}`);
+        if (!subjectsResponse.ok) throw new Error(`Failed to fetch subjects data: ${subjectsResponse.status} ${subjectsResponse.statusText}`);
+        if (!teachersResponse.ok) throw new Error(`Failed to fetch teachers data: ${teachersResponse.status} ${teachersResponse.statusText}`);
         
         const roomsData = await roomsResponse.json();
         const allocationsData = await allocationsResponse.json();
+        const semestersData = await semestersResponse.json();
+        const subjectsData = await subjectsResponse.json();
+        const teachersData = await teachersResponse.json();
         
         console.log('Fetched rooms data:', roomsData.length, 'rooms');
         console.log('Fetched allocations data:', allocationsData.length, 'allocations');
+        console.log('Fetched semesters data:', semestersData.length, 'semesters');
+        console.log('Fetched subjects data:', subjectsData.length, 'subjects');
+        console.log('Fetched teachers data:', teachersData.length, 'teachers');
         console.log('First room:', roomsData[0]);
         console.log('First allocation:', allocationsData[0]);
         
         setRooms(roomsData);
         setAllocations(allocationsData);
+        setSemesters(semestersData);
+        setSubjects(subjectsData);
+        setTeachers(teachersData);
       } catch (error) {
         console.error('Error loading data:', error);
         setRooms([]);
         setAllocations([]);
+        setSemesters([]);
+        setSubjects([]);
+        setTeachers([]);
       } finally {
         setLoading(false);
       }
@@ -94,12 +116,12 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
 
   const getSubjectName = (subjectId: string) => {
     const subject = subjects.find(s => s.id === subjectId);
-    return subject?.shortName || subjectId;
+    return subject?.name || subjectId;
   };
 
   const getTeacherName = (teacherId: string) => {
     const teacher = teachers.find(t => t.id === teacherId);
-    return teacher?.shortName || teacherId;
+    return teacher?.name || teacherId;
   };
 
   const getSemesterName = (semesterId: string) => {

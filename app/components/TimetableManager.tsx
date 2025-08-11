@@ -3,42 +3,34 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import ConflictViewer from './ConflictViewer';
-import TimetableAdmin from './TimetableAdmin';
+import TimetableAdmin, { TimetableEntryType } from './TimetableAdmin';
 import TimetableNew from './TimetableNew';
 import { validateTimetable } from './conflictChecker';
-import { timetableEntries as initialEntries, TimetableEntry } from './data';
+import { TimetableEntry } from './data';
 import { generateStats } from './timetableUtils';
 
 const TimetableManager: React.FC = () => {
-  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
-  
-  // Load entries from allocations.json file
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
-  
+  const [validation, setValidation] = useState<{ isValid: boolean; conflicts: { details: string }[] }>({ isValid: true, conflicts: [] });
   const [showAdmin, setShowAdmin] = useState(false);
   const [showStats, setShowStats] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
 
-  // Load from allocations.json file
   useEffect(() => {
-    setMounted(true);
-    loadAllocations();
+    loadTimetableEntries();
   }, []);
 
-  const loadAllocations = async () => {
+  const loadTimetableEntries = async () => {
     try {
-      const response = await fetch('/api/allocations');
+      const response = await fetch('/api/timetable-entries');
       if (response.ok) {
-        const allocations = await response.json();
-        setEntries(allocations);
-      } else {
-        console.warn('Failed to load allocations, using initial entries');
-        setEntries(initialEntries);
+        const dbEntries = await response.json();
+        setEntries(dbEntries);
+        validateTimetable().then(setValidation);
       }
     } catch (error) {
-      console.error('Error loading allocations:', error);
-      setEntries(initialEntries);
+      console.error('Error loading timetable entries:', error);
     } finally {
       setLoading(false);
     }
@@ -53,22 +45,21 @@ const TimetableManager: React.FC = () => {
         },
         body: JSON.stringify(updatedEntries),
       });
-      
       if (!response.ok) {
         throw new Error('Failed to save allocations');
       }
+      validateTimetable().then(setValidation);
     } catch (error) {
       console.error('Error saving allocations:', error);
       alert('Failed to save allocations. Please try again.');
     }
   };
 
-  const handleAddEntry = async (newEntry: Omit<TimetableEntry, 'id'>) => {
+  const handleAddEntry = async (newEntry: Omit<TimetableEntryType, 'id'>) => {
     const entry: TimetableEntry = {
       ...newEntry,
-      id: `e${Date.now()}` // Simple ID generation
+      id: `e${Date.now()}`
     };
-    
     const updatedEntries = [...entries, entry];
     setEntries(updatedEntries);
     await saveAllocations(updatedEntries);
@@ -79,14 +70,12 @@ const TimetableManager: React.FC = () => {
     await saveAllocations(updatedEntries);
   };
 
-  // Clear allocations data
   const handleClearStorage = async () => {
     const emptyEntries: TimetableEntry[] = [];
     setEntries(emptyEntries);
     await saveAllocations(emptyEntries);
   };
 
-  const validation = validateTimetable();
   const stats = generateStats(entries);
 
   if (loading) {
@@ -138,8 +127,8 @@ const TimetableManager: React.FC = () => {
             <button
               onClick={() => setShowConflicts(!showConflicts)}
               className={`px-4 py-2 rounded-md transition-colors text-sm font-medium text-white ${
-                validation.conflicts.length > 0 
-                  ? 'bg-red-600 hover:bg-red-700' 
+                validation.conflicts.length > 0
+                  ? 'bg-red-600 hover:bg-red-700'
                   : 'bg-gray-400 hover:bg-gray-500'
               }`}
             >
