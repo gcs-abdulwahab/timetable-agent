@@ -1,6 +1,13 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
+
+/**
+ * useFilterState Hook
+ * 
+ * Provides filter state management with JSON file persistence via API.
+ * No localStorage usage - all persistence is handled server-side via /api/filters
+ */
 
 export interface FilterState {
   filterType: "inter" | "bs" | "both"
@@ -20,8 +27,9 @@ interface UseFilterStateReturn {
   setFilterType: (type: "inter" | "bs" | "both") => void
   setCapacity: (capacity: number[]) => void
   resetFilters: () => void
-  saveFiltersToJson: () => Promise<void>
+  saveFiltersToJson: () => Promise<{ success: boolean }>
   loadFiltersFromJson: () => Promise<void>
+  clearSavedFilters: () => Promise<{ success: boolean }>
 }
 
 export function useFilterState(options: UseFilterStateOptions = {}): UseFilterStateReturn {
@@ -58,7 +66,7 @@ export function useFilterState(options: UseFilterStateOptions = {}): UseFilterSt
     })
   }, [defaultFilterType, defaultCapacity])
 
-  // Save filter state to JSON file (following your rule to use JSON files)
+  // Save filter state to JSON file via API
   const saveFiltersToJson = useCallback(async () => {
     const dataToSave = {
       ...filterState,
@@ -67,7 +75,6 @@ export function useFilterState(options: UseFilterStateOptions = {}): UseFilterSt
     }
 
     try {
-      // In a real Next.js app, you'd make an API call to save to the server
       const response = await fetch('/api/filters', {
         method: 'POST',
         headers: {
@@ -80,36 +87,76 @@ export function useFilterState(options: UseFilterStateOptions = {}): UseFilterSt
       })
 
       if (!response.ok) {
-        throw new Error('Failed to save filters')
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to save filters`)
       }
 
       console.log('Filters saved successfully to JSON file')
+      return { success: true }
     } catch (error) {
       console.error('Error saving filters:', error)
-      // Fallback: save to browser's localStorage (though we avoid localStorage per your rule)
-      // Instead, we could show a notification to the user
-      alert('Failed to save filters. Please try again.')
+      throw new Error('Failed to save filters. Please check your connection and try again.')
     }
   }, [filterState, persistenceKey])
 
-  // Load filter state from JSON file
+  // Load filter state from JSON file via API
   const loadFiltersFromJson = useCallback(async () => {
     try {
-      const response = await fetch(`/api/filters?key=${persistenceKey}`)
+      const response = await fetch(`/api/filters?key=${encodeURIComponent(persistenceKey)}`)
       
       if (response.ok) {
         const data = await response.json()
-        if (data && data.filterType && data.capacity) {
-          setFilterState({
-            filterType: data.filterType,
-            capacity: data.capacity
-          })
-          console.log('Filters loaded successfully from JSON file')
+        if (data && typeof data.filterType === 'string' && Array.isArray(data.capacity)) {
+          // Validate the loaded data before applying
+          const validFilterTypes = ['inter', 'bs', 'both']
+          if (validFilterTypes.includes(data.filterType) && 
+              data.capacity.length === 2 && 
+              typeof data.capacity[0] === 'number' && 
+              typeof data.capacity[1] === 'number') {
+            
+            setFilterState({
+              filterType: data.filterType,
+              capacity: [
+                Math.max(minCapacity, Math.min(data.capacity[0], maxCapacity)),
+                Math.max(minCapacity, Math.min(data.capacity[1], maxCapacity))
+              ]
+            })
+            console.log('Filters loaded successfully from JSON file')
+          } else {
+            console.warn('Invalid filter data format, using defaults')
+          }
         }
+      } else if (response.status === 404) {
+        console.log('No saved filters found, using defaults')
+      } else {
+        console.error('Failed to load filters:', response.status)
       }
     } catch (error) {
       console.error('Error loading filters:', error)
-      // Silently fail and keep default state
+      // Silently fail and keep default state - don't throw error on load
+    }
+  }, [persistenceKey, minCapacity, maxCapacity])
+
+  // Clear saved filters from JSON file via API
+  const clearSavedFilters = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/filters?key=${encodeURIComponent(persistenceKey)}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        console.log('Saved filters cleared successfully')
+        return { success: true }
+      } else if (response.status === 404) {
+        console.log('No saved filters to clear')
+        return { success: true }
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }))
+        throw new Error(errorData.error || `HTTP ${response.status}: Failed to clear filters`)
+      }
+    } catch (error) {
+      console.error('Error clearing saved filters:', error)
+      throw new Error('Failed to clear saved filters. Please try again.')
     }
   }, [persistenceKey])
 
@@ -124,7 +171,8 @@ export function useFilterState(options: UseFilterStateOptions = {}): UseFilterSt
     setCapacity,
     resetFilters,
     saveFiltersToJson,
-    loadFiltersFromJson
+    loadFiltersFromJson,
+    clearSavedFilters
   }
 }
 

@@ -1,10 +1,10 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { applyFilters, useFilterState } from "@/hooks/useFilterState"
+import { cn } from "@/lib/utils"
 import * as React from "react"
 import { FilterComponent } from "./FilterComponent"
-import { useFilterState, applyFilters } from "@/hooks/useFilterState"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 
 interface FilterComponentWithHookProps<T extends { type: string; capacity: number }> {
   data: T[]
@@ -49,11 +49,14 @@ function FilterComponentWithHook<T extends { type: string; capacity: number }>({
 
   const handleSaveFilters = async () => {
     try {
-      await saveFiltersToJson()
-      // You could add a toast notification here
-      console.log("Filters saved successfully!")
+      const result = await saveFiltersToJson()
+      if (result.success) {
+        console.log("Filters saved successfully!")
+        // You could add a toast notification here
+      }
     } catch (error) {
       console.error("Failed to save filters:", error)
+      // You could show an error toast notification here
     }
   }
 

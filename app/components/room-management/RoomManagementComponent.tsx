@@ -47,6 +47,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   const [filterDepartment, setFilterDepartment] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
+  const [savedScrollPosition, setSavedScrollPosition] = useState<number>(0);
 
   // Load rooms from API
   const fetchRooms = async () => {
@@ -91,11 +92,21 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   };
 
   const handleEdit = (room: Room) => {
+    // Save current scroll position before opening modal
+    const scrollableContainer = document.querySelector('.room-management-container');
+    if (scrollableContainer) {
+      setSavedScrollPosition(scrollableContainer.scrollTop);
+    }
     setEditingRoom(room);
     setShowAddModal(true);
   };
 
   const handleAddRoom = () => {
+    // Save current scroll position before opening modal
+    const scrollableContainer = document.querySelector('.room-management-container');
+    if (scrollableContainer) {
+      setSavedScrollPosition(scrollableContainer.scrollTop);
+    }
     setEditingRoom(null);
     setShowAddModal(true);
   };
@@ -116,6 +127,13 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
 
         if (response.ok) {
           await fetchRooms(); // Refresh rooms list
+          // Restore scroll position after a brief delay to allow DOM to update
+          setTimeout(() => {
+            const scrollableContainer = document.querySelector('.room-management-container');
+            if (scrollableContainer) {
+              scrollableContainer.scrollTop = savedScrollPosition;
+            }
+          }, 100);
         } else {
           const error = await response.json();
           alert(error.error || 'Failed to update room');
@@ -138,6 +156,13 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
 
         if (response.ok) {
           await fetchRooms(); // Refresh rooms list
+          // Restore scroll position after a brief delay to allow DOM to update
+          setTimeout(() => {
+            const scrollableContainer = document.querySelector('.room-management-container');
+            if (scrollableContainer) {
+              scrollableContainer.scrollTop = savedScrollPosition;
+            }
+          }, 100);
         } else {
           const error = await response.json();
           alert(error.error || 'Failed to add room');
@@ -154,6 +179,11 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
 
   const handleDelete = async (roomId: string) => {
     if (confirm('Are you sure you want to delete this room?')) {
+      // Save current scroll position before deleting
+      const scrollableContainer = document.querySelector('.room-management-container');
+      if (scrollableContainer) {
+        setSavedScrollPosition(scrollableContainer.scrollTop);
+      }
       try {
         const response = await fetch(`/api/rooms?id=${roomId}`, {
           method: 'DELETE',
@@ -161,6 +191,13 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
 
         if (response.ok) {
           await fetchRooms(); // Refresh rooms list
+          // Restore scroll position after a brief delay to allow DOM to update
+          setTimeout(() => {
+            const scrollableContainer = document.querySelector('.room-management-container');
+            if (scrollableContainer) {
+              scrollableContainer.scrollTop = savedScrollPosition;
+            }
+          }, 100);
         } else {
           const error = await response.json();
           alert(error.error || 'Failed to delete room');
@@ -197,7 +234,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   }
 
   return (
-    <div className="p-6 bg-white shadow-lg rounded-lg">
+    <div className="p-6 bg-white shadow-lg rounded-lg room-management-container" style={{ maxHeight: 'calc(100vh - 2rem)', overflowY: 'auto' }}>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Room Management</h2>
         <Button onClick={handleAddRoom} className="bg-blue-600 hover:bg-blue-700">
@@ -264,6 +301,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
         onClose={() => setShowAddModal(false)}
         onSave={handleSaveRoom}
         editingRoom={editingRoom}
+        savedScrollPosition={savedScrollPosition}
       />
 
       {/* Rooms Summary */}

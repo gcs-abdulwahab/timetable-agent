@@ -1,0 +1,37 @@
+[
+  {
+    "value": "Professor & HOD",
+    "label": "Professor & HOD",
+    "order": 1
+  },
+  {
+    "value": "Professor",
+    "label": "Professor", 
+    "order": 2
+  },
+  {
+    "value": "Associate Professor & HOD",
+    "label": "Associate Professor & HOD",
+    "order": 3
+  },
+  {
+    "value": "Associate Professor",
+    "label": "Associate Professor",
+    "order": 4
+  },
+  {
+    "value": "Assistant Professor & HOD", 
+    "label": "Assistant Professor & HOD",
+    "order": 5
+  },
+  {
+    "value": "Assistant Professor",
+    "label": "Assistant Professor",
+    "order": 6
+  },
+  {
+    "value": "Lecturer",
+    "label": "Lecturer",
+    "order": 7
+  }
+]

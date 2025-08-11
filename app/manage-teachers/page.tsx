@@ -3,9 +3,10 @@
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Department, Teacher } from '../components/data';
+import { Department, Teacher, TimetableEntry } from '../components/data';
 import AddTeacherModal from '../components/ui/AddTeacherModal';
 import ConfirmationDialog from '../components/ui/ConfirmationDialog';
+import TeacherProfile from '../components/TeacherProfile';
 
 const ManageTeachersPage = () => {
   const searchParams = useSearchParams();
@@ -23,6 +24,8 @@ const ManageTeachersPage = () => {
     isOpen: boolean;
     teacher: Teacher | null;
   }>({ isOpen: false, teacher: null });
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  const [timetableEntries, setTimetableEntries] = useState<TimetableEntry[]>([]);
   
   // Status states
   const [loading, setLoading] = useState(true);
@@ -47,6 +50,7 @@ const ManageTeachersPage = () => {
   // Load initial data
   useEffect(() => {
     loadData();
+    loadTimetableEntries();
     
     // Handle URL parameter for pre-selecting department
     const departmentParam = searchParams.get('departmentId');
@@ -54,6 +58,18 @@ const ManageTeachersPage = () => {
       setSelectedDepartmentId(departmentParam);
     }
   }, [searchParams]);
+
+  const loadTimetableEntries = async () => {
+    try {
+      const response = await fetch('/api/allocations');
+      if (response.ok) {
+        const data = await response.json();
+        setTimetableEntries(data);
+      }
+    } catch (err) {
+      console.error('Error loading timetable entries:', err);
+    }
+  };
 
   // Filter teachers when department selection changes
   useEffect(() => {
@@ -345,6 +361,13 @@ const ManageTeachersPage = () => {
                       {/* Action buttons */}
                       <div className="flex space-x-2 pt-2 border-t border-gray-100">
                         <button
+                          onClick={() => setSelectedTeacher(teacher)}
+                          className="flex-1 bg-green-600 text-white text-xs px-3 py-2 rounded hover:bg-green-700 transition-colors font-medium"
+                          title="View teacher profile"
+                        >
+                          👁️ View
+                        </button>
+                        <button
                           onClick={() => handleTeacherEdit(teacher)}
                           className="flex-1 bg-blue-600 text-white text-xs px-3 py-2 rounded hover:bg-blue-700 transition-colors font-medium"
                           title="Edit this teacher"
@@ -433,6 +456,16 @@ const ManageTeachersPage = () => {
           </div>
         }
       />
+
+      {/* Teacher Profile Modal */}
+      {selectedTeacher && (
+        <TeacherProfile
+          teacher={selectedTeacher}
+          timetableEntries={timetableEntries}
+          isOpen={!!selectedTeacher}
+          onClose={() => setSelectedTeacher(null)}
+        />
+      )}
     </div>
   );
 };

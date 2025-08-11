@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Subject, Department } from '../data';
+import React, { useEffect, useState } from 'react';
+import { Department, Subject } from '../data';
 import { Button } from './button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './dialog';
+import { Checkbox } from './checkbox';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './dialog';
 import { Input } from './input';
 import { Label } from './label';
-import { Checkbox } from './checkbox';
 
 interface SubjectModalProps {
   isOpen: boolean;
@@ -44,6 +44,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+    const [bulkCodes, setBulkCodes] = useState('');
 
   // Color options for subjects
   const colorOptions = [
@@ -126,6 +127,35 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
     }
   };
 
+    // Bulk add handler
+    const handleBulkAdd = async () => {
+      const codes = bulkCodes.split(',').map(c => c.trim()).filter(Boolean);
+      if (codes.length === 0) return;
+      setIsSubmitting(true);
+      try {
+        const bulkSubjects = codes.map(code => ({
+          name: code,
+          shortName: code,
+          code: code,
+          creditHours: formData.creditHours,
+          color: formData.color,
+          departmentId: formData.departmentId,
+          semesterLevel: formData.semesterLevel,
+          isCore: formData.isCore,
+          isMajor: formData.isMajor,
+          teachingDepartmentIds: formData.teachingDepartmentIds
+        }));
+        // Call onSubmit for each subject
+        for (const subj of bulkSubjects) {
+          await onSubmit(subj);
+        }
+        setBulkCodes('');
+        handleClose();
+      } catch (error) {
+        setIsSubmitting(false);
+        console.error('Bulk add error:', error);
+      }
+    };
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
 
@@ -246,6 +276,25 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
             </div>
           </div>
 
+            {/* Bulk Add Section - only show in add mode */}
+            {mode === 'add' && (
+              <div className="space-y-1">
+                <Label htmlFor="bulkCodes" className="text-sm">Bulk Course Codes (comma separated)</Label>
+                <div className="flex gap-2">
+                  <Input
+                    id="bulkCodes"
+                    value={bulkCodes}
+                    onChange={e => setBulkCodes(e.target.value)}
+                    placeholder="e.g. ECON-101, ECON-102, ECON-103"
+                    className="text-sm"
+                  />
+                  <Button type="button" onClick={handleBulkAdd} disabled={isSubmitting || !bulkCodes.trim()} className="text-sm bg-green-600 text-white">
+                    Add Bulk
+                  </Button>
+                </div>
+                <p className="text-xs text-gray-500">Subject name and short name will be set to each code.</p>
+              </div>
+            )}
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="code" className="text-sm">Subject Code *</Label>
@@ -326,8 +375,8 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
               <Label className="text-sm">Teaching Departments *</Label>
               
               <div className="border rounded-lg p-3 max-h-32 overflow-y-auto bg-gray-50">
-                {departments
-                  .filter(dept => dept.offersBSDegree)
+                {[...departments]
+                  .sort((a, b) => a.name.localeCompare(b.name))
                   .map(dept => {
                     const isOwningDept = dept.id === formData.departmentId;
                     const isSelected = formData.teachingDepartmentIds?.includes(dept.id) || false;

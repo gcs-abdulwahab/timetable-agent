@@ -1,5 +1,6 @@
 'use client';
 
+import { useSubjects } from '@/app/hooks/useData';
 import { useState } from 'react';
 import { Department, computeNextOfferedLevels, countSubjectsForDeptLevel, getOfferedLevelsForDept, setOfferedLevelsForDept } from '../data';
 
@@ -49,6 +50,7 @@ const ConfirmDialog = ({ isOpen, title, message, onConfirm, onCancel, confirmTex
 };
 
 const SemesterChipsManager = ({ department, onUpdate, onError }: SemesterChipsManagerProps) => {
+  const { data: subjects } = useSubjects();
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -72,27 +74,19 @@ const SemesterChipsManager = ({ department, onUpdate, onError }: SemesterChipsMa
 
     const nextOfferedLevels = computeNextOfferedLevels(department, level);
     const isRemoving = currentOfferedLevels.includes(level);
-    
-    if (isRemoving) {
-      // Check if removing a level that contains subjects
-      const subjectCount = countSubjectsForDeptLevel(department.id, level);
-      
-      if (subjectCount > 0) {
-        // Show confirmation dialog
-        setConfirmDialog({
-          isOpen: true,
-          title: 'Confirm Level Removal',
-          message: `Semester ${level} currently contains ${subjectCount} subject${subjectCount !== 1 ? 's' : ''}. Removing this level will only update availability and will not delete the subjects. The subjects will remain in the system.`,
-          onConfirm: () => {
-            performUpdate(nextOfferedLevels);
-            setConfirmDialog({ ...confirmDialog, isOpen: false });
-          }
-        });
-        return;
-      }
+    const subjectCount = countSubjectsForDeptLevel(department.id, level, subjects);
+    if (isRemoving && subjectCount > 0) {
+      setConfirmDialog({
+        isOpen: true,
+        title: 'Confirm Level Removal',
+        message: `Semester ${level} currently contains ${subjectCount} subject${subjectCount !== 1 ? 's' : ''}. Removing this level will only update availability and will not delete the subjects. The subjects will remain in the system.`,
+        onConfirm: () => {
+          performUpdate(nextOfferedLevels);
+          setConfirmDialog({ ...confirmDialog, isOpen: false });
+        }
+      });
+      return;
     }
-
-    // No confirmation needed, proceed with update
     performUpdate(nextOfferedLevels);
   };
 
@@ -115,7 +109,7 @@ const SemesterChipsManager = ({ department, onUpdate, onError }: SemesterChipsMa
         <div className="flex flex-wrap gap-2">
           {allLevels.map(level => {
             const isOffered = currentOfferedLevels.includes(level);
-            const subjectCount = countSubjectsForDeptLevel(department.id, level);
+            const subjectCount = countSubjectsForDeptLevel(department.id, level, subjects);
             
             return (
               <button

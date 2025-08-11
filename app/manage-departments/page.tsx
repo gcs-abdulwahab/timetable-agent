@@ -1,19 +1,19 @@
 'use client';
 
+import { Toggle } from '@/components/ui/toggle';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ConflictViewer from '../components/ConflictViewer';
 import { validateTimetable } from '../components/conflictChecker';
-import { Department, Subject, Teacher, departmentHasSubjectsOrLevels, getOfferedLevelsForDept, setOfferedLevelsForDept } from '../components/data';
+import { Department, departmentHasSubjectsOrLevels, getOfferedLevelsForDept, setOfferedLevelsForDept, Subject, Teacher } from '../components/data';
 import AddDepartmentModal from '../components/ui/AddDepartmentModal';
 import AddTeacherModal from '../components/ui/AddTeacherModal';
+import ConfirmationDialog from '../components/ui/ConfirmationDialog';
 import DepartmentSemesterModal from '../components/ui/DepartmentSemesterModal';
 import SemesterChipsManager from '../components/ui/SemesterChipsManager';
 import SubjectModal from '../components/ui/SubjectModal';
-import ConfirmationDialog from '../components/ui/ConfirmationDialog';
 import { Badge } from '../components/ui/badge';
-import { Toggle } from '@/components/ui/toggle';
 
 const ManageDepartmentsPage = () => {
   const searchParams = useSearchParams();
@@ -723,9 +723,7 @@ Enter department number:`);
                       <div>
                         <button
                           onClick={() => {
-                            // Pre-populate modal with current filter selections if a specific department is selected
                             if (selectedSubjectDepartment !== 'all') {
-                              // The modal will use the selectedSubjectDepartment and selectedSemesterLevel
                               setShowSubjectModal(true);
                             } else {
                               setShowSubjectModal(true);

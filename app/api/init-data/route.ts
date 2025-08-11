@@ -1,40 +1,39 @@
 import { promises as fs } from 'fs';
-import { NextResponse } from 'next/server';
 import path from 'path';
-import { departments, teachers } from '../../components/data';
+import { NextResponse } from 'next/server';
 
 const DATA_DIR = path.join(process.cwd(), 'data');
-const DEPARTMENTS_FILE = path.join(DATA_DIR, 'departments.json');
-const TEACHERS_FILE = path.join(DATA_DIR, 'teachers.json');
+const FILES = ['departments.json', 'teachers.json', 'subjects.json', 'semesters.json'];
 
-// Ensure data directory exists
-async function ensureDataDir() {
+async function ensureFile(file: string) {
+  const full = path.join(DATA_DIR, file);
   try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
+    await fs.access(full);
   } catch {
-    // Directory already exists or other error
+    await fs.writeFile(full, '[]', 'utf8');
   }
 }
 
-// POST - Initialize data files with default data
 export async function POST() {
   try {
-    await ensureDataDir();
-    
-    // Write departments
-    await fs.writeFile(DEPARTMENTS_FILE, JSON.stringify(departments, null, 2));
-    
-    // Write teachers
-    await fs.writeFile(TEACHERS_FILE, JSON.stringify(teachers, null, 2));
-    
-    return NextResponse.json({ 
-      success: true, 
-      message: 'Data files initialized successfully',
-      departments: departments.length,
-      teachers: teachers.length
+    await fs.mkdir(DATA_DIR, { recursive: true });
+    await Promise.all(FILES.map(ensureFile));
+
+    // Report counts
+    const counts = {};
+    for (const f of FILES) {
+      const raw = await fs.readFile(path.join(DATA_DIR, f), 'utf8');
+      const arr = JSON.parse(raw);
+      counts[f] = Array.isArray(arr) ? arr.length : 0;
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: 'Data files are present',
+      counts
     });
-  } catch (error) {
-    console.error('Error initializing data:', error);
+  } catch (err) {
+    console.error('Error initializing data:', err);
     return NextResponse.json({ error: 'Failed to initialize data' }, { status: 500 });
   }
 }

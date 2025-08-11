@@ -222,25 +222,34 @@ const ManageSchedulePage = () => {
                 {slots.map((slot) => (
                   <div key={slot.id} className="bg-white border rounded-lg p-3">
                     {isEditingSlot === slot.id ? (
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-3 gap-2 items-center mb-2">
+                        <div className="col-span-3 mb-2">
+                          <span className="font-medium">Editing Period {slot.period}</span>
+                        </div>
                         <input
                           type="time"
-                          defaultValue={slot.start}
+                          value={slot.start}
                           onChange={(e) => updateSlot(slot.id, { start: e.target.value })}
                           className="px-2 py-1 border rounded text-sm"
                         />
                         <input
                           type="time"
-                          defaultValue={slot.end}
+                          value={slot.end}
                           onChange={(e) => updateSlot(slot.id, { end: e.target.value })}
                           className="px-2 py-1 border rounded text-sm"
                         />
                         <input
                           type="number"
-                          defaultValue={slot.period}
+                          value={slot.period}
                           onChange={(e) => updateSlot(slot.id, { period: parseInt(e.target.value) })}
                           className="px-2 py-1 border rounded text-sm"
                         />
+                        <button
+                          onClick={() => setIsEditingSlot(null)}
+                          className="col-span-3 mt-2 bg-gray-300 text-gray-800 px-3 py-1 rounded hover:bg-gray-400 text-sm"
+                        >
+                          Cancel
+                        </button>
                       </div>
                     ) : (
                       <div className="flex justify-between items-center">

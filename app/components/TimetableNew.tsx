@@ -1,19 +1,16 @@
 'use client';
+import { useRooms, useSemesters, useTimeSlots } from '@/app/hooks/useData';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { buildDragId, createGroupKey, parseDragId } from '../../utils/dnd';
+import { loadAllData } from '../lib/dataLoader';
 import {
-  departments,
   getActiveDepartmentsForSemester,
-  rooms,
   Semester,
-  semesters,
   Subject,
-  subjects,
   Teacher,
-  teachers,
-  timeSlots,
   TimetableEntry
 } from './data';
+import TeacherProfile from './TeacherProfile';
 
 // Shared constants for ESC functionality
 const ESC_TOOLTIP = 'Press ESC to cancel';
@@ -22,9 +19,15 @@ const ESC_LABEL_SUFFIX = ' (ESC)';
 interface TimetableProps {
   entries: TimetableEntry[];
   onUpdateEntries: (entries: TimetableEntry[]) => void;
+  activeSemesterTab: string;
+  setActiveSemesterTab: (id: string) => void;
 }
 
-const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
+const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries, activeSemesterTab, setActiveSemesterTab }) => {
+  const { data: semesters, loading: loadingSemesters, error: errorSemesters } = useSemesters();
+  const { data: timeSlots, loading: loadingTimeSlots, error: errorTimeSlots } = useTimeSlots();
+  const { data: rooms, loading: loadingRooms, error: errorRooms } = useRooms();
+  
   const [mounted, setMounted] = useState(false);
   const idCounterRef = useRef(0);
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
@@ -82,22 +85,61 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     subject: Subject;
     teacher: Teacher;
   } | null>(null);
-  const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
+  // const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
+  const [selectedTeacher, setSelectedTeacher] = useState<Teacher | null>(null);
+  
+  // State for JSON data
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [departments, setDepartments] = useState<{ id: string; name: string; shortName: string; offersBSDegree: boolean; bsSemesterAvailability?: { offeredLevels?: number[]; excludedLevels?: number[]; }; }[]>([]);
+  const [isDataLoading, setIsDataLoading] = useState(true);
 
   // Derive the semester-scoped department list whenever activeSemesterTab changes
-  const visibleDepartments = useMemo(
-    () => activeSemesterTab ? getActiveDepartmentsForSemester(activeSemesterTab) : departments.filter(d => d.offersBSDegree),
-    [activeSemesterTab]
-  );
+  const visibleDepartments = useMemo(() => {
+    if (!activeSemesterTab || !departments.length || !semesters.length) return [];
+    const semesterObj = semesters.find(s => s.id === activeSemesterTab);
+    if (!semesterObj) return [];
+    // Extract semester level from name, e.g. "Semester 1" => 1
+    const match = semesterObj.name.match(/\d+/);
+    const semesterLevel = match ? parseInt(match[0], 10) : 1;
+    return getActiveDepartmentsForSemester(semesterLevel, departments);
+  }, [activeSemesterTab, departments, semesters]);
+
+  // Load data from JSON files on mount
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        setIsDataLoading(true);
+        const { subjects: loadedSubjects, teachers: loadedTeachers, departments: loadedDepartments } = await loadAllData();
+        
+        console.log('✅ Data loaded from JSON files:', {
+          subjects: loadedSubjects.length,
+          teachers: loadedTeachers.length,
+          departments: loadedDepartments.length
+        });
+        
+        setSubjects(loadedSubjects);
+        setTeachers(loadedTeachers);
+        setDepartments(loadedDepartments);
+      } catch (error) {
+        console.error('❌ Failed to load data from JSON files:', error);
+        // Show error notification
+        setNotification({ 
+          message: 'Failed to load data from server. Please refresh the page.', 
+          type: 'error' 
+        });
+        setTimeout(() => setNotification(null), 5000);
+      } finally {
+        setIsDataLoading(false);
+      }
+    };
+    
+    loadData();
+  }, []);
 
   // Mark as mounted after hydration
   useEffect(() => {
     setMounted(true);
-    // Set the first active semester as default tab
-    const activeSems = getActiveSemesters();
-    if (activeSems.length > 0 && !activeSemesterTab) {
-      setActiveSemesterTab(activeSems[0].id);
-    }
   }, []);
 
   // Sync props with local state
@@ -338,7 +380,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   };
 
   // Helper function to get subject by ID
-  const getSubject = (id: string) => subjects.find(s => s.id === id);
+  const getSubject = (id: string | number) => subjects.find(s => s.id === id);
   
   // Helper function to get teacher by ID
   const getTeacher = (id: string) => teachers.find(t => t.id === id);
@@ -974,7 +1016,10 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
           <div className="font-semibold text-gray-800 mb-0.5" style={{ fontSize: '8px', lineHeight: '1.1' }}>
             {subject.shortName || subject.code || subject.name} {daysDisplay}
           </div>
-          <div className="text-gray-600 truncate" style={{ fontSize: '8px', lineHeight: '1.1' }}>
+          <div className="text-gray-600 truncate cursor-pointer hover:text-blue-600 hover:underline" style={{ fontSize: '8px', lineHeight: '1.1' }} onClick={(e) => {
+            e.stopPropagation();
+            setSelectedTeacher(teacher);
+          }} title={`View ${teacher.name}'s profile`}>
             {teacher.shortName}
           </div>
           {entries[0].room ? (
@@ -1029,8 +1074,8 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
                 setEditingEntry(groupKey);
                 // Populate form data with current values
                 setEditFormData({
-                  subjectId: subject.id,
-                  teacherId: teacher.id,
+                  subjectId: String(subject.id),
+                  teacherId: String(teacher.id),
                   room: entries[0]?.room || '',
                   timeSlotId: entries[0]?.timeSlotId || '',
                   selectedDays: entries.map(e => e.day)
@@ -1102,7 +1147,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
       }
     }
 
-let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]`;
+let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px] relative`;
     
     // Remove hover effects - only plus button should be interactive
     if (isEmpty) {
@@ -1126,7 +1171,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
       <td
         className={cellClasses}
         style={{ minHeight: '60px', verticalAlign: 'top' }}
-        title={isEmpty ? 'Use + button to add new entry' : hasConflict ? `${conflictType} Conflict - Cannot drop here` : ''}
+        title={hasConflict ? `${conflictType} Conflict - Cannot drop here` : 'Use + button to add new entry'}
         onClick={handleCellClick}
         onDragOver={(e) => handleDragOver(e, departmentId, timeSlotId)}
         onDrop={(e) => handleDrop(e, departmentId, timeSlotId)}
@@ -1134,42 +1179,49 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
         data-timeslot-id={timeSlotId}
         data-testid={`cell-${departmentId}-${timeSlotId}`}
       >
+        {/* Add entry button - positioned in top-left corner, always visible */}
+        <button
+          className="absolute top-1 left-1 w-5 h-5 rounded-full bg-white hover:bg-blue-100 text-gray-400 hover:text-blue-500 flex items-center justify-center transition-all duration-200 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md z-20"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            // Find the department to get its name
+            const department = departments.find(dept => dept.id === departmentId);
+            const timeSlot = timeSlots.find(slot => slot.id === timeSlotId);
+            
+            if (department && timeSlot) {
+              // Use the currently active semester tab instead of first active semester
+              const activeSemester = semesters.find(s => s.id === activeSemesterTab);
+              
+              // Pre-fill the modal with department and time slot information
+              setAddEntryData(prev => ({
+                ...prev,
+                selectedSemester: activeSemester?.id || '', // Use semester ID, not name
+                selectedDepartment: department.id, // Use department ID, not name
+                selectedTimeSlot: timeSlotId,
+                selectedDays: [] // Let user select days
+              }));
+              
+              // Open the add entry modal
+              setShowAddEntry(true);
+            }
+          }}
+          title="Add new entry to this time slot"
+        >
+          <span className="text-xs font-bold leading-none">+</span>
+        </button>
+        
+        {/* Cell content */}
         {children}
+        
+        {/* Placeholder text for empty cells */}
         {isEmpty && (
-          <div className="flex items-center justify-center h-full">
-            <button
-              className="w-8 h-8 rounded-full bg-white hover:bg-blue-100 text-gray-400 hover:text-blue-500 flex items-center justify-center transition-all duration-200 opacity-100 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Find the department to get its name
-                const department = departments.find(dept => dept.id === departmentId);
-                const timeSlot = timeSlots.find(slot => slot.id === timeSlotId);
-                
-                if (department && timeSlot) {
-                  // Use the currently active semester tab instead of first active semester
-                  const activeSemester = semesters.find(s => s.id === activeSemesterTab);
-                  
-                  // Pre-fill the modal with department and time slot information
-                  setAddEntryData(prev => ({
-                    ...prev,
-                    selectedSemester: activeSemester?.id || '', // Use semester ID, not name
-                    selectedDepartment: department.id, // Use department ID, not name
-                    selectedTimeSlot: timeSlotId,
-                    selectedDays: [] // Let user select days
-                  }));
-                  
-                  // Open the add entry modal
-                  setShowAddEntry(true);
-                }
-              }}
-              title="Add new entry to this time slot"
-            >
-              <span className="text-lg font-bold leading-none">+</span>
-            </button>
+          <div className="flex items-center justify-center h-full text-gray-400 text-xs mt-4">
           </div>
         )}
+        
+        {/* Conflict indicator */}
         {isOver && hasConflict && (
           <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded">
             ⚠️ Conflict
@@ -1184,12 +1236,17 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
     console.log('Current modal state:', { editingData: !!editingData, editingEntry, updateCounter });
   }
 
-  // If not mounted yet, show loading state to prevent hydration mismatches
-  if (!mounted) {
+  // If not mounted yet or data is loading, show loading state to prevent hydration mismatches
+  if (!mounted || isDataLoading) {
     return (
       <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
         <div className="flex items-center justify-center h-64">
-          <div className="text-gray-500">Loading timetable...</div>
+          <div className="text-center">
+            <div className="text-gray-500 mb-2">
+              {!mounted ? 'Loading timetable...' : 'Loading data from JSON files...'}
+            </div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mx-auto"></div>
+          </div>
         </div>
       </div>
     );
@@ -1235,14 +1292,15 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
             {getActiveSemesters().map((semester) => (
               <button
                 key={semester.id}
-                onClick={() => setActiveSemesterTab(semester.id)}
-                className={`py-3 px-6 border-b-3 font-semibold text-base rounded-t-lg transition-all duration-200 ${
+                className={`px-4 py-2 text-sm font-medium border-b-2 focus:outline-none transition-colors duration-200 ${
                   activeSemesterTab === semester.id
-                    ? 'border-emerald-500 text-emerald-700 bg-emerald-50 shadow-md transform scale-105'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 hover:bg-gray-50'
+                    ? 'border-blue-600 text-blue-700 bg-blue-50'
+                    : 'border-transparent text-gray-500 hover:text-blue-600 hover:border-blue-300'
                 }`}
+                onClick={() => setActiveSemesterTab(semester.id)}
+                type="button"
               >
-                {formatSemesterLabel(semester)}
+                {semester.name}
               </button>
             ))}
           </nav>
@@ -1372,7 +1430,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 // Group entries by subject and teacher to show days together
                 const groupedEntries = departmentEntries.reduce((groups, entry) => {
                   // Use the createGroupKey helper for consistent group key generation
-                  const baseGroupKey = createGroupKey(entry.subjectId, entry.teacherId);
+                  const baseGroupKey = createGroupKey(String(entry.subjectId), String(entry.teacherId));
                   const key = buildDragId(baseGroupKey, department.id, timeSlot.id);
                   
                   // If buildDragId fails, skip this entry
@@ -1644,7 +1702,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
               </div>
             </div>
             
-            <div className="flex gap-2 mt-6">
+            <div className="flex gap-2">
               <button 
                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors"
                 onClick={() => {
@@ -1724,11 +1782,80 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
         </div>
       )}
 
-      {/* Debug Info */}
+      {/* Debug Info - JSON Data Display */}
       {process.env.NODE_ENV === 'development' && (
-        <div className="fixed bottom-4 right-4 bg-black text-white p-2 text-xs rounded opacity-75 z-[10000]">
-          Modal: {editingEntry ? 'OPEN' : 'CLOSED'} | Data: {editingData ? 'SET' : 'NULL'}
+        <div className="mt-8 p-4 bg-gray-100 rounded-lg">
+          <h3 className="text-lg font-semibold mb-4 text-gray-800">🛠️ Debug Information (Development Only)</h3>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Subjects Data */}
+            <div className="bg-white p-3 rounded shadow">
+              <h4 className="font-semibold text-blue-600 mb-2">📚 Subjects ({subjects.length})</h4>
+              <div className="text-xs text-gray-600 max-h-32 overflow-y-auto">
+                {subjects.slice(0, 5).map((subject, i) => (
+                  <div key={subject.id} className="mb-1">
+                    <strong>{subject.shortName || subject.code}:</strong> {subject.name.substring(0, 30)}{subject.name.length > 30 ? '...' : ''}
+                  </div>
+                ))}
+                {subjects.length > 5 && (
+                  <div className="text-gray-400 italic">...and {subjects.length - 5} more</div>
+                )}
+              </div>
+            </div>
+            
+            {/* Teachers Data */}
+            <div className="bg-white p-3 rounded shadow">
+              <h4 className="font-semibold text-green-600 mb-2">👨‍🏫 Teachers ({teachers.length})</h4>
+              <div className="text-xs text-gray-600 max-h-32 overflow-y-auto">
+                {teachers.slice(0, 5).map((teacher, i) => (
+                  <div key={teacher.id} className="mb-1">
+                    <strong>{teacher.shortName}:</strong> {teacher.name.substring(0, 25)}{teacher.name.length > 25 ? '...' : ''}
+                  </div>
+                ))}
+                {teachers.length > 5 && (
+                  <div className="text-gray-400 italic">...and {teachers.length - 5} more</div>
+                )}
+              </div>
+            </div>
+            
+            {/* Departments Data */}
+            <div className="bg-white p-3 rounded shadow">
+              <h4 className="font-semibold text-purple-600 mb-2">🏛️ Departments ({departments.length})</h4>
+              <div className="text-xs text-gray-600 max-h-32 overflow-y-auto">
+                {departments.map((department, i) => (
+                  <div key={department.id} className="mb-1">
+                    <strong>{department.shortName}:</strong> {department.name.substring(0, 20)}{department.name.length > 20 ? '...' : ''}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+          
+          <div className="mt-4 p-2 bg-blue-50 rounded text-xs">
+            <div className="text-blue-800">
+              <strong>Data Status:</strong> 
+              {isDataLoading ? (
+                <span className="text-orange-600 ml-1">🔄 Loading...</span>
+              ) : (
+                <span className="text-green-600 ml-1">✅ Loaded from JSON files</span>
+              )}
+            </div>
+            <div className="text-blue-700 mt-1">
+              <strong>Active Semester:</strong> {formatSemesterLabel(getSemester(activeSemesterTab))} | 
+              <strong>Modal:</strong> {editingEntry ? 'OPEN' : 'CLOSED'} | 
+              <strong>Entries:</strong> {localTimetableEntries?.length || 0}
+            </div>
+          </div>
         </div>
+      )}
+
+      {selectedTeacher && (
+        <TeacherProfile
+          teacher={selectedTeacher}
+          timetableEntries={localTimetableEntries}
+          isOpen={!!selectedTeacher}
+          onClose={() => setSelectedTeacher(null)}
+        />
       )}
 
       {/* Add Entry Modal */}
@@ -1775,28 +1902,20 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 <p className="text-xs text-gray-500 mt-1">Semester is automatically set based on the current active tab</p>
               </div>
 
-              {/* Department Selection */}
+              {/* Department Selection - Read Only */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Department</label>
-                <select
-                  value={addEntryData.selectedDepartment}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedDepartment: e.target.value,
-                      selectedSubject: '', // Reset subject when department changes
-                      selectedTeacher: '', // Reset teacher when department changes
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Department</option>
-                  {visibleDepartments.map(dept => (
-                    <option key={dept.id} value={dept.id}>
-                      {dept.name}
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={(() => {
+                    const department = visibleDepartments.find(d => d.id === addEntryData.selectedDepartment);
+                    return department ? department.name : 'No department selected';
+                  })()}
+                  readOnly
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-50 cursor-not-allowed"
+                  placeholder="Department will be set automatically"
+                />
+                <p className="text-xs text-gray-500 mt-1">Department is automatically set based on the current context</p>
               </div>
 
               {/* Subject Selection - Filtered by Semester and Department */}
@@ -1861,26 +1980,20 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
                 </select>
               </div>
 
-              {/* Time Slot Selection */}
+              {/* Time Slot Selection - Read Only */}
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-1">Time Slot</label>
-                <select
-                  value={addEntryData.selectedTimeSlot}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedTimeSlot: e.target.value
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Time Slot</option>
-                  {timeSlots.map(slot => (
-                    <option key={slot.id} value={slot.id}>
-                      Period {slot.period} ({slot.start} - {slot.end})
-                    </option>
-                  ))}
-                </select>
+                <input
+                  type="text"
+                  value={(() => {
+                    const timeSlot = timeSlots.find(ts => ts.id === addEntryData.selectedTimeSlot);
+                    return timeSlot ? `Period ${timeSlot.period} (${timeSlot.start} - ${timeSlot.end})` : 'No time slot selected';
+                  })()}
+                  readOnly
+                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-50 cursor-not-allowed"
+                  placeholder="Time slot will be set automatically"
+                />
+                <p className="text-xs text-gray-500 mt-1">Time slot is automatically set based on the current context</p>
               </div>
 
               {/* Days Selection */}

@@ -1,4 +1,4 @@
-import { teachers, timetableEntries, subjects, semesters } from './data';
+import { Semester, Subject, Teacher, TimetableEntry } from './data';
 
 export interface ConflictInfo {
   type: 'teacher' | 'room';
@@ -8,8 +8,18 @@ export interface ConflictInfo {
   details: string;
 }
 
-export function checkScheduleConflicts(): ConflictInfo[] {
+export function checkScheduleConflicts(
+  timetableEntries: TimetableEntry[],
+  teachers: Teacher[],
+  subjects: Subject[],
+  semesters: Semester[]
+): ConflictInfo[] {
   const conflicts: ConflictInfo[] = [];
+  
+  // Safety check for undefined or empty arrays
+  if (!timetableEntries || !Array.isArray(timetableEntries) || timetableEntries.length === 0) {
+    return conflicts;
+  }
   
   // Group entries by time slot and day
   const timeSlotGroups = timetableEntries.reduce((groups, entry) => {
@@ -110,15 +120,20 @@ export function checkScheduleConflicts(): ConflictInfo[] {
   return conflicts;
 }
 
-export function validateTimetable(): { isValid: boolean; conflicts: ConflictInfo[] } {
-  const conflicts = checkScheduleConflicts();
+export function validateTimetable(
+  timetableEntries: TimetableEntry[],
+  teachers: Teacher[],
+  subjects: Subject[],
+  semesters: Semester[]
+): { isValid: boolean; conflicts: ConflictInfo[] } {
+  const conflicts = checkScheduleConflicts(timetableEntries, teachers, subjects, semesters);
   return {
     isValid: conflicts.length === 0,
     conflicts
   };
 }
 
-export function getTeacherSchedule(teacherId: string) {
+export function getTeacherSchedule(teacherId: string, timetableEntries: TimetableEntry[]) {
   return timetableEntries
     .filter(entry => entry.teacherId === teacherId)
     .sort((a, b) => {
@@ -129,7 +144,7 @@ export function getTeacherSchedule(teacherId: string) {
     });
 }
 
-export function getRoomSchedule(room: string) {
+export function getRoomSchedule(room: string, timetableEntries: TimetableEntry[]) {
   return timetableEntries
     .filter(entry => entry.room === room)
     .sort((a, b) => {

@@ -1,8 +1,32 @@
 [
-  { "id": "day1", "name": "Monday", "active": true },
-  { "id": "day2", "name": "Tuesday", "active": true },
-  { "id": "day3", "name": "Wednesday", "active": true },
-  { "id": "day4", "name": "Thursday", "active": true },
-  { "id": "day5", "name": "Friday", "active": true },
-  { "id": "day6", "name": "Saturday", "active": true }
+  {
+    "id": "day1",
+    "name": "Monday",
+    "active": true
+  },
+  {
+    "id": "day2",
+    "name": "Tuesday",
+    "active": true
+  },
+  {
+    "id": "day3",
+    "name": "Wednesday",
+    "active": true
+  },
+  {
+    "id": "day4",
+    "name": "Thursday",
+    "active": true
+  },
+  {
+    "id": "day5",
+    "name": "Friday",
+    "active": true
+  },
+  {
+    "id": "day6",
+    "name": "Saturday",
+    "active": true
+  }
 ]
