@@ -1,0 +1,32 @@
+[
+  {
+    "id": "sub1754860259286sx2des",
+    "name": "aaaa",
+    "shortName": "aaa",
+    "code": "aaa",
+    "creditHours": 3,
+    "color": "bg-blue-100",
+    "departmentId": "d20",
+    "semesterLevel": 1,
+    "isCore": true,
+    "isMajor": true,
+    "teachingDepartmentIds": [
+      "d20"
+    ]
+  },
+  {
+    "id": "sub17548602801724kcyow",
+    "name": "cccc",
+    "shortName": "ccc",
+    "code": "ccc",
+    "creditHours": 3,
+    "color": "bg-blue-100",
+    "departmentId": "d2",
+    "semesterLevel": 1,
+    "isCore": true,
+    "isMajor": true,
+    "teachingDepartmentIds": [
+      "d2"
+    ]
+  }
+]

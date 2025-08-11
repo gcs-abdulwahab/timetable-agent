@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Toggle } from '@/components/ui/toggle';
+import ConfirmDialog from '@/components/ui/ConfirmDialog';
 
 interface Semester {
   id: string;
@@ -42,6 +43,12 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
   // Check if even/odd semesters are currently active
   const [evenActive, setEvenActive] = useState(false);
   const [oddActive, setOddActive] = useState(false);
+  
+  // Confirmation dialog state
+  const [showOddConfirm, setShowOddConfirm] = useState(false);
+  const [showEvenConfirm, setShowEvenConfirm] = useState(false);
+  const [pendingOddAction, setPendingOddAction] = useState<boolean | null>(null);
+  const [pendingEvenAction, setPendingEvenAction] = useState<boolean | null>(null);
 
   useEffect(() => {
     // Check current state based on active semesters
@@ -58,7 +65,15 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
     setOddActive(hasOddActive);
   }, [semesters]);
 
-  const handleOddToggle = (isPressed: boolean) => {
+  const handleOddToggleRequest = (isPressed: boolean) => {
+    setPendingOddAction(isPressed);
+    setShowOddConfirm(true);
+  };
+
+  const confirmOddToggle = () => {
+    if (pendingOddAction === null) return;
+    
+    const isPressed = pendingOddAction;
     setOddActive(isPressed);
     
     const updatedSemesters = semesters.map(sem => {
@@ -134,9 +149,24 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
     } else {
       onSemestersUpdate(updatedSemesters);
     }
+    
+    // Reset pending action
+    setPendingOddAction(null);
   };
 
-  const handleEvenToggle = (isPressed: boolean) => {
+  const cancelOddToggle = () => {
+    setPendingOddAction(null);
+  };
+
+  const handleEvenToggleRequest = (isPressed: boolean) => {
+    setPendingEvenAction(isPressed);
+    setShowEvenConfirm(true);
+  };
+
+  const confirmEvenToggle = () => {
+    if (pendingEvenAction === null) return;
+    
+    const isPressed = pendingEvenAction;
     setEvenActive(isPressed);
     
     const updatedSemesters = semesters.map(sem => {
@@ -212,6 +242,13 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
     } else {
       onSemestersUpdate(updatedSemesters);
     }
+    
+    // Reset pending action
+    setPendingEvenAction(null);
+  };
+
+  const cancelEvenToggle = () => {
+    setPendingEvenAction(null);
   };
 
   const oddCount = semesters.filter(sem => {
@@ -235,7 +272,7 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
       <div className="flex items-center gap-2">
         <Toggle
           pressed={oddActive}
-          onPressedChange={handleOddToggle}
+          onPressedChange={handleOddToggleRequest}
           variant="outline"
           size="lg"
           className="flex flex-col items-center p-3 min-h-[80px] min-w-[120px] data-[state=on]:bg-blue-100 data-[state=on]:border-blue-500 data-[state=on]:text-blue-700"
@@ -251,7 +288,7 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
         
         <Toggle
           pressed={evenActive}
-          onPressedChange={handleEvenToggle}
+          onPressedChange={handleEvenToggleRequest}
           variant="outline"
           size="lg"
           className="flex flex-col items-center p-3 min-h-[80px] min-w-[120px] data-[state=on]:bg-green-100 data-[state=on]:border-green-500 data-[state=on]:text-green-700"
@@ -271,6 +308,37 @@ const SemesterToggle: React.FC<SemesterToggleProps> = ({
         <div>• Toggle even semesters (2nd, 4th, 6th, 8th)</div>
         <div>• Active semesters will be available for scheduling</div>
       </div>
+      
+      {/* Confirmation Dialogs */}
+      <ConfirmDialog
+        open={showOddConfirm}
+        onOpenChange={setShowOddConfirm}
+        title={pendingOddAction ? "Enable Odd Semesters?" : "Disable Odd Semesters?"}
+        description={
+          pendingOddAction 
+            ? "This will activate all odd semesters (1st, 3rd, 5th, 7th). If they don't exist, default semester entries will be created."
+            : "This will deactivate all odd semesters (1st, 3rd, 5th, 7th) and make them unavailable for scheduling."
+        }
+        onConfirm={confirmOddToggle}
+        onCancel={cancelOddToggle}
+        confirmText={pendingOddAction ? "Enable" : "Disable"}
+        variant={pendingOddAction ? "default" : "destructive"}
+      />
+      
+      <ConfirmDialog
+        open={showEvenConfirm}
+        onOpenChange={setShowEvenConfirm}
+        title={pendingEvenAction ? "Enable Even Semesters?" : "Disable Even Semesters?"}
+        description={
+          pendingEvenAction 
+            ? "This will activate all even semesters (2nd, 4th, 6th, 8th). If they don't exist, default semester entries will be created."
+            : "This will deactivate all even semesters (2nd, 4th, 6th, 8th) and make them unavailable for scheduling."
+        }
+        onConfirm={confirmEvenToggle}
+        onCancel={cancelEvenToggle}
+        confirmText={pendingEvenAction ? "Enable" : "Disable"}
+        variant={pendingEvenAction ? "default" : "destructive"}
+      />
     </div>
   );
 };

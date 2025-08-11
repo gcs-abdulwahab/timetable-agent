@@ -451,11 +451,10 @@
     "availableForOtherDepartments": false
   },
   {
-    "id": "b-11",
     "name": "B11",
     "capacity": 60,
     "type": "Classroom",
-    "building": "BS Block A",
+    "building": "Business Block",
     "floor": 1,
     "hasProjector": false,
     "hasAC": false,
@@ -463,10 +462,11 @@
     "programTypes": [
       "BS"
     ],
-    "availableForOtherDepartments": true
+    "primaryDepartmentId": "d13",
+    "availableForOtherDepartments": true,
+    "id": "b-11"
   },
   {
-    "id": "b-12",
     "name": "B12",
     "capacity": 60,
     "type": "Classroom",
@@ -478,7 +478,9 @@
     "programTypes": [
       "BS"
     ],
-    "availableForOtherDepartments": true
+    "primaryDepartmentId": "d13",
+    "availableForOtherDepartments": true,
+    "id": "b-12"
   },
   {
     "id": "b-13",
@@ -766,7 +768,6 @@
     "availableForOtherDepartments": true
   },
   {
-    "id": "bs-78",
     "name": "78",
     "capacity": 60,
     "type": "Classroom",
@@ -778,7 +779,9 @@
     "programTypes": [
       "BS"
     ],
-    "availableForOtherDepartments": true
+    "primaryDepartmentId": "d10",
+    "availableForOtherDepartments": true,
+    "id": "bs-78"
   },
   {
     "id": "bs-79",
@@ -961,7 +964,6 @@
     "availableForOtherDepartments": true
   },
   {
-    "id": "bs-136",
     "name": "136",
     "capacity": 60,
     "type": "Classroom",
@@ -973,6 +975,8 @@
     "programTypes": [
       "BS"
     ],
-    "availableForOtherDepartments": true
+    "primaryDepartmentId": "d14",
+    "availableForOtherDepartments": false,
+    "id": "bs-136"
   }
 ]

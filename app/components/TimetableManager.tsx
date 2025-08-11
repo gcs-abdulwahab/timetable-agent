@@ -1,17 +1,24 @@
 'use client';
 
+import { useDepartments, useSemesters, useSubjects, useTeachers } from '@/app/hooks/useData';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import ConflictViewer from './ConflictViewer';
 import TimetableAdmin from './TimetableAdmin';
 import TimetableNew from './TimetableNew';
 import { validateTimetable } from './conflictChecker';
-import { timetableEntries as initialEntries, TimetableEntry } from './data';
+import { TimetableEntry } from './data';
 import { generateStats } from './timetableUtils';
 
 const TimetableManager: React.FC = () => {
   const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
+  
+  // Load data from APIs
+  const { data: departments } = useDepartments();
+  const { data: subjects } = useSubjects();
+  const { data: semesters } = useSemesters();
+  const { data: teachers } = useTeachers();
   
   // Load entries from allocations.json file
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
@@ -33,12 +40,12 @@ const TimetableManager: React.FC = () => {
         const allocations = await response.json();
         setEntries(allocations);
       } else {
-        console.warn('Failed to load allocations, using initial entries');
-        setEntries(initialEntries);
+        console.warn('Failed to load allocations, using empty entries');
+        setEntries([]);
       }
     } catch (error) {
       console.error('Error loading allocations:', error);
-      setEntries(initialEntries);
+      setEntries([]);
     } finally {
       setLoading(false);
     }
@@ -86,7 +93,9 @@ const TimetableManager: React.FC = () => {
     await saveAllocations(emptyEntries);
   };
 
-  const validation = validateTimetable();
+  const validation = (entries.length > 0 && teachers.length > 0 && subjects.length > 0 && semesters.length > 0) 
+    ? validateTimetable(entries, teachers, subjects, semesters)
+    : { isValid: true, conflicts: [] };
   const stats = generateStats(entries);
 
   if (loading) {

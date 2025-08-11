@@ -1,48 +1,25 @@
-import { promises as fs } from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
+import { readJsonArray, writeJsonArray } from '@/app/lib/fsJson';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const DEPARTMENTS_FILE = path.join(DATA_DIR, 'departments.json');
+const FILE = 'departments.json';
 
-// Ensure data directory exists
-async function ensureDataDir() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  } catch {
-    // Directory already exists or other error
-  }
-}
-
-// GET - Read departments
 export async function GET() {
   try {
-    await ensureDataDir();
-    
-    try {
-      const data = await fs.readFile(DEPARTMENTS_FILE, 'utf8');
-      return NextResponse.json(JSON.parse(data));
-    } catch {
-      // File doesn't exist, return empty array
-      return NextResponse.json([]);
-    }
-  } catch (error) {
-    console.error('Error reading departments:', error);
+    const departments = await readJsonArray(FILE);
+    return NextResponse.json(departments);
+  } catch (err) {
+    console.error('Error reading departments:', err);
     return NextResponse.json({ error: 'Failed to read departments' }, { status: 500 });
   }
 }
 
-// POST - Write departments
 export async function POST(request: NextRequest) {
   try {
-    await ensureDataDir();
-    
     const departments = await request.json();
-    await fs.writeFile(DEPARTMENTS_FILE, JSON.stringify(departments, null, 2));
-    
+    await writeJsonArray(FILE, departments);
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error('Error writing departments:', error);
+  } catch (err) {
+    console.error('Error writing departments:', err);
     return NextResponse.json({ error: 'Failed to write departments' }, { status: 500 });
   }
 }

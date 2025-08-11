@@ -13,13 +13,15 @@ interface AddRoomModalProps {
   onClose: () => void;
   onSave: (room: Omit<Room, 'id'>) => void;
   editingRoom?: Room | null;
+  savedScrollPosition?: number;
 }
 
 const AddRoomModal: React.FC<AddRoomModalProps> = ({
   isOpen,
   onClose,
   onSave,
-  editingRoom
+  editingRoom,
+  savedScrollPosition
 }) => {
   const [formData, setFormData] = useState<Omit<Room, 'id'>>({
     name: '',
@@ -155,6 +157,16 @@ const AddRoomModal: React.FC<AddRoomModalProps> = ({
   const handleClose = () => {
     onClose();
     setErrors({});
+    
+    // Restore scroll position when modal is closed without saving
+    if (savedScrollPosition !== undefined) {
+      setTimeout(() => {
+        const scrollableContainer = document.querySelector('.room-management-container');
+        if (scrollableContainer) {
+          scrollableContainer.scrollTop = savedScrollPosition;
+        }
+      }, 100);
+    }
   };
 
   return (

@@ -3,20 +3,22 @@
 import React, { useState } from 'react';
 import {
   daysOfWeek,
-  departments,
-  semesters,
-  subjects,
-  teachers,
   timeSlots,
   TimetableEntry,
   getActiveDepartmentsForSemester
 } from './data';
+import { useDepartments, useSemesters, useSubjects, useTeachers } from '@/app/hooks/useData';
 
 interface TimetableAdminProps {
   onAddEntry: (entry: Omit<TimetableEntry, 'id'>) => void;
 }
 
 const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
+  const { data: departments, loading: loadingDepartments, error: errorDepartments } = useDepartments();
+  const { data: semesters, loading: loadingSemesters, error: errorSemesters } = useSemesters();
+  const { data: subjects, loading: loadingSubjects, error: errorSubjects } = useSubjects();
+  const { data: teachers, loading: loadingTeachers, error: errorTeachers } = useTeachers();
+  
   const [formData, setFormData] = useState({
     semesterId: '',
     departmentId: '',
@@ -85,6 +87,33 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
       ...(name === 'departmentId' && { teacherId: '', subjectId: '', classId: '' })
     }));
   };
+
+  // Show loading state if any data is still loading
+  if (loadingDepartments || loadingSemesters || loadingSubjects || loadingTeachers) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Add New Timetable Entry</h2>
+        <div className="flex items-center justify-center py-8">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"></div>
+          <span className="ml-2 text-gray-600">Loading data...</span>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state if any data failed to load
+  const hasError = errorDepartments || errorSemesters || errorSubjects || errorTeachers;
+  if (hasError) {
+    return (
+      <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
+        <h2 className="text-xl font-bold text-gray-800 mb-4">Add New Timetable Entry</h2>
+        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <p className="font-bold">Error loading data:</p>
+          <p>{errorDepartments || errorSemesters || errorSubjects || errorTeachers}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
