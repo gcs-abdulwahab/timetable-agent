@@ -1,69 +1,69 @@
-import fs from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
-import { Room } from '../../components/data';
+import { PrismaClient } from '../../../lib/generated/prisma';
 
-const roomsFilePath = path.join(process.cwd(), 'data', 'rooms.json');
+const prisma = new PrismaClient();
 
-// Helper function to read rooms from JSON file
-function readRooms(): Room[] {
-  try {
-    const fileContents = fs.readFileSync(roomsFilePath, 'utf8');
-    return JSON.parse(fileContents);
-  } catch (error) {
-    console.error('Error reading rooms file:', error);
-    return [];
-  }
-}
-
-// Helper function to write rooms to JSON file
-function writeRooms(rooms: Room[]): boolean {
-  try {
-    fs.writeFileSync(roomsFilePath, JSON.stringify(rooms, null, 2));
-    return true;
-  } catch (error) {
-    console.error('Error writing rooms file:', error);
-    return false;
-  }
-}
-
-// GET - Fetch all rooms
+// GET - Fetch all rooms from database
 export async function GET() {
   try {
-    const rooms = readRooms();
+    const rooms = await prisma.room.findMany({
+      orderBy: { name: 'asc' }
+    });
     return NextResponse.json(rooms);
   } catch (error) {
     console.error('Error fetching rooms:', error);
-    return NextResponse.json({ error: 'Failed to fetch rooms' }, { status: 500 });
+    return NextResponse.json([], { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-// POST - Add a new room
+// POST - Add or update rooms in database
 export async function POST(request: NextRequest) {
   try {
-    const newRoom = await request.json();
-    const rooms = readRooms();
+    const rooms = await request.json();
     
-    // Check if room with same name already exists
-    if (rooms.some((room: Room) => room.name.toLowerCase() === newRoom.name.toLowerCase())) {
-      return NextResponse.json({ error: 'A room with this name already exists' }, { status: 400 });
-    }
+    // Update each room in the database
+    const updatePromises = rooms.map((room: any) =>
+      prisma.room.upsert({
+        where: { id: room.id },
+        update: {
+          name: room.name,
+          capacity: room.capacity,
+          type: room.type,
+          building: room.building,
+          floor: room.floor,
+          hasProjector: room.hasProjector,
+          hasAC: room.hasAC,
+          description: room.description,
+          programTypes: room.programTypes,
+          primaryDepartmentId: room.primaryDepartmentId,
+          availableForOtherDepartments: room.availableForOtherDepartments,
+        },
+        create: {
+          id: room.id,
+          name: room.name,
+          capacity: room.capacity,
+          type: room.type,
+          building: room.building,
+          floor: room.floor,
+          hasProjector: room.hasProjector,
+          hasAC: room.hasAC,
+          description: room.description,
+          programTypes: room.programTypes,
+          primaryDepartmentId: room.primaryDepartmentId,
+          availableForOtherDepartments: room.availableForOtherDepartments,
+        },
+      })
+    );
     
-    // Generate ID if not provided
-    if (!newRoom.id) {
-      newRoom.id = `room-${newRoom.name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
-    }
-    
-    rooms.push(newRoom);
-    
-    if (writeRooms(rooms)) {
-      return NextResponse.json(newRoom, { status: 201 });
-    } else {
-      return NextResponse.json({ error: 'Failed to save room' }, { status: 500 });
-    }
+    await Promise.all(updatePromises);
+    return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error adding room:', error);
-    return NextResponse.json({ error: 'Failed to add room' }, { status: 500 });
+    console.error('Error updating rooms:', error);
+    return NextResponse.json({ error: 'Failed to update rooms' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -71,23 +71,30 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const updatedRoom = await request.json();
-    const rooms = readRooms();
     
-    const roomIndex = rooms.findIndex((room: Room) => room.id === updatedRoom.id);
-    if (roomIndex === -1) {
-      return NextResponse.json({ error: 'Room not found' }, { status: 404 });
-    }
+    const room = await prisma.room.update({
+      where: { id: updatedRoom.id },
+      data: {
+        name: updatedRoom.name,
+        capacity: updatedRoom.capacity,
+        type: updatedRoom.type,
+        building: updatedRoom.building,
+        floor: updatedRoom.floor,
+        hasProjector: updatedRoom.hasProjector,
+        hasAC: updatedRoom.hasAC,
+        description: updatedRoom.description,
+        programTypes: updatedRoom.programTypes,
+        primaryDepartmentId: updatedRoom.primaryDepartmentId,
+        availableForOtherDepartments: updatedRoom.availableForOtherDepartments,
+      },
+    });
     
-    rooms[roomIndex] = updatedRoom;
-    
-    if (writeRooms(rooms)) {
-      return NextResponse.json(updatedRoom);
-    } else {
-      return NextResponse.json({ error: 'Failed to update room' }, { status: 500 });
-    }
+    return NextResponse.json(room);
   } catch (error) {
     console.error('Error updating room:', error);
     return NextResponse.json({ error: 'Failed to update room' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
@@ -101,20 +108,15 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({ error: 'Room ID is required' }, { status: 400 });
     }
     
-    const rooms = readRooms();
-    const filteredRooms = rooms.filter((room: Room) => room.id !== roomId);
+    await prisma.room.delete({
+      where: { id: roomId }
+    });
     
-    if (rooms.length === filteredRooms.length) {
-      return NextResponse.json({ error: 'Room not found' }, { status: 404 });
-    }
-    
-    if (writeRooms(filteredRooms)) {
-      return NextResponse.json({ message: 'Room deleted successfully' });
-    } else {
-      return NextResponse.json({ error: 'Failed to delete room' }, { status: 500 });
-    }
+    return NextResponse.json({ message: 'Room deleted successfully' });
   } catch (error) {
     console.error('Error deleting room:', error);
     return NextResponse.json({ error: 'Failed to delete room' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

@@ -2,8 +2,9 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import Navigation from '../components/Navigation';
 import { TimeSlot } from '../components/data';
+import Navigation from '../components/Navigation';
+import SemesterInfoComponent from '../components/SemesterInfoComponent';
 
 interface Day {
   id: string;
@@ -65,17 +66,20 @@ const ManageSchedulePage = () => {
 
   // Save days to JSON file
   const saveDays = async (updatedDays: Day[]) => {
-    setDays(updatedDays);
     try {
-      await fetch('/api/save-days', {
+      // Only send the updated day to the backend
+      const changedDay = updatedDays.find((d, i) => d.active !== days[i]?.active);
+      if (!changedDay) return;
+      const res = await fetch('/api/days', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedDays),
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(changedDay),
       });
+      if (res.ok) {
+        setDays(updatedDays);
+      }
     } catch (error) {
-      console.error('Error saving days:', error);
+      console.error('Error saving day:', error);
     }
   };
 
@@ -135,99 +139,97 @@ const ManageSchedulePage = () => {
     <div className="min-h-screen bg-gray-50">
       <Navigation />
       <div className="p-6">
-      <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-800">Manage Schedule</h1>
-            <div className="space-x-2">
-              <Link
-                href="/manage-departments"
-                className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
-              >
-                Manage Departments
-              </Link>
-              <Link
-                href="/"
-                className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors"
-              >
-                ← Back to Timetable
-              </Link>
-            </div>
-          </div>
-          
-          <div className="mb-4">
-            <button
-              onClick={exportToJSON}
-              className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
-            >
-              Export to JSON
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Time Slots Management */}
-            <div>
-              <h2 className="text-2xl font-semibold text-gray-700 mb-4">Time Slots</h2>
-              
-              {/* Add New Slot */}
-              <div className="bg-gray-50 p-4 rounded-lg mb-4">
-                <h3 className="text-lg font-medium mb-3">Add New Time Slot</h3>
-                <div className="grid grid-cols-3 gap-2 mb-3">
-                  <input
-                    type="time"
-                    value={newSlot.start}
-                    onChange={(e) => setNewSlot({ ...newSlot, start: e.target.value })}
-                    className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Start Time"
-                  />
-                  <input
-                    type="time"
-                    value={newSlot.end}
-                    onChange={(e) => setNewSlot({ ...newSlot, end: e.target.value })}
-                    className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="End Time"
-                  />
-                  <input
-                    type="number"
-                    value={newSlot.period}
-                    onChange={(e) => setNewSlot({ ...newSlot, period: parseInt(e.target.value) })}
-                    className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    placeholder="Period"
-                  />
-                </div>
-                <button
-                  onClick={addSlot}
-                  className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+        <div className="max-w-7xl mx-auto">
+          {/* Semester Info Section */}
+          <SemesterInfoComponent />
+          <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+            <div className="flex justify-between items-center mb-6">
+              <h1 className="text-3xl font-bold text-gray-800">Manage Schedule</h1>
+              <div className="space-x-2">
+                <Link
+                  href="/manage-departments"
+                  className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition-colors"
                 >
-                  Add Slot
-                </button>
+                  Manage Departments
+                </Link>
+                <Link
+                  href="/"
+                  className="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 transition-colors"
+                >
+                  ← Back to Timetable
+                </Link>
               </div>
-
-              {/* Slots List */}
-              <div className="space-y-2">
-                {slots.map((slot) => (
-                  <div key={slot.id} className="bg-white border rounded-lg p-3">
-                    {isEditingSlot === slot.id ? (
-                      <div className="grid grid-cols-3 gap-2">
-                        <input
-                          type="time"
-                          defaultValue={slot.start}
-                          onChange={(e) => updateSlot(slot.id, { start: e.target.value })}
-                          className="px-2 py-1 border rounded text-sm"
-                        />
-                        <input
-                          type="time"
-                          defaultValue={slot.end}
-                          onChange={(e) => updateSlot(slot.id, { end: e.target.value })}
-                          className="px-2 py-1 border rounded text-sm"
-                        />
-                        <input
-                          type="number"
-                          defaultValue={slot.period}
-                          onChange={(e) => updateSlot(slot.id, { period: parseInt(e.target.value) })}
-                          className="px-2 py-1 border rounded text-sm"
-                        />
-                      </div>
+            </div>
+            <div className="mb-4">
+              <button
+                onClick={exportToJSON}
+                className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition-colors"
+              >
+                Export to JSON
+              </button>
+            </div>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+              {/* Time Slots Management */}
+              <div>
+                <h2 className="text-2xl font-semibold text-gray-700 mb-4">Time Slots</h2>
+                {/* Add New Slot */}
+                <div className="bg-gray-50 p-4 rounded-lg mb-4">
+                  <h3 className="text-lg font-medium mb-3">Add New Time Slot</h3>
+                  <div className="grid grid-cols-3 gap-2 mb-3">
+                    <input
+                      type="time"
+                      value={newSlot.start}
+                      onChange={(e) => setNewSlot({ ...newSlot, start: e.target.value })}
+                      className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Start Time"
+                    />
+                    <input
+                      type="time"
+                      value={newSlot.end}
+                      onChange={(e) => setNewSlot({ ...newSlot, end: e.target.value })}
+                      className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="End Time"
+                    />
+                    <input
+                      type="number"
+                      value={newSlot.period}
+                      onChange={(e) => setNewSlot({ ...newSlot, period: parseInt(e.target.value) })}
+                      className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Period"
+                    />
+                  </div>
+                  <button
+                    onClick={addSlot}
+                    className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+                  >
+                    Add Slot
+                  </button>
+                </div>
+                {/* Slots List */}
+                <div className="space-y-2">
+                  {slots.map((slot) => (
+                    <div key={slot.id} className="bg-white border rounded-lg p-3">
+                      {isEditingSlot === slot.id ? (
+                        <div className="grid grid-cols-3 gap-2">
+                          <input
+                            type="time"
+                            defaultValue={slot.start}
+                            onChange={(e) => updateSlot(slot.id, { start: e.target.value })}
+                            className="px-2 py-1 border rounded text-sm"
+                          />
+                          <input
+                            type="time"
+                            defaultValue={slot.end}
+                            onChange={(e) => updateSlot(slot.id, { end: e.target.value })}
+                            className="px-2 py-1 border rounded text-sm"
+                          />
+                          <input
+                            type="number"
+                            defaultValue={slot.period}
+                            onChange={(e) => updateSlot(slot.id, { period: parseInt(e.target.value) })}
+                            className="px-2 py-1 border rounded text-sm"
+                          />
+                        </div>
                     ) : (
                       <div className="flex justify-between items-center">
                         <div>

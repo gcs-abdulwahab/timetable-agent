@@ -1,48 +1,54 @@
-import { promises as fs } from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
+import { PrismaClient } from '../../../lib/generated/prisma';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const DEPARTMENTS_FILE = path.join(DATA_DIR, 'departments.json');
+const prisma = new PrismaClient();
 
-// Ensure data directory exists
-async function ensureDataDir() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  } catch {
-    // Directory already exists or other error
-  }
-}
-
-// GET - Read departments
+// GET - Fetch all departments from database
 export async function GET() {
   try {
-    await ensureDataDir();
-    
-    try {
-      const data = await fs.readFile(DEPARTMENTS_FILE, 'utf8');
-      return NextResponse.json(JSON.parse(data));
-    } catch {
-      // File doesn't exist, return empty array
-      return NextResponse.json([]);
-    }
+    const departments = await prisma.department.findMany({
+      orderBy: { name: 'asc' }
+    });
+    return NextResponse.json(departments);
   } catch (error) {
-    console.error('Error reading departments:', error);
-    return NextResponse.json({ error: 'Failed to read departments' }, { status: 500 });
+    console.error('Error fetching departments:', error);
+    return NextResponse.json([], { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-// POST - Write departments
+// POST - Update departments in database
 export async function POST(request: NextRequest) {
   try {
-    await ensureDataDir();
-    
     const departments = await request.json();
-    await fs.writeFile(DEPARTMENTS_FILE, JSON.stringify(departments, null, 2));
     
+    // Update each department in the database
+    const updatePromises = departments.map((dept: any) =>
+      prisma.department.upsert({
+        where: { id: dept.id },
+        update: {
+          name: dept.name,
+          shortName: dept.shortName,
+          offersBSDegree: dept.offersBSDegree,
+          bsSemesterAvailability: dept.bsSemesterAvailability,
+        },
+        create: {
+          id: dept.id,
+          name: dept.name,
+          shortName: dept.shortName,
+          offersBSDegree: dept.offersBSDegree,
+          bsSemesterAvailability: dept.bsSemesterAvailability,
+        },
+      })
+    );
+    
+    await Promise.all(updatePromises);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error writing departments:', error);
-    return NextResponse.json({ error: 'Failed to write departments' }, { status: 500 });
+    console.error('Error updating departments:', error);
+    return NextResponse.json({ error: 'Failed to update departments' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

@@ -16,8 +16,13 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const updatedEntries = await request.json();
-    // Here you would update the database with the new entries
-    // For now, just return success
+    // Remove all existing entries (for full replace)
+    await prisma.timetableEntry.deleteMany({});
+    // Add new entries
+    const createPromises = updatedEntries.map((entry: any) =>
+      prisma.timetableEntry.create({ data: entry })
+    );
+    await Promise.all(createPromises);
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Error updating timetable entries:', error);

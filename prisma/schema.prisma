@@ -31,13 +31,14 @@ datasource db {
   }
 
   model Semester {
-    id        String   @id
-    name      String
-    year      Int
-    term      String
-    isActive  Boolean
-    startDate String
-    endDate   String
+  id        String   @id
+  name      String
+  code      String?
+  year      Int?
+  term      String?
+  isActive  Boolean?
+  startDate String?
+  endDate   String?
   }
 
   model Subject {
@@ -72,6 +73,15 @@ datasource db {
     start  String
     end    String
     period Int
+  }
+
+  model Day {
+    id           String   @id
+    name         String
+    shortName    String
+    dayCode      Int      @unique
+    isActive     Boolean
+    workingHours String
   }
 
   model TimetableEntry {

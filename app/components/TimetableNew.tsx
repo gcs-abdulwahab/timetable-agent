@@ -1,25 +1,35 @@
-'use client';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { buildDragId, createGroupKey, parseDragId } from '../../utils/dnd';
-import {
-  getActiveDepartmentsForSemester,
-  getDepartments,
-  getSemesters,
-  getSubjects,
-  getTeachers,
-  getTimeSlots
-} from './data';
+import React, { useEffect, useMemo, useRef, useState } from "react";
+import type { Room, Semester, Subject, Teacher, TimetableEntry } from "../types/timetable";
+import type { AddEntryData, ConflictTooltip, DeleteConfirmation, Notification } from "../types/ui";
+import { getActiveDepartmentsForSemester } from "../utils/timetable-utils";
+import { ConflictTooltipModal, DeleteConfirmationModal, EditEntryModal } from "./TimetableModals";
+import AddEntryModal from "./AddEntryModal";
 
-// Shared constants for ESC functionality
-const ESC_TOOLTIP = 'Press ESC to cancel';
-const ESC_LABEL_SUFFIX = ' (ESC)';
-
-interface TimetableProps {
+// Define TimetableProps type locally
+type TimetableProps = {
   entries: TimetableEntry[];
   onUpdateEntries: (entries: TimetableEntry[]) => void;
-}
+};
+// Define missing constants for tooltips and labels
+const ESC_TOOLTIP = "Close (ESC)";
+const ESC_LABEL_SUFFIX = " (ESC)";
+
 
 const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
+  const [notification, setNotification] = useState<Notification>(null);
+  const [updateCounter, setUpdateCounter] = useState(0);
+  const [conflictTooltip, setConflictTooltip] = useState<ConflictTooltip>({ show: false, content: '', x: 0, y: 0 });
+  const [deleteConfirmation, setDeleteConfirmation] = useState<DeleteConfirmation>(null);
+  const [addEntryData, setAddEntryData] = useState<AddEntryData>({
+    selectedSemester: '',
+    selectedDepartment: '',
+    selectedSubject: '',
+    selectedTeacher: '',
+    selectedTimeSlot: '',
+    selectedDays: [],
+    room: ''
+  });
+  const [showAddEntry, setShowAddEntry] = useState(false);
   const [mounted, setMounted] = useState(false);
   const idCounterRef = useRef(0);
   const [editingEntry, setEditingEntry] = useState<string | null>(null);
@@ -31,52 +41,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     timeSlotId: '',
     selectedDays: [] as string[]
   });
-  const [dragData, setDragData] = useState<{ 
-    groupKey: string, 
-    entries: TimetableEntry[], 
-    subject: Subject, 
-    teacher: Teacher,
-    departmentId: string,
-    sourceTimeSlotId: string
-  } | null>(null);
-  // Draft state for provisional move preview
-  const [draftData, setDraftData] = useState<{ 
-    groupKey: string, 
-    entries: TimetableEntry[], 
-    subject: Subject, 
-    teacher: Teacher,
-    departmentId: string,
-    provisionalTimeSlotId: string
-  } | null>(null);
-  // Track the current drop target for handleDragEnd
-  const [currentDropTarget, setCurrentDropTarget] = useState<{ departmentId: string, timeSlotId: string } | null>(null);
-  const [dragOverlay, setDragOverlay] = useState<{ show: boolean, x: number, y: number, subject?: Subject, teacher?: Teacher, daysDisplay?: string } | null>(null);
   const [localTimetableEntries, setLocalTimetableEntries] = useState<TimetableEntry[]>(entries || []);
-  const [notification, setNotification] = useState<{ message: string, type: 'success' | 'error' } | null>(null);
-  const [updateCounter, setUpdateCounter] = useState(0);
-  const [showAddEntry, setShowAddEntry] = useState(false);
-  const [conflictTooltip, setConflictTooltip] = useState<{ show: boolean, content: string, x: number, y: number }>({
-    show: false,
-    content: '',
-    x: 0,
-    y: 0
-  });
-  const [addEntryData, setAddEntryData] = useState({
-    selectedSemester: '',
-    selectedDepartment: '',
-    selectedSubject: '',
-    selectedTeacher: '',
-    selectedTimeSlot: '',
-    selectedDays: [] as string[],
-    room: ''
-  });
-  const [deleteConfirmation, setDeleteConfirmation] = useState<{
-    show: boolean;
-    groupKey: string;
-    entries: TimetableEntry[];
-    subject: Subject;
-    teacher: Teacher;
-  } | null>(null);
   const [activeSemesterTab, setActiveSemesterTab] = useState<string>('');
 
   // State for fetched data
@@ -85,30 +50,69 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   const [subjects, setSubjects] = useState<Array<{ id: string; name: string; departmentId: string; semesterLevel: number }>>([]);
   const [teachers, setTeachers] = useState<Array<{ id: string; name: string; departmentId: string }>>([]);
   const [timeSlots, setTimeSlots] = useState<Array<{ id: string; period: number; start: string; end: string }>>([]);
+  const [rooms, setRooms] = useState<Array<Room>>([]);
+  const [semesterMode, setSemesterMode] = useState<'odd' | 'even' | 'mixed'>('mixed');
+
+  // Hardcoded timeslots for demonstration
+  const defaultTimeSlots = [
+    { id: 'ts1', period: 1, start: '08:00', end: '09:00' },
+    { id: 'ts2', period: 2, start: '09:00', end: '10:00' },
+    { id: 'ts3', period: 3, start: '10:00', end: '11:00' },
+    { id: 'ts4', period: 4, start: '11:00', end: '12:00' }
+  ];
+
+  // Add state for showing the add time slot form
+  const [showAddTimeSlot, setShowAddTimeSlot] = useState(false);
+  const [newTimeSlot, setNewTimeSlot] = useState({ period: '', start: '', end: '' });
+  const [addTimeSlotError, setAddTimeSlotError] = useState('');
 
   // Fetch data on mount
   useEffect(() => {
-    getDepartments().then(setDepartments);
-    getSemesters().then(setSemesters);
-    getSubjects().then(setSubjects);
-    getTeachers().then(setTeachers);
-    getTimeSlots().then(setTimeSlots);
+    fetch('/api/departments')
+      .then(res => res.json())
+      .then(setDepartments);
+    fetch('/api/semesters')
+      .then(res => res.json())
+      .then(setSemesters);
+    fetch('/api/subjects')
+      .then(res => res.json())
+      .then(setSubjects);
+    fetch('/api/teachers')
+      .then(res => res.json())
+      .then(setTeachers);
+    fetch('/api/timeslots')
+      .then(res => res.json())
+      .then((data) => {
+        // Use hardcoded timeslots if API returns empty
+        setTimeSlots(data.length ? data : defaultTimeSlots);
+        console.log('[DEBUG] TimeSlots fetched:', data.length ? data : defaultTimeSlots);
+      });
+    fetch('/api/rooms')
+      .then(res => res.json())
+      .then(setRooms);
   }, []);
 
   // Derive the semester-scoped department list whenever activeSemesterTab changes
-  const visibleDepartments = useMemo(
-    () => activeSemesterTab ? getActiveDepartmentsForSemester(activeSemesterTab) : departments.filter(d => d.offersBSDegree),
-    [activeSemesterTab, departments]
-  );
+    const visibleDepartments = useMemo(
+      () => activeSemesterTab
+        ? getActiveDepartmentsForSemester(activeSemesterTab, departments, semesters)
+        : departments.filter(d => d.offersBSDegree),
+      [activeSemesterTab, departments, semesters]
+    );
 
-  // Mark as mounted after hydration
+  // Mark as mounted after hydration and set first active semester tab
   useEffect(() => {
     setMounted(true);
-    // Set the first active semester as default tab
-    const activeSems = getActiveSemesters();
-    if (activeSems.length > 0 && !activeSemesterTab) {
-      setActiveSemesterTab(activeSems[0].id);
-    }
+    fetch('/api/semesters')
+      .then(res => res.json())
+      .then((semList) => {
+        const activeSems = semList.filter((s: any) => s.isActive);
+        if (activeSems.length > 0) {
+          setActiveSemesterTab(activeSems[0].id);
+        } else if (semList.length > 0) {
+          setActiveSemesterTab(semList[0].id);
+        }
+      });
   }, []);
 
   // Sync props with local state
@@ -127,7 +131,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         }));
       }
     }
-  }, [showAddEntry, activeSemesterTab, addEntryData.selectedSemester, semesters]);
+  }, [activeSemesterTab, semesters]);
 
   // Debug modal state changes (can be removed in production)
   useEffect(() => {
@@ -138,200 +142,36 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         updateCounter 
       });
     }
-  }, [editingEntry, editingData, updateCounter]);
+  }, [editingEntry, editingData]);
 
   // ESC key handling to close modals and cancel drag operations
   // ENTER key handling to complete drag operations
-  useEffect(() => {
-    const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        let actionTaken = false;
-
-        // Cancel drag operation if in progress
-        if (dragData || draftData || dragOverlay?.show) {
-          console.log('🔄 [ESC] Cancelling drag operation and resetting to original state');
-          
-          // Clear all drag-related state
-          setDragData(null);
-          setDraftData(null);
-          setDragOverlay(null);
-          setCurrentDropTarget(null);
-          
-          // Show cancellation notification
-          setNotification({ 
-            message: 'Drag operation cancelled', 
-            type: 'success' 
-          });
-          setTimeout(() => setNotification(null), 2000);
-          
-          actionTaken = true;
-        }
-
-        // Close Edit Entry modal if open
-        if (editingEntry || editingData) {
-          setEditingEntry(null);
-          setEditingData(null);
-          actionTaken = true;
-        }
-
-        // Close Add New Entry modal if open
-        if (showAddEntry) {
-          setShowAddEntry(false);
-          actionTaken = true;
-        }
-
-        // Close Delete Confirmation modal if open
-        if (deleteConfirmation) {
-          setDeleteConfirmation(null);
-          actionTaken = true;
-        }
-
-        // Close conflict tooltip if open
-        if (conflictTooltip.show) {
-          setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
-          actionTaken = true;
-        }
-
-        if (actionTaken) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
-      } else if (e.key === 'Enter') {
-        let actionTaken = false;
-
-        // Complete drag operation if in progress and we have draft data
-        if (dragData && draftData && dragOverlay?.show) {
-          console.log('⏎ [ENTER] Completing drag operation at current location');
-          
-          // Use the provisional time slot from draftData as the drop target
-          const targetDepartmentId = draftData.departmentId;
-          const targetTimeSlotId = draftData.provisionalTimeSlotId;
-          
-          console.log('⏎ [ENTER] Drop target:', {
-            targetDepartmentId,
-            targetTimeSlotId,
-            dragData: {
-              groupKey: dragData.groupKey,
-              departmentId: dragData.departmentId,
-              sourceTimeSlotId: dragData.sourceTimeSlotId
-            }
-          });
-          
-          // Validate drop is in same department
-          if (dragData.departmentId !== targetDepartmentId) {
-            console.log('❌ [ENTER] Cannot drop in different department');
-            setNotification({ 
-              message: 'Cannot move to different department! Drops are only allowed within the same row.', 
-              type: 'error' 
-            });
-            setTimeout(() => setNotification(null), 4000);
-            actionTaken = true;
-          } 
-          // Check if dropping on same cell (no change needed)
-          else if (dragData.sourceTimeSlotId === targetTimeSlotId) {
-            console.log('❌ [ENTER] Dropping on same cell - no change needed');
-            setNotification({ 
-              message: 'Entry is already in this time slot', 
-              type: 'error' 
-            });
-            setTimeout(() => setNotification(null), 2000);
-            actionTaken = true;
-          }
-          else {
-            // Check for conflicts before dropping
-            const draggedDays = dragData.entries.map(e => e.day);
-            
-            // Check for room conflicts
-            const roomConflicts = dragData.entries[0]?.room ? localTimetableEntries.filter(entry => {
-              return entry.room === dragData.entries[0].room && 
-                     entry.timeSlotId === targetTimeSlotId &&
-                     draggedDays.includes(entry.day) && // Only conflict if on same day
-                     !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id);
-            }) : [];
-            
-            // Check for teacher conflicts
-            const teacherConflicts = localTimetableEntries.filter(entry => 
-              entry.teacherId === dragData.teacher.id && 
-              entry.timeSlotId === targetTimeSlotId &&
-              draggedDays.includes(entry.day) && // Only conflict if on same day
-              !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)
-            );
-            
-            if (roomConflicts.length > 0 || teacherConflicts.length > 0) {
-              console.log('❌ [ENTER] Conflicts detected, cannot drop');
-              const conflictMessage = `Cannot complete move: Conflict detected!\n` +
-                    `${roomConflicts.length > 0 ? '- Room conflict\n' : ''}` +
-                    `${teacherConflicts.length > 0 ? '- Teacher conflict\n' : ''}` +
-                    `Please choose a different time slot.`;
-              
-              setNotification({ message: conflictMessage, type: 'error' });
-              setTimeout(() => setNotification(null), 4000);
-              actionTaken = true;
-            } else {
-              console.log('✅ [ENTER] No conflicts, proceeding with move');
-              
-              // Update the entries to the new time slot
-              const newEntries = localTimetableEntries.map(entry => {
-                if (dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)) {
-                  const updatedEntry = {
-                    ...entry,
-                    timeSlotId: targetTimeSlotId
-                  };
-                  
-                  console.log('⏎ [ENTER] Updating entry:', {
-                    originalTimeSlot: entry.timeSlotId,
-                    newTimeSlot: targetTimeSlotId,
-                    updatedEntry
-                  });
-                  
-                  return updatedEntry;
-                }
-                return entry;
-              });
-              
-              // Apply the update
-              updateEntries([...newEntries]);
-              setUpdateCounter(prev => prev + 1);
-              
-              // Show success notification
-            }
-          }
-          
-          // Clear all drag-related state after processing
-          setDragData(null);
-          setDraftData(null);
-          setDragOverlay(null);
-          setCurrentDropTarget(null);
-        }
-
-        if (actionTaken) {
-          e.preventDefault();
-          e.stopPropagation();
-        }
+  const onKeyDown = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      // Only handle modal and tooltip closing
+      if (editingEntry || editingData) {
+        setEditingEntry(null);
+        setEditingData(null);
       }
-    };
+      if (showAddEntry) {
+        setShowAddEntry(false);
+      }
+      if (deleteConfirmation) {
+        setDeleteConfirmation(null);
+      }
+      if (conflictTooltip.show) {
+        setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    // No drag-and-drop logic for ENTER key
+  };
 
+  useEffect(() => {
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [editingEntry, editingData, showAddEntry, deleteConfirmation, dragData, draftData, dragOverlay?.show, conflictTooltip.show, localTimetableEntries]);
-
-  // Mouse tracking for drag overlay
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      if (dragOverlay?.show) {
-        setDragOverlay(prev => prev ? {
-          ...prev,
-          x: e.clientX,
-          y: e.clientY
-        } : null);
-      }
-    };
-
-    if (dragOverlay?.show) {
-      document.addEventListener('mousemove', handleMouseMove);
-      return () => document.removeEventListener('mousemove', handleMouseMove);
-    }
-  }, [dragOverlay?.show]);
+  }, [editingEntry, editingData, showAddEntry, deleteConfirmation, conflictTooltip.show, localTimetableEntries]);
 
   // Helper function to update entries and notify parent
   const updateEntries = (newEntries: TimetableEntry[]) => {
@@ -352,7 +192,11 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   const formatSemesterLabel = (sem?: Semester) => {
     if (!sem) return 'Unknown Semester';
     const match = sem.name?.match(/\d+/);
-    return match ? `Semester ${match[0]}` : sem.name;
+    if (match) {
+      return `Semester ${match[0]}`;
+    } else {
+      return sem.name;
+    }
   };
 
   // Get active semesters only
@@ -411,14 +255,16 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
       return dayMap[entry.day];
     }).filter(num => num !== undefined).sort((a, b) => a - b);
 
-    if (dayNumbers.length === 0) return '';
-    if (dayNumbers.length === 1) return `(${dayNumbers[0]})`;
-
+    if (dayNumbers.length === 0) {
+      return '';
+    }
+    if (dayNumbers.length === 1) {
+      return `(${dayNumbers[0]})`;
+    }
     // Check if days are consecutive
-    const isConsecutive = dayNumbers.every((day, index) => 
+    const isConsecutive = dayNumbers.every((day, index) =>
       index === 0 || day === dayNumbers[index - 1] + 1
     );
-
     if (isConsecutive && dayNumbers.length > 1) {
       return `(${dayNumbers[0]}-${dayNumbers[dayNumbers.length - 1]})`;
     } else {
@@ -481,8 +327,9 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     
     // Enhanced teacher conflict details
     if (teacherConflicts.length > 0) {
-      const teacherName = getTeacher(teacher)?.name || teacher;
-      const teacherShortName = getTeacher(teacher)?.shortName || teacher;
+  const teacherObj = getTeacher(teacher);
+  const teacherName = teacherObj?.name || teacher;
+  const teacherShortName = teacherObj?.name ?? teacher;
       const currentSubject = getSubject(firstEntry.subjectId);
       const currentTimeSlotDetails = timeSlots.find(ts => ts.id === timeSlot);
       
@@ -500,7 +347,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         const semLabel = formatSemesterLabel(semester);
         const department = departments.find(d => d.id === subject?.departmentId);
         details += `   ${index + 1}. ${subject?.name || c.subjectId}\n`;
-        details += `      📖 Subject Code: ${subject?.shortName || c.subjectId}\n`;
+  details += `      📖 Subject Code: ${subject?.name || c.subjectId}\n`;
         details += `      🏛️  Department: ${department?.name || 'Unknown'} (${department?.shortName || 'N/A'})\n`;
         details += `      📊 ${semLabel}\n`;
         details += `      📅 Day: ${c.day}\n`;
@@ -521,7 +368,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
       details += `🏛️  Room: ${firstEntry.room}\n`;
       details += `⏰ Time Slot: Period ${currentTimeSlotDetails?.period || ''} (${currentTimeSlotDetails?.start}-${currentTimeSlotDetails?.end})\n`;
       details += `📚 Current Subject: ${currentSubject?.name || firstEntry.subjectId}\n`;
-      details += `👨‍🏫 Current Teacher: ${currentTeacher?.name} (${currentTeacher?.shortName})\n`;
+  details += `👨‍🏫 Current Teacher: ${currentTeacher?.name} (${currentTeacher?.name})\n`;
       details += `📅 Days: ${currentDays.join(', ')}\n\n`;
       
       details += `🔴 Room also booked for:\n`;
@@ -532,9 +379,9 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
         const semLabel = formatSemesterLabel(semester);
         const department = departments.find(d => d.id === subject?.departmentId);
         details += `   ${index + 1}. ${subject?.name || c.subjectId}\n`;
-        details += `      📖 Subject Code: ${subject?.shortName || c.subjectId}\n`;
-        details += `      🏛️  Department: ${department?.name || 'Unknown'} (${department?.shortName || 'N/A'})\n`;
-        details += `      👨‍🏫 Teacher: ${conflictTeacher?.name || c.teacherId} (${conflictTeacher?.shortName || c.teacherId})\n`;
+  details += `      📖 Subject Code: ${subject?.name || c.subjectId}\n`;
+  details += `      🏛️  Department: ${department?.name || 'Unknown'} (${department?.name || 'N/A'})\n`;
+  details += `      👨‍🏫 Teacher: ${conflictTeacher?.name || c.teacherId} (${conflictTeacher?.name || c.teacherId})\n`;
         details += `      📊 ${semLabel}\n`;
         details += `      📅 Day: ${c.day}\n\n`;
       });
@@ -559,629 +406,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     return details.trim();
   };
 
-  // HTML5 Drag and Drop handlers
-  // NOTE: We use the buildDragId/parseDragId helpers to ensure consistent ID schema: groupKey|departmentId|timeSlotId
-  const handleDragStart = (e: React.DragEvent, groupKey: string, departmentId: string, timeSlotId: string, entries: TimetableEntry[]) => {
-    // Validate the ID schema using our defensive helper
-    const dragId = buildDragId(groupKey, departmentId, timeSlotId);
-    const parsedDragId = parseDragId(dragId);
-    
-    if (!parsedDragId) {
-      console.error('❌ [DRAG START] Invalid drag ID schema:', { groupKey, departmentId, timeSlotId, dragId });
-      return;
-    }
-    console.log('🎯 [DRAG START] Handler called with:', {
-      groupKey,
-      departmentId,
-      timeSlotId,
-      entries: entries?.length || 0,
-      'event.target': (e.target as HTMLElement)?.className,
-      'event.currentTarget': (e.currentTarget as HTMLElement)?.className
-    });
-    
-    // Validate entries
-    if (!entries || entries.length === 0) {
-      console.warn('❌ [DRAG START] No entries found for groupKey:', groupKey);
-      return;
-    }
-    
-    const subject = getSubject(entries[0].subjectId);
-    const teacher = getTeacher(entries[0].teacherId);
-    
-    if (!subject || !teacher) {
-      console.warn('❌ [DRAG START] Could not find subject or teacher for entries');
-      return;
-    }
-    
-    const dragPayload = { 
-      groupKey, 
-      entries, 
-      subject, 
-      teacher,
-      departmentId,
-      sourceTimeSlotId: timeSlotId
-    };
-    
-    console.log('✅ [DRAG START] Setting dragData (setActiveEntry):', {
-      groupKey: dragPayload.groupKey,
-      entriesCount: dragPayload.entries.length,
-      subject: dragPayload.subject.name,
-      teacher: dragPayload.teacher.name,
-      departmentId: dragPayload.departmentId,
-      sourceTimeSlotId: dragPayload.sourceTimeSlotId
-    });
-    
-    // Set drag data
-    setDragData(dragPayload);
-    
-    // Initialize drag overlay with current mouse position
-    setDragOverlay({
-      show: true,
-      x: e.clientX,
-      y: e.clientY,
-      subject,
-      teacher,
-      daysDisplay: formatDaysDisplay(entries)
-    });
-    
-    // Set dragging effect and ghost image
-    e.dataTransfer.effectAllowed = 'move';
-    e.dataTransfer.setData('text/plain', JSON.stringify({
-      groupKey,
-      departmentId,
-      timeSlotId
-    }));
-    
-    // You can create a custom drag image if needed
-    // const dragImage = document.createElement('div');
-    // dragImage.textContent = `${subject.shortName}`;
-    // document.body.appendChild(dragImage);
-    // e.dataTransfer.setDragImage(dragImage, 0, 0);
-    // setTimeout(() => document.body.removeChild(dragImage), 0);
-  };
-  
-  const handleDragOver = (e: React.DragEvent, departmentId: string, timeSlotId?: string) => {
-    console.log('🎯 [DRAG OVER] Handler called:', {
-      departmentId,
-      timeSlotId,
-      'event.active.id': 'N/A (HTML5 DnD)',
-      'event.over?.id': timeSlotId ? `${departmentId}-${timeSlotId}` : departmentId,
-      'dragData exists': !!dragData,
-      'dragData.departmentId': dragData?.departmentId,
-      'allowDrop': dragData && dragData.departmentId === departmentId
-    });
-    
-    // Only allow dropping if we're in the same department row
-    if (dragData && dragData.departmentId === departmentId) {
-      console.log('✅ [DRAG OVER] Allowing drop - same department');
-      e.preventDefault(); // This is required to allow dropping
-      e.dataTransfer.dropEffect = 'move';
-      
-      // If we have a specific timeSlotId and it's different from source, create draft preview
-      if (timeSlotId && timeSlotId !== dragData.sourceTimeSlotId) {
-        console.log('🎯 [DRAG OVER] Creating provisional preview for timeSlot:', timeSlotId);
-        
-        // Create provisional entries with updated timeSlotId for preview
-        const provisionalEntries = dragData.entries.map(entry => ({
-          ...entry,
-          timeSlotId: timeSlotId
-        }));
-        
-        // Set draft data for overlay preview
-        setDraftData({
-          groupKey: dragData.groupKey,
-          entries: provisionalEntries,
-          subject: dragData.subject,
-          teacher: dragData.teacher,
-          departmentId: dragData.departmentId,
-          provisionalTimeSlotId: timeSlotId
-        });
-        
-        console.log('✅ [DRAG OVER] Draft data set for preview:', {
-          provisionalTimeSlotId: timeSlotId,
-          entriesCount: provisionalEntries.length
-        });
-      } else if (!timeSlotId || timeSlotId === dragData.sourceTimeSlotId) {
-        // Clear draft data when not over a specific cell or over the original cell
-        if (draftData) {
-          console.log('🧹 [DRAG OVER] Clearing draft data - not over specific cell or over original');
-          setDraftData(null);
-        }
-      }
-    } else {
-      console.log('❌ [DRAG OVER] Blocking drop - different department or no dragData');
-      // Set cursor-not-allowed effect for invalid drop targets
-      if (dragData) {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'none'; // Indicate that drop is not allowed
-      }
-      // Clear draft data when not allowed to drop
-      if (draftData) {
-        console.log('🧹 [DRAG OVER] Clearing draft data - drop not allowed');
-        setDraftData(null);
-      }
-    }
-  };
-  
-  const handleDrop = (e: React.DragEvent, targetDepartmentId: string, targetTimeSlotId: string) => {
-    console.log('🎯 [DRAG DROP] Handler called:', {
-      targetDepartmentId,
-      targetTimeSlotId,
-      'event.active.id': 'N/A (HTML5 DnD)',
-      'event.over?.id': `${targetDepartmentId}-${targetTimeSlotId}`,
-      'dragData exists': !!dragData
-    });
-    
-    e.preventDefault();
-    e.stopPropagation();
-    
-    // Store the drop target for handleDragEnd to process
-    setCurrentDropTarget({ departmentId: targetDepartmentId, timeSlotId: targetTimeSlotId });
-    
-    console.log('✅ [DRAG DROP] Drop target stored, will be processed in handleDragEnd');
-  };
-  
-  const handleDragEnd = () => {
-    console.log('🎯 [DRAG END] Handler called:', {
-      'event.active.id': 'N/A (HTML5 DnD)',
-      'event.over?.id': currentDropTarget ? `${currentDropTarget.departmentId}-${currentDropTarget.timeSlotId}` : 'N/A', 
-      'dragData before clear': !!dragData,
-      'draftData before clear': !!draftData,
-      'currentDropTarget': currentDropTarget,
-      'dragData details': dragData ? {
-        groupKey: dragData.groupKey,
-        departmentId: dragData.departmentId,
-        sourceTimeSlotId: dragData.sourceTimeSlotId
-      } : null
-    });
-    
-    // 1. If event.over is null, cancel the drag
-    if (!currentDropTarget) {
-      console.log('❌ [DRAG END] No drop target - canceling drag');
-      setDragData(null);
-      setDraftData(null);
-      setDragOverlay(null);
-      return;
-    }
-    
-    // 2. Enforce same department constraint - TEMPORARILY DISABLED FOR TESTING
-    if (false && dragData?.departmentId !== currentDropTarget?.departmentId) {
-      console.log('❌ [DRAG END] Drop target in different department - aborting');
-      setNotification({ 
-        message: 'Cannot move to different department! Drops are only allowed within the same row.', 
-        type: 'error' 
-      });
-      setTimeout(() => setNotification(null), 4000);
-      setDragData(null);
-      setDraftData(null);
-      setCurrentDropTarget(null);
-      return;
-    }
-    
-    // 2. Parse both active and over ids; if the timeSlot actually changed, map over localTimetableEntries
-    if (!dragData) {
-      console.log('❌ [DRAG END] No dragData - aborting');
-      setCurrentDropTarget(null);
-      return;
-    }
-    
-    const { departmentId: targetDepartmentId, timeSlotId: targetTimeSlotId } = currentDropTarget;
-    
-    // No drag data or dropping on the same cell
-    if (dragData.departmentId === targetDepartmentId && dragData.sourceTimeSlotId === targetTimeSlotId) {
-      console.log('❌ [DRAG END] Dropping on same cell - no change needed');
-      setDragData(null);
-      setDraftData(null);
-      setCurrentDropTarget(null);
-      return;
-    }
-    
-    // RESTRICTION: Only allow drops within the same row (same department)
-    if (dragData.departmentId !== targetDepartmentId) {
-      setNotification({ 
-        message: 'Cannot move to different department! Drops are only allowed within the same row.', 
-        type: 'error' 
-      });
-      setTimeout(() => setNotification(null), 4000);
-      setDragData(null);
-      setDraftData(null);
-      setCurrentDropTarget(null);
-      return;
-    }
-    
-    // Check for conflicts in the target location
-    const draggedDays = dragData.entries.map(e => e.day); // Get days from dragged entries
-    
-    // Check for room conflicts - only if dragged entry has a room and on same days
-    const roomConflicts = dragData.entries[0]?.room ? localTimetableEntries.filter(entry => {
-      return entry.room === dragData.entries[0].room && 
-             entry.timeSlotId === targetTimeSlotId &&
-             draggedDays.includes(entry.day) && // Only conflict if on same day
-             !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id);
-    }) : [];
-    
-    // Check for teacher conflicts - same teacher, same time, same day
-    const teacherConflicts = localTimetableEntries.filter(entry => 
-      entry.teacherId === dragData.teacher.id && 
-      entry.timeSlotId === targetTimeSlotId &&
-      draggedDays.includes(entry.day) && // Only conflict if on same day
-      !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)
-    );
-    
-    const conflictingEntries = roomConflicts; // Keep this for backward compatibility
-    
-    // If there are conflicts, show warning and prevent drop
-    if (conflictingEntries.length > 0 || teacherConflicts.length > 0) {
-      const conflictMessage = `Cannot move entry: Conflict detected!\n` +
-            `${conflictingEntries.length > 0 ? '- Room/Department conflict\n' : ''}` +
-            `${teacherConflicts.length > 0 ? '- Teacher conflict\n' : ''}` +
-            `Please choose a different time slot.`;
-      
-      setNotification({ message: conflictMessage, type: 'error' });
-      setTimeout(() => setNotification(null), 4000);
-      setDragData(null);
-      setDraftData(null);
-      setCurrentDropTarget(null);
-      return;
-    }
-    
-    console.log('✅ [DRAG END] Time slot changed - updating entries');
-    
-    // Update the entries to the new time slot - for every entry in the dragged group update its timeSlotId
-    const newEntries = localTimetableEntries.map(entry => {
-      if (dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)) {
-        const updatedEntry = {
-          ...entry,
-          timeSlotId: targetTimeSlotId
-        };
-        
-        console.log('Updating entry:', {
-          originalTimeSlot: entry.timeSlotId,
-          newTimeSlot: targetTimeSlotId,
-          updatedEntry
-        });
-        
-        return updatedEntry;
-      }
-      return entry;
-    });
-    
-    console.log('Updated entries set:', newEntries);
-    
-    // 3. Call updateEntries(newEntries) and clear active states
-    updateEntries([...newEntries]); // Force array re-creation to trigger re-render
-    setUpdateCounter(prev => prev + 1); // Force component re-render
-    
-    // Show success notification
-    const targetDepartmentName = departments.find(d => d.id === targetDepartmentId)?.shortName || 'Unknown';
-    const targetTimeSlot = timeSlots.find(ts => ts.id === targetTimeSlotId);
-              const successMessage = `Successfully moved ${dragData.subject.shortName || dragData.subject.code || dragData.subject.name} to ${targetDepartmentName} at ${targetTimeSlot?.start}-${targetTimeSlot?.end}`;
-    
-    setNotification({ message: successMessage, type: 'success' });
-    setTimeout(() => setNotification(null), 3000);
-    
-    console.log('✅ [DRAG END] Clearing dragData and draftData (equivalent to setActiveEntry to null)');
-    // Clear drag data, draft data, drag overlay and drop target when drag operation ends - this is our equivalent of setActiveEntry(null)
-    setDragData(null);
-    setDraftData(null);
-    setDragOverlay(null);
-    setCurrentDropTarget(null);
-  };
-
-  // Draggable entry component
-  const DraggableEntry = ({ groupKey, entries, subject, teacher, departmentId, timeSlotId }: {
-    groupKey: string;
-    entries: TimetableEntry[];
-    subject: Subject;
-    teacher: Teacher;
-    departmentId: string;
-    timeSlotId: string;
-  }) => {
-    const daysDisplay = formatDaysDisplay(entries);
-    const isConflicted = hasConflicts(entries);
-    const hasRoom = entries[0]?.room && entries[0].room.trim() !== '';
-    
-    // Use parseDragId helper for consistent ID comparison
-    const isDragging = dragData && (() => {
-      const parsedId = parseDragId(groupKey);
-      return parsedId && 
-             dragData.groupKey === parsedId.groupKey &&
-             dragData.departmentId === parsedId.departmentId && 
-             dragData.sourceTimeSlotId === parsedId.timeSlotId;
-    })();
-    
-    // Determine background color: yellow if no room, otherwise subject color or default
-    let bgColor = subject.color || 'bg-gray-100';
-    if (!hasRoom) {
-      bgColor = 'bg-yellow-200';
-    }
-    
-    return (
-      <div
-        draggable="true"
-        onDragStart={(e) => handleDragStart(e, groupKey, departmentId, timeSlotId, entries)}
-        onDragEnd={handleDragEnd}
-        className={`p-1 rounded text-xs border ${bgColor} cursor-grab hover:shadow-md hover:scale-105 transition-all duration-200 relative group ${isDragging ? 'opacity-50 z-50' : ''} ${isConflicted ? 'border-red-500 border-2' : ''} ${!hasRoom ? 'border-yellow-400 border-2' : ''}`}
-        title={!hasRoom ? 'Room not assigned' : undefined}
-      >
-        {/* Drag area - excludes the edit button */}
-        <div className="w-full h-full">
-          {/* Drag handle icon */}
-          <div className="absolute top-1 left-1 text-gray-400 hover:text-gray-600 cursor-grab active:cursor-grabbing z-10">
-            <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor" className="opacity-60">
-              <circle cx="2" cy="2" r="1"/>
-              <circle cx="6" cy="2" r="1"/>
-              <circle cx="10" cy="2" r="1"/>
-              <circle cx="2" cy="6" r="1"/>
-              <circle cx="6" cy="6" r="1"/>
-              <circle cx="10" cy="6" r="1"/>
-              <circle cx="2" cy="10" r="1"/>
-              <circle cx="6" cy="10" r="1"/>
-              <circle cx="10" cy="10" r="1"/>
-            </svg>
-          </div>
-          
-          {/* Conflict danger icon */}
-          {isConflicted && (
-            <div 
-              className="absolute -top-1 -left-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs z-20 animate-pulse border-2 border-white shadow-lg cursor-pointer hover:bg-red-600"
-              onClick={(e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                const rect = (e.target as HTMLElement).getBoundingClientRect();
-                
-                // Calculate tooltip position with boundary checking
-                let tooltipX = rect.left + rect.width / 2;
-                let tooltipY = rect.top - 10;
-                
-                // Ensure tooltip doesn't go off-screen horizontally (only on client side)
-                if (mounted && typeof window !== 'undefined') {
-                  const tooltipWidth = 300; // Approximate tooltip width
-                  if (tooltipX - tooltipWidth / 2 < 10) {
-                    tooltipX = tooltipWidth / 2 + 10;
-                  } else if (tooltipX + tooltipWidth / 2 > window.innerWidth - 10) {
-                    tooltipX = window.innerWidth - tooltipWidth / 2 - 10;
-                  }
-                }
-                
-                // Ensure tooltip doesn't go off-screen vertically
-                if (tooltipY < 100) {
-                  tooltipY = rect.bottom + 20; // Show below if not enough space above
-                }
-                
-                setConflictTooltip({
-                  show: true,
-                  content: getConflictDetails(entries),
-                  x: tooltipX,
-                  y: tooltipY
-                });
-                
-                // Auto-close tooltip after 8 seconds (increased for better UX)
-                setTimeout(() => {
-                  setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
-                }, 8000);
-              }}
-              onMouseDown={(e) => {
-                e.stopPropagation(); // Prevent drag from starting
-              }}
-              title="Scheduling conflict detected - click for details"
-              aria-label="Scheduling conflict detected, click for details"
-              role="button"
-            >
-              <span className="text-white font-bold" aria-hidden="true">!</span>
-              <span className="sr-only">Conflict warning</span>
-            </div>
-          )}
-          
-          <div className="font-semibold text-gray-800 mb-0.5" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-            {subject.shortName || subject.code || subject.name} {daysDisplay}
-          </div>
-          <div className="text-gray-600 truncate" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-            {teacher.shortName}
-          </div>
-          {entries[0].room ? (
-            <div className="text-gray-500 text-xs" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-              {entries[0].room}
-            </div>
-          ) : (
-            <div className="text-yellow-700 text-xs font-medium" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-              No room assigned
-            </div>
-          )}
-        </div>
-        
-        {/* Action buttons - separate from drag area */}
-        <div className="absolute top-0 right-0 flex gap-1 z-30">
-          {/* Delete button */}
-          <button
-            className="bg-white text-red-500 rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-50 hover:text-red-700 shadow-md border border-red-200 hover:border-red-400"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              console.log('Delete button clicked for:', groupKey, { subject, teacher, entries });
-              if (subject && teacher) {
-                handleDeleteEntry(groupKey, entries, subject, teacher);
-              } else {
-                console.error('Missing subject or teacher for delete:', { subject, teacher });
-              }
-            }}
-            onMouseDown={(e) => {
-              e.stopPropagation(); // Prevent drag from starting
-            }}
-            onTouchStart={(e) => {
-              e.stopPropagation(); // Prevent drag on mobile
-            }}
-            style={{ pointerEvents: 'all' }} // Ensure button receives clicks
-            title="Delete this entry"
-          >
-            ×
-          </button>
-          
-          {/* Edit button */}
-          <button
-            className="bg-blue-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-blue-600 shadow-md"
-            onClick={(e) => {
-              e.stopPropagation();
-              e.preventDefault();
-              console.log('Edit button clicked for:', groupKey, { subject, teacher, entries });
-              console.log('Current editingEntry state:', editingEntry);
-              console.log('Current editingData state:', editingData);
-              if (subject && teacher) {
-                setEditingData({ entries, subject, teacher });
-                setEditingEntry(groupKey);
-                // Populate form data with current values
-                setEditFormData({
-                  subjectId: subject.id,
-                  teacherId: teacher.id,
-                  room: entries[0]?.room || '',
-                  timeSlotId: entries[0]?.timeSlotId || '',
-                  selectedDays: entries.map(e => e.day)
-                });
-                console.log('Modal should open now - editingEntry set to:', groupKey);
-                console.log('Modal should open now - editingData set to:', { entries, subject, teacher });
-              } else {
-                console.error('Missing subject or teacher:', { subject, teacher });
-              }
-            }}
-            onMouseDown={(e) => {
-              e.stopPropagation(); // Prevent drag from starting
-            }}
-            onTouchStart={(e) => {
-              e.stopPropagation(); // Prevent drag on mobile
-            }}
-            style={{ pointerEvents: 'all' }} // Ensure button receives clicks
-            title="Edit this entry"
-          >
-            ✏️
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  // Droppable cell component
-  const DroppableCell = ({ departmentId, timeSlotId, children, isEmpty = false }: {
-    departmentId: string;
-    timeSlotId: string;
-    children: React.ReactNode;
-    isEmpty?: boolean;
-  }) => {
-    // Check if being dragged over
-    const isOver = dragData && dragData.departmentId === departmentId;
-
-    // Handle click on empty cell - disabled, only + button should add entries
-    const handleCellClick = (e: React.MouseEvent) => {
-      // No action on cell click - only the + button should trigger add entry
-      // This prevents accidental modal opening when clicking on empty cells
-    };
-
-    // Check for potential conflicts when hovering
-    let hasConflict = false;
-    let conflictType = '';
-    
-    if (isOver && dragData) {
-      const draggedDays = dragData.entries.map(e => e.day); // Get days from dragged entries
-      
-      // Check for room conflicts - only if dragged entry has a room
-      const roomConflicts = dragData.entries[0]?.room ? localTimetableEntries.filter(entry => {
-        return entry.room === dragData.entries[0].room && 
-               entry.timeSlotId === timeSlotId &&
-               draggedDays.includes(entry.day) && // Only conflict if on same day
-               !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id);
-      }) : [];
-
-      // Check for teacher conflicts - same teacher, same time, same day
-      const teacherConflicts = localTimetableEntries.filter(entry => 
-        entry.teacherId === dragData.teacher.id && 
-        entry.timeSlotId === timeSlotId &&
-        draggedDays.includes(entry.day) && // Only conflict if on same day
-        !dragData.entries.some(dragEntryItem => dragEntryItem.id === entry.id)
-      );
-
-      if (roomConflicts.length > 0 || teacherConflicts.length > 0) {
-        hasConflict = true;
-        conflictType = roomConflicts.length > 0 ? 'Room' : 'Teacher';
-      }
-    }
-
-let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]`;
-    
-    // Remove hover effects - only plus button should be interactive
-    if (isEmpty) {
-      cellClasses += ' cursor-default';
-    }
-    
-    // Show cursor-not-allowed for different department when dragging
-    if (dragData && dragData.departmentId !== departmentId) {
-      cellClasses += ' cursor-not-allowed';
-    }
-    
-    if (isOver && dragData?.sourceTimeSlotId !== timeSlotId) {
-      if (hasConflict) {
-        cellClasses += ' bg-red-100 border-red-300';
-      } else if (dragData?.departmentId === departmentId) {
-        cellClasses += ' bg-green-100 border-green-300';
-      }
-    }
-
-    return (
-      <td
-        className={cellClasses}
-        style={{ minHeight: '60px', verticalAlign: 'top' }}
-        title={isEmpty ? 'Use + button to add new entry' : hasConflict ? `${conflictType} Conflict - Cannot drop here` : ''}
-        onClick={handleCellClick}
-        onDragOver={(e) => handleDragOver(e, departmentId, timeSlotId)}
-        onDrop={(e) => handleDrop(e, departmentId, timeSlotId)}
-        data-department-id={departmentId}
-        data-timeslot-id={timeSlotId}
-        data-testid={`cell-${departmentId}-${timeSlotId}`}
-      >
-        {children}
-        {isEmpty && (
-          <div className="flex items-center justify-center h-full">
-            <button
-              className="w-8 h-8 rounded-full bg-white hover:bg-blue-100 text-gray-400 hover:text-blue-500 flex items-center justify-center transition-all duration-200 opacity-100 border border-gray-200 hover:border-blue-300 shadow-sm hover:shadow-md"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                
-                // Find the department to get its name
-                const department = departments.find(dept => dept.id === departmentId);
-                const timeSlot = timeSlots.find(slot => slot.id === timeSlotId);
-                
-                if (department && timeSlot) {
-                  // Use the currently active semester tab instead of first active semester
-                  const activeSemester = semesters.find(s => s.id === activeSemesterTab);
-                  
-                  // Pre-fill the modal with department and time slot information
-                  setAddEntryData(prev => ({
-                    ...prev,
-                    selectedSemester: activeSemester?.id || '', // Use semester ID, not name
-                    selectedDepartment: department.id, // Use department ID, not name
-                    selectedTimeSlot: timeSlotId,
-                    selectedDays: [] // Let user select days
-                  }));
-                  
-                  // Open the add entry modal
-                  setShowAddEntry(true);
-                }
-              }}
-              title="Add new entry to this time slot"
-            >
-              <span className="text-lg font-bold leading-none">+</span>
-            </button>
-          </div>
-        )}
-        {isOver && hasConflict && (
-          <div className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded">
-            ⚠️ Conflict
-          </div>
-        )}
-      </td>
-    );
-  };
-
-  // Debug: Log modal state (development only)
+  // Debug modal state (development only)
   if (process.env.NODE_ENV === 'development') {
     console.log('Current modal state:', { editingData: !!editingData, editingEntry, updateCounter });
   }
@@ -1199,7 +424,7 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
 
   // Main render: wrap all content in a single parent div
   return (
-  <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
+    <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
       {/* Notification Toast */}
       {notification && (
         <div className={`fixed top-4 right-4 z-[10000] p-4 rounded-lg shadow-lg transition-all duration-300 max-w-sm ${
@@ -1221,13 +446,10 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
           </div>
         </div>
       )}
-      
+
       <div className="mb-6">
-        <div>
-          <h1 className="text-3xl font-bold mb-4 text-gray-800">Timetable</h1>
-          <div className="text-xs text-gray-500">
-            Updates: {updateCounter} | Total Entries: {mounted ? (localTimetableEntries?.length || 0) : '...'}
-          </div>
+        <div className="text-xs text-gray-500">
+          Updates: {updateCounter} | Total Entries: {mounted ? (localTimetableEntries?.length || 0) : '...'}
         </div>
       </div>
 
@@ -1254,324 +476,237 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
 
       {/* Timetable Content */}
       <div role="region" aria-label="Weekly timetable grid">
-      <div className="w-full overflow-x-auto bg-white rounded-lg shadow-lg">
-      <table className="w-full border-collapse" role="table" aria-label="Timetable showing subjects by department and time slots">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="border border-gray-300 p-2 text-xs font-bold text-gray-700 w-32" scope="col" aria-label="Department column">
-              <span className="sr-only">Department</span>
-              Department
-            </th>
-            {timeSlots.map(slot => (
-              <th key={slot.id} className="border border-gray-300 p-2 text-xs font-bold text-gray-700 min-w-[150px]" scope="col" aria-label={`Time slot period ${slot.period} from ${slot.start} to ${slot.end}`}>
-                Period {slot.period}<br/>
-                {slot.start}-{slot.end}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {visibleDepartments.map((department) => (
-            <tr key={department.id} role="row">
-              {/* Department column */}
-              <th className="border border-gray-300 p-2 text-center bg-gray-50" scope="row" role="rowheader" aria-label={`${department.name} department`}>
-                <div className="text-xs font-semibold text-gray-700">
-                  {department.shortName}
-                </div>
-                <div className="text-xs text-gray-500 mt-1">
-                  {department.name}
-                </div>
-              </th>
-              
-              {/* Time slot columns */}
-              {timeSlots.map(timeSlot => {
-                // Filter entries by active semester tab
-                const semesterFilteredEntries = localTimetableEntries.filter(entry => entry.semesterId === activeSemesterTab);
-                
-                // Get all entries for this department and time slot for the active semester
-                const departmentEntries = semesterFilteredEntries.filter(entry => {
-                  const subject = getSubject(entry.subjectId);
-                  return subject?.departmentId === department.id && entry.timeSlotId === timeSlot.id;
-                });
-                
-                // Enhanced debugging - run for first time slot only to avoid spam
-                if (timeSlot.id === 'ts1' && department.id === 'd1') {
-                  console.log('🔍 [COMPREHENSIVE DEBUG] Overall filtering analysis:', {
-                    activeSemesterTab,
-                    totalEntries: localTimetableEntries.length,
-                    semesterFilteredCount: semesterFilteredEntries.length,
-                    
-                    // Analyze semester distribution
-                    semesterDistribution: localTimetableEntries.reduce((acc, entry) => {
-                      acc[entry.semesterId] = (acc[entry.semesterId] || 0) + 1;
-                      return acc;
-                    }, {} as Record<string, number>),
-                    
-                    // Analyze department distribution for current semester
-                    departmentDistribution: semesterFilteredEntries.reduce((acc, entry) => {
-                      const subject = getSubject(entry.subjectId);
-                      const deptId = subject?.departmentId || 'unknown';
-                      acc[deptId] = (acc[deptId] || 0) + 1;
-                      return acc;
-                    }, {} as Record<string, number>),
-                    
-                    // Check for missing subjects/teachers
-                    missingSubjects: localTimetableEntries.filter(entry => !getSubject(entry.subjectId)).length,
-                    missingTeachers: localTimetableEntries.filter(entry => !getTeacher(entry.teacherId)).length,
-                    
-                    // Sample entries for current semester
-                    sampleSemesterEntries: semesterFilteredEntries.slice(0, 5).map(entry => ({
-                      id: entry.id,
-                      subjectId: entry.subjectId,
-                      subject: getSubject(entry.subjectId),
-                      teacherId: entry.teacherId,
-                      teacher: getTeacher(entry.teacherId),
-                      timeSlotId: entry.timeSlotId,
-                      day: entry.day,
-                      semesterId: entry.semesterId
-                    })),
-                    
-                    // Check visible departments
-                    visibleDepartmentIds: visibleDepartments.map(d => d.id),
-                    allDepartmentIds: departments.map(d => d.id)
-                  });
-                }
+        <div className="w-full overflow-x-auto bg-white rounded-lg shadow-lg">
+          <table className="w-full border-collapse" role="table" aria-label="Timetable showing subjects by department and time slots">
+            <thead>
+              <tr className="bg-gray-200">
+                <th className="border border-gray-300 p-2 text-xs font-bold text-gray-700 w-32" scope="col" aria-label="Department column">
+                  <span className="sr-only">Department</span>
+                  Department
+                </th>
+                {/* Time slot headers */}
+                {timeSlots.map(slot => (
+                  <th key={slot.id} className="border border-gray-300 p-2 text-xs font-bold text-gray-700 min-w-[150px]" scope="col" aria-label={`Time slot period ${slot.period} from ${slot.start} to ${slot.end}`}>
+                    Period {slot.period}<br/>
+                    {slot.start}-{slot.end}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {visibleDepartments.map((department) => (
+                <tr key={department.id} role="row">
+                  {/* Department column */}
+                  <th className="border border-gray-300 p-2 text-center bg-gray-50" scope="row" role="rowheader" aria-label={`${department.name} department`}>
+                    <div className="text-xs font-semibold text-gray-700">
+                      {department.shortName}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {department.name}
+                    </div>
+                  </th>
+                  {/* Time slot columns */}
+                  {timeSlots.map(timeSlot => {
+                    // Get entries for this department, time slot, and active semester
+                    const cellEntries = localTimetableEntries.filter(entry => 
+                      entry.semesterId === activeSemesterTab &&
+                      entry.timeSlotId === timeSlot.id &&
+                      subjects.find(s => s.id === entry.subjectId)?.departmentId === department.id
+                    );
 
-                // Debug logging after departmentEntries is initialized
-                if (department.id === 'd6' && timeSlot.id === 'ts1') { // Debug for Computer Science, Period 1
-                  console.log(`Filtering entries for ${department.shortName} Period ${timeSlot.period} (${formatSemesterLabel(getSemester(activeSemesterTab))}):`, {
-                    activeSemesterTab,
-                    totalEntries: localTimetableEntries.length,
-                    semesterFilteredEntriesCount: semesterFilteredEntries.length,
-                    departmentEntriesCount: departmentEntries.length,
-                    firstEntry: localTimetableEntries[0],
-                    filteredEntries: departmentEntries
-                  });
-                }
+                    // Group entries by subject+teacher combination
+                    const entryGroups = cellEntries.reduce((groups, entry) => {
+                      const key = `${entry.subjectId}-${entry.teacherId}`;
+                      if (!groups[key]) {
+                        groups[key] = [];
+                      }
+                      groups[key].push(entry);
+                      return groups;
+                    }, {} as Record<string, typeof cellEntries>);
 
-                // Special debug for Semester 7 - check why entries aren't showing
-                if (activeSemesterTab === 'sem7' && department.id === 'd6') {
-                  console.log(`🔍 [SEM7 DEBUG] CS Department - TimeSlot ${timeSlot.id}:`, {
-                    activeSemesterTab,
-                    department: department.shortName,
-                    timeSlot: timeSlot.id,
-                    totalEntries: localTimetableEntries.length,
-                    semesterFilteredEntries: semesterFilteredEntries.length,
-                    departmentEntries: departmentEntries.length,
-                    allSem7Entries: localTimetableEntries.filter(e => e.semesterId === 'sem7'),
-                    csEntriesForThisSlot: semesterFilteredEntries.filter(entry => {
-                      const subject = getSubject(entry.subjectId);
-                      return subject?.departmentId === department.id && entry.timeSlotId === timeSlot.id;
-                    }),
-                    subjectsFound: departmentEntries.map(e => ({
-                      subjectId: e.subjectId,
-                      subject: getSubject(e.subjectId),
-                      teacherId: e.teacherId,
-                      teacher: getTeacher(e.teacherId)
-                    }))
-                  });
-                }
+                    return (
+                      <td key={`${department.id}-${timeSlot.id}`} className="border border-gray-300 p-1 text-center align-top min-h-[60px] relative">
+                        {/* Add Entry Button - simple plus icon in bottom left */}
+                        <button
+                          onClick={() => {
+                            setAddEntryData(prev => ({
+                              ...prev,
+                              selectedSemester: activeSemesterTab,
+                              selectedDepartment: department.id,
+                              selectedTimeSlot: timeSlot.id
+                            }));
+                            setShowAddEntry(true);
+                          }}
+                          className="absolute left-1 bottom-1 w-6 h-6 flex items-center justify-center bg-green-100 text-green-700 border border-green-300 rounded-full hover:bg-green-200 transition-colors shadow"
+                          title={`Add entry for ${department.shortName} at Period ${timeSlot.period}`}
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                            <path fillRule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clipRule="evenodd" />
+                          </svg>
+                        </button>
 
-                // Group entries by subject and teacher to show days together
-                const groupedEntries = departmentEntries.reduce((groups, entry) => {
-                  // Use the createGroupKey helper for consistent group key generation
-                  const baseGroupKey = createGroupKey(entry.subjectId, entry.teacherId);
-                  const key = buildDragId(baseGroupKey, department.id, timeSlot.id);
-                  
-                  // If buildDragId fails, skip this entry
-                  if (!key) {
-                    console.warn('Skipping entry due to invalid drag ID generation:', { entry, department: department.id, timeSlot: timeSlot.id });
-                    return groups;
-                  }
-                  
-                  if (!groups[key]) {
-                    groups[key] = [];
-                  }
-                  groups[key].push(entry);
-                  return groups;
-                }, {} as Record<string, typeof departmentEntries>);
-                
-                const hasEntries = Object.keys(groupedEntries).length > 0;
-                
-                return (
-                  <DroppableCell 
-                    key={`${department.id}-${timeSlot.id}`} 
-                    departmentId={department.id}
-                    timeSlotId={timeSlot.id}
-                    isEmpty={!hasEntries}
-                  >
-                    {hasEntries && (
-                      <div className="space-y-1">
-                        {Object.entries(groupedEntries).map(([groupKey, entries]) => {
-                          const firstEntry = entries[0];
-                          const subject = getSubject(firstEntry.subjectId);
-                          const teacher = getTeacher(firstEntry.teacherId);
-                          
-                          if (!subject || !teacher) return null;
-                          
-                          return (
-                            <DraggableEntry
-                              key={groupKey}
-                              groupKey={groupKey}
-                              entries={entries}
-                              subject={subject}
-                              teacher={teacher}
-                              departmentId={department.id}
-                              timeSlotId={timeSlot.id}
-                            />
-                          );
-                        })}
-                      </div>
-                    )}
-                  </DroppableCell>
-                );
-              })}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                        {/* Render entry groups */}
+                        <div className="space-y-1">
+                          {Object.entries(entryGroups).map(([groupKey, entries]) => {
+                            const firstEntry = entries[0];
+                            const subject = getSubject(firstEntry.subjectId);
+                            const teacher = getTeacher(firstEntry.teacherId);
+                            const hasConflict = hasConflicts(entries);
+                            
+                            if (!subject || !teacher) return null;
+
+                            return (
+                              <div
+                                key={groupKey}
+                                className={`relative p-1 rounded border text-xs ${
+                                  hasConflict 
+                                    ? 'bg-red-50 border-red-300' 
+                                    : 'bg-blue-50 border-blue-300'
+                                }`}
+                              >
+                                {/* Subject and Teacher */}
+                                <div className="font-semibold text-gray-800 truncate" title={subject.name}>
+                                  {subject.name.substring(0, 8)}
+                                </div>
+                                <div className="text-gray-600 truncate" title={teacher.name}>
+                                  {teacher.name.substring(0, 10)}
+                                </div>
+                                
+                                {/* Days display */}
+                                <div className="text-gray-500 text-xs mt-1">
+                                  {formatDaysDisplay(entries)}
+                                </div>
+                                
+                                {/* Room info */}
+                                {firstEntry.room && (
+                                  <div className="text-gray-500 text-xs">
+                                    Room: {firstEntry.room}
+                                  </div>
+                                )}
+
+                                {/* Action buttons */}
+                                <div className="flex justify-between items-center mt-1 gap-1">
+                                  {/* Conflict button */}
+                                  {hasConflict && (
+                                    <button
+                                      onClick={(e) => {
+                                        const rect = e.currentTarget.getBoundingClientRect();
+                                        setConflictTooltip({
+                                          show: true,
+                                          content: getConflictDetails(entries),
+                                          x: rect.left + rect.width / 2,
+                                          y: rect.top
+                                        });
+                                      }}
+                                      className="px-1 py-0.5 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                                      title="View conflict details"
+                                    >
+                                      ⚠ Conflict
+                                    </button>
+                                  )}
+                                  
+                                  {/* Delete button */}
+                                  <button
+                                    onClick={() => handleDeleteEntry(groupKey, entries, subject, teacher)}
+                                    className="px-1 py-0.5 text-xs bg-red-500 text-white rounded hover:bg-red-600 transition-colors ml-auto"
+                                    title="Delete this entry"
+                                  >
+                                    🗑️
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
       {/* Draft Overlay for Provisional Move Preview */}
-      {draftData && (
-        <div className="fixed inset-0 pointer-events-none z-[5000]">
-          <div className="absolute top-4 left-4 bg-blue-500 text-white p-3 rounded-lg shadow-xl border-2 border-blue-600 opacity-90">
-            <div className="text-sm font-semibold mb-1">
-              📋 Preview Move
-            </div>
-            <div className="text-xs mb-2">
-              Moving <span className="font-bold">{draftData.subject.shortName || draftData.subject.code || draftData.subject.name}</span> to {timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.start}-{timeSlots.find(ts => ts.id === draftData.provisionalTimeSlotId)?.end}
-            </div>
-            <div className="text-xs border-t border-blue-400 pt-2">
-              <div className="flex items-center gap-2">
-                <kbd className="px-1 py-0.5 bg-blue-700 rounded text-xs">ENTER</kbd>
-                <span>Drop here</span>
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <kbd className="px-1 py-0.5 bg-blue-700 rounded text-xs">ESC</kbd>
-                <span>Cancel</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Removed draftData overlay as drag-and-drop is no longer used */}
 
       {/* Edit Entry Modal */}
-      {mounted && editingData && editingEntry && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96 max-w-lg">
-            <div className="space-y-4">
-              {/* Subject */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
-                <select
-                  value={editFormData.subjectId}
-                  onChange={e => setEditFormData(prev => ({ ...prev, subjectId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Subject</option>
-                  {subjects.map(subject => (
-                    <option key={subject.id} value={subject.id}>{subject.name}</option>
-                  ))}
-                </select>
-              </div>
-              {/* Teacher */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher</label>
-                <select
-                  value={editFormData.teacherId}
-                  onChange={e => setEditFormData(prev => ({ ...prev, teacherId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Teacher</option>
-                  {teachers.map(teacher => (
-                    <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
-                  ))}
-                </select>
-              </div>
-              {/* Room */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Room</label>
-                <input
-                  type="text"
-                  value={editFormData.room}
-                  onChange={e => setEditFormData(prev => ({ ...prev, room: e.target.value }))}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                />
-              </div>
-              {/* Time Slot */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Time Slot</label>
-                <select
-                  value={editFormData.timeSlotId}
-                  onChange={e => setEditFormData(prev => ({ ...prev, timeSlotId: e.target.value }))}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Time Slot</option>
-                  {timeSlots.map(slot => (
-                    <option key={slot.id} value={slot.id}>Period {slot.period} ({slot.start} - {slot.end})</option>
-                  ))}
-                </select>
-              </div>
-              {/* Days */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Days</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
-                    <label key={day} className="flex items-center space-x-1">
-                      <input
-                        type="checkbox"
-                        checked={editFormData.selectedDays.includes(day)}
-                        onChange={e => {
-                          if (e.target.checked) {
-                            setEditFormData(prev => ({ ...prev, selectedDays: [...prev.selectedDays, day] }));
-                          } else {
-                            setEditFormData(prev => ({ ...prev, selectedDays: prev.selectedDays.filter(d => d !== day) }));
-                          }
-                        }}
-                        className="text-sm"
-                      />
-                      <span className="text-xs">{day.substring(0, 3)}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            </div>
-            <div className="flex gap-2 mt-6">
-              <button
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors disabled:bg-gray-400"
-                disabled={!editFormData.subjectId || !editFormData.teacherId || !editFormData.timeSlotId || editFormData.selectedDays.length === 0}
-                onClick={() => {
-                  // Save changes logic here
-                  setEditingEntry(null);
-                  setEditingData(null);
-                }}
-              >
-                Save Changes
-              </button>
-              <button
-                type="button"
-                title={ESC_TOOLTIP}
-                aria-label={`Cancel${ESC_LABEL_SUFFIX}`}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors"
-                onClick={() => {
-                  setEditingEntry(null);
-                  setEditingData(null);
-                  setEditFormData({
-                    subjectId: '',
-                    teacherId: '',
-                    room: '',
-                    timeSlotId: '',
-                    selectedDays: []
-                  });
-                }}
-              >
-                {`Cancel${ESC_LABEL_SUFFIX}`}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      <EditEntryModal
+        show={mounted && editingData && editingEntry}
+        editingData={editingData}
+        editingEntry={editingEntry}
+        editFormData={editFormData}
+        setEditFormData={setEditFormData}
+        setEditingEntry={setEditingEntry}
+        setEditingData={setEditingData}
+        subjects={subjects}
+        teachers={teachers}
+        timeSlots={timeSlots}
+      />
+      {/* Delete Confirmation Modal */}
+      <DeleteConfirmationModal
+        show={!!deleteConfirmation}
+        deleteConfirmation={deleteConfirmation}
+        confirmDeleteEntry={confirmDeleteEntry}
+        setDeleteConfirmation={setDeleteConfirmation}
+        timeSlots={timeSlots}
+        formatDaysDisplay={formatDaysDisplay}
+      />
+      {/* Conflict Tooltip Modal */}
+      <ConflictTooltipModal
+        show={conflictTooltip.show}
+        conflictTooltip={conflictTooltip}
+        setConflictTooltip={setConflictTooltip}
+      />
+
+      {/* Add Entry Modal */}
+        <AddEntryModal
+          show={showAddEntry}
+          addEntryData={addEntryData}
+          setAddEntryData={setAddEntryData}
+          setShowAddEntry={setShowAddEntry}
+          semesters={semesters}
+          visibleDepartments={visibleDepartments}
+          subjects={subjects}
+          teachers={teachers}
+          timeSlots={timeSlots}
+          rooms={rooms}
+          formatSemesterLabel={formatSemesterLabel}
+          onAddEntry={() => {
+            // Create new entries for each selected day
+            const newEntries = addEntryData.selectedDays.map((day, index) => ({
+              id: `new-${idCounterRef.current + index}`,
+              subjectId: addEntryData.selectedSubject,
+              teacherId: addEntryData.selectedTeacher || 'unassigned',
+              timeSlotId: addEntryData.selectedTimeSlot,
+              day: day,
+              room: addEntryData.room || '', // Ensure room is always a string
+              semesterId: addEntryData.selectedSemester,
+              departmentId: addEntryData.selectedDepartment
+            }));
+            const updatedEntries = [...localTimetableEntries, ...newEntries];
+            updateEntries(updatedEntries);
+            setUpdateCounter(prev => prev + 1);
+            idCounterRef.current += addEntryData.selectedDays.length;
+            const subject = subjects.find(s => s.id === addEntryData.selectedSubject);
+            setNotification({ 
+              message: `Successfully added ${subject?.name} for ${addEntryData.selectedDays.join(', ')}`,
+              type: 'success' 
+            });
+            setTimeout(() => setNotification(null), 3000);
+            setShowAddEntry(false);
+            setAddEntryData({
+              selectedSemester: '',
+              selectedDepartment: '',
+              selectedSubject: '',
+              selectedTeacher: '',
+              selectedTimeSlot: '',
+              selectedDays: [],
+              room: ''
+            });
+          }}
+        />
 
       {/* Debug Info */}
       {process.env.NODE_ENV === 'development' && (
@@ -1579,476 +714,8 @@ let cellClasses = `border border-gray-300 p-1 text-center align-top min-h-[60px]
           Modal: {editingEntry ? 'OPEN' : 'CLOSED'} | Data: {editingData ? 'SET' : 'NULL'}
         </div>
       )}
-
-      {/* Add Entry Modal */}
-      {showAddEntry && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96 max-w-lg max-h-[90vh] overflow-y-auto">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-800">Add New Entry</h2>
-              <button 
-                onClick={() => {
-                  setShowAddEntry(false);
-                  setAddEntryData({
-                    selectedSemester: '',
-                    selectedDepartment: '',
-                    selectedSubject: '',
-                    selectedTeacher: '',
-                    selectedTimeSlot: '',
-                    selectedDays: [],
-                    room: ''
-                  });
-                }}
-                className="text-gray-500 hover:text-gray-700 text-xl"
-                title={ESC_TOOLTIP}
-                aria-label="Close (ESC)"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="space-y-4">
-              {/* Semester Selection - Read Only */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Semester</label>
-                <input
-                  type="text"
-                  value={(() => {
-                    const semester = semesters.find(s => s.id === addEntryData.selectedSemester);
-                    return semester ? formatSemesterLabel(semester) : 'No semester selected';
-                  })()}
-                  readOnly
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm bg-gray-50 cursor-not-allowed"
-                  placeholder="Semester will be set automatically"
-                />
-                <p className="text-xs text-gray-500 mt-1">Semester is automatically set based on the current active tab</p>
-              </div>
-
-              {/* Department Selection */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Department</label>
-                <select
-                  value={addEntryData.selectedDepartment}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedDepartment: e.target.value,
-                      selectedSubject: '', // Reset subject when department changes
-                      selectedTeacher: '', // Reset teacher when department changes
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Department</option>
-                  {visibleDepartments.map(dept => (
-                    <option key={dept.id} value={dept.id}>
-                      {dept.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Subject Selection - Filtered by Semester and Department */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Subject/Course</label>
-                <select
-                  value={addEntryData.selectedSubject}
-                  onChange={(e) => setAddEntryData(prev => ({ ...prev, selectedSubject: e.target.value }))}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                  disabled={!addEntryData.selectedSemester || !addEntryData.selectedDepartment}
-                >
-                  <option value="">Select Subject</option>
-                  {addEntryData.selectedSemester && addEntryData.selectedDepartment &&
-                    getFilteredSubjects(
-                      parseInt(addEntryData.selectedSemester.split(' ')[1]),
-                      addEntryData.selectedDepartment
-                    ).map(subject => (
-                      <option key={subject.id} value={subject.id}>
-                        {subject.name}
-                      </option>
-                    ))
-                  }
-                </select>
-              </div>
-
-              {/* Teacher Selection - Filtered by Selected Subject's Department */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher (Optional)</label>
-                <select
-                  value={addEntryData.selectedTeacher}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedTeacher: e.target.value
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                  disabled={!addEntryData.selectedSubject}
-                >
-                  <option value="">Select Teacher (Optional)</option>
-                  {(() => {
-                    // Get the selected subject to find its department
-                    const selectedSubject = subjects.find(s => s.id === addEntryData.selectedSubject);
-                    
-                    // Filter teachers based on the selected subject's department
-                    const filteredTeachers = selectedSubject 
-                      ? teachers.filter(teacher => teacher.departmentId === selectedSubject.departmentId)
-                      : [];
-                    
-                    return filteredTeachers.map(teacher => (
-                      <option key={teacher.id} value={teacher.id}>
-                        {teacher.name}
-                      </option>
-                    ));
-                  })()}
-                </select>
-              </div>
-
-              {/* Time Slot Selection */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Time Slot</label>
-                <select
-                  value={addEntryData.selectedTimeSlot}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      selectedTimeSlot: e.target.value
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Time Slot</option>
-                  {timeSlots.map(slot => (
-                    <option key={slot.id} value={slot.id}>
-                      Period {slot.period} ({slot.start} - {slot.end})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Days Selection */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Days</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
-                    <label key={day} className="flex items-center space-x-1">
-                      <input
-                        type="checkbox"
-                        checked={addEntryData.selectedDays.includes(day)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setAddEntryData(prev => ({
-                              ...prev,
-                              selectedDays: [...prev.selectedDays, day]
-                            }));
-                          } else {
-                            setAddEntryData(prev => ({
-                              ...prev,
-                              selectedDays: prev.selectedDays.filter(d => d !== day)
-                            }));
-                          }
-                        }}
-                        className="text-sm"
-                      />
-                      <span className="text-xs">{day.substring(0, 3)}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Room */}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1">Room (Optional)</label>
-                <select
-                  value={addEntryData.room}
-                  onChange={(e) => {
-                    setAddEntryData(prev => ({
-                      ...prev,
-                      room: e.target.value
-                    }));
-                  }}
-                  className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
-                >
-                  <option value="">Select Room (Optional)</option>
-                  {rooms.map(room => (
-                    <option key={room.id} value={room.name}>
-                      {room.name} - Capacity: {room.capacity} ({room.type})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            
-            <div className="flex gap-2 mt-6">
-              <button 
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors disabled:bg-gray-400"
-                disabled={!addEntryData.selectedSemester || !addEntryData.selectedDepartment || !addEntryData.selectedSubject || !addEntryData.selectedTimeSlot || addEntryData.selectedDays.length === 0}
-                onClick={() => {
-                  // Create new entries for each selected day
-                  const newEntries = addEntryData.selectedDays.map((day, index) => ({
-                    id: `new-${idCounterRef.current + index}`,
-                    subjectId: addEntryData.selectedSubject,
-                    teacherId: addEntryData.selectedTeacher || 'unassigned', // Use 'unassigned' if no teacher selected
-                    timeSlotId: addEntryData.selectedTimeSlot,
-                    day: day,
-                    room: addEntryData.room || undefined,
-                    semesterId: getActiveSemesters().find(s => s.name === addEntryData.selectedSemester)?.id || 'sem1'
-                  }));
-
-                  if (process.env.NODE_ENV === 'development') {
-                    console.log('Creating new entries:', newEntries);
-                  }
-
-                  // Add to timetable
-                  const updatedEntries = [...localTimetableEntries, ...newEntries];
-                  
-                  if (process.env.NODE_ENV === 'development') {
-                    console.log('All entries before update:', localTimetableEntries.length);
-                    console.log('All entries after update:', updatedEntries.length);
-                  }
-                  
-                  updateEntries(updatedEntries);
-                  setUpdateCounter(prev => prev + 1);
-                  idCounterRef.current += addEntryData.selectedDays.length;
-
-                  if (process.env.NODE_ENV === 'development') {
-                    console.log('State updated, counter incremented');
-                  }
-
-                  // Show success notification
-                  const subject = subjects.find(s => s.id === addEntryData.selectedSubject);
-                  setNotification({ 
-                    message: `Successfully added ${subject?.shortName || subject?.code || subject?.name} for ${addEntryData.selectedDays.join(', ')}`, 
-                    type: 'success' 
-                  });
-                  setTimeout(() => setNotification(null), 3000);
-
-                  // Close modal and reset form - no need to reset active entry as we're adding, not editing
-                  setShowAddEntry(false);
-                  setAddEntryData({
-                    selectedSemester: '',
-                    selectedDepartment: '',
-                    selectedSubject: '',
-                    selectedTeacher: '',
-                    selectedTimeSlot: '',
-                    selectedDays: [],
-                    room: ''
-                  });
-                }}
-              >
-                Add Entry
-              </button>
-              <button 
-                type="button"
-                title={ESC_TOOLTIP}
-                aria-label={`Cancel${ESC_LABEL_SUFFIX}`}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors"
-                onClick={() => {
-                  setShowAddEntry(false);
-                  setAddEntryData({
-                    selectedSemester: '',
-                    selectedDepartment: '',
-                    selectedSubject: '',
-                    selectedTeacher: '',
-                    selectedTimeSlot: '',
-                    selectedDays: [],
-                    room: ''
-                  });
-                }}
-              >
-                {`Cancel${ESC_LABEL_SUFFIX}`}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* DragOverlay for visual feedback during dragging */}
-      {dragOverlay?.show && dragOverlay.subject && dragOverlay.teacher && (
-        <div 
-          className="fixed pointer-events-none z-[10000]"
-          style={{
-            left: `${dragOverlay.x}px`,
-            top: `${dragOverlay.y}px`,
-            transform: 'translate(-50%, -50%)'
-          }}
-        >
-          <div className={`p-1 rounded text-xs border shadow-xl ${dragOverlay.subject.color || 'bg-gray-100'} opacity-90 transform scale-110`}>
-            <div className="font-semibold text-gray-800 mb-0.5" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-              {dragOverlay.subject.shortName || dragOverlay.subject.code || dragOverlay.subject.name} {dragOverlay.daysDisplay}
-            </div>
-            <div className="text-gray-600 truncate" style={{ fontSize: '8px', lineHeight: '1.1' }}>
-              {dragOverlay.teacher.shortName}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Confirmation Modal */}
-      {deleteConfirmation && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
-          <div className="bg-white rounded-lg shadow-xl p-6 w-96 max-w-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-gray-800 flex items-center">
-                <span className="text-red-500 mr-2">🗑️</span>
-                Delete Entry
-              </h2>
-              <button 
-                onClick={() => setDeleteConfirmation(null)}
-                className="text-gray-500 hover:text-gray-700 text-xl"
-                title={ESC_TOOLTIP}
-                aria-label="Close (ESC)"
-              >
-                ×
-              </button>
-            </div>
-            
-            <div className="mb-6">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <div className="text-sm text-red-800">
-                  <p className="font-semibold mb-2">Are you sure you want to delete this entry?</p>
-                  <div className="space-y-1">
-                    <p><strong>Subject:</strong> {deleteConfirmation.subject.name} ({deleteConfirmation.subject.shortName || deleteConfirmation.subject.code})</p>
-                    <p><strong>Teacher:</strong> {deleteConfirmation.teacher.name}</p>
-                    <p><strong>Days:</strong> {formatDaysDisplay(deleteConfirmation.entries)}</p>
-                    <p><strong>Time Slot:</strong> {(() => {
-                      const timeSlot = timeSlots.find(ts => ts.id === deleteConfirmation.entries[0]?.timeSlotId);
-                      return timeSlot ? `Period ${timeSlot.period} (${timeSlot.start} - ${timeSlot.end})` : 'Unknown';
-                    })()}</p>
-                    {deleteConfirmation.entries[0]?.room && (
-                      <p><strong>Room:</strong> {deleteConfirmation.entries[0].room}</p>
-                    )}
-                  </div>
-                  <p className="mt-3 text-red-700 font-medium">This action cannot be undone.</p>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex gap-2">
-              <button 
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors flex items-center"
-                onClick={confirmDeleteEntry}
-              >
-                <span className="mr-1">🗑️</span>
-                Delete Entry
-              </button>
-              <button 
-                type="button"
-                title={ESC_TOOLTIP}
-                aria-label={`Cancel${ESC_LABEL_SUFFIX}`}
-                className="bg-gray-400 text-white px-4 py-2 rounded hover:bg-gray-500 transition-colors"
-                onClick={() => setDeleteConfirmation(null)}
-              >
-                {`Cancel${ESC_LABEL_SUFFIX}`}
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Custom Conflict Tooltip */}
-      {conflictTooltip.show && (
-        <>
-          {/* Overlay to close tooltip */}
-          <div 
-            className="fixed inset-0 z-[8000]"
-            onClick={() => setConflictTooltip({ show: false, content: '', x: 0, y: 0 })}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Escape') {
-                setConflictTooltip({ show: false, content: '', x: 0, y: 0 });
-              }
-            }}
-          />
-          
-          {/* Tooltip content */}
-          <div 
-            className="fixed bg-red-600 text-white p-3 rounded-lg shadow-xl z-[9000] max-w-xs border border-red-700"
-            style={{ 
-              left: `${conflictTooltip.x}px`, 
-              top: `${conflictTooltip.y}px`,
-              transform: 'translate(-50%, -100%)'
-            }}
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="conflict-details-title"
-            aria-describedby="conflict-details-content"
-            tabIndex={-1}
-          >
-            <div className="flex justify-between items-center mb-2">
-              <div id="conflict-details-title" className="text-sm font-semibold">⚠️ Conflict Details</div>
-              <button
-                className="text-white hover:text-red-200 text-lg leading-none"
-                onClick={() => setConflictTooltip({ show: false, content: '', x: 0, y: 0 })}
-                aria-label="Close conflict details"
-                title="Close (ESC)"
-              >
-                ×
-              </button>
-            </div>
-            <div id="conflict-details-content" className="text-xs whitespace-pre-line">
-              {conflictTooltip.content}
-            </div>
-            
-            {/* Arrow pointing down */}
-            <div 
-              className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-600"
-              aria-hidden="true"
-            />
-          </div>
-        </>
-      )}
-      
-      </div>
-  </div>
+    </div>
   );
-};
-
-// Fix Subject and Teacher types to include missing properties
-export type Subject = {
-  id: string;
-  name: string;
-  departmentId: string;
-  semesterLevel: number;
-  shortName?: string;
-  semesterId?: string;
-  teachingDepartmentIds?: string[];
-  code?: string;
-};
-
-export type Teacher = {
-  id: string;
-  name: string;
-  departmentId: string;
-  shortName?: string;
-};
-
-export type Room = {
-  id: string;
-  name: string;
-  capacity: number;
-  type: string;
-  building?: string;
-  floor?: number;
-  hasProjector?: boolean;
-  hasAC?: boolean;
-  description?: string;
-  programTypes: string[];
-  primaryDepartmentId?: string;
-  availableForOtherDepartments?: boolean;
-};
-
-// Fix TimetableEntry type to include departmentId
-export type TimetableEntry = {
-  id: string;
-  subjectId: string;
-  teacherId: string;
-  timeSlotId: string;
-  day: string;
-  room: string;
-  semesterId: string;
-  departmentId: string;
-};
+}
 
 export default Timetable;

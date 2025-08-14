@@ -1,48 +1,54 @@
-import { promises as fs } from 'fs';
 import { NextRequest, NextResponse } from 'next/server';
-import path from 'path';
+import { PrismaClient } from '../../../lib/generated/prisma';
 
-const DATA_DIR = path.join(process.cwd(), 'data');
-const TEACHERS_FILE = path.join(DATA_DIR, 'teachers.json');
+const prisma = new PrismaClient();
 
-// Ensure data directory exists
-async function ensureDataDir() {
-  try {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  } catch {
-    // Directory already exists or other error
-  }
-}
-
-// GET - Read teachers
+// GET - Fetch all teachers from database
 export async function GET() {
   try {
-    await ensureDataDir();
-    
-    try {
-      const data = await fs.readFile(TEACHERS_FILE, 'utf8');
-      return NextResponse.json(JSON.parse(data));
-    } catch {
-      // File doesn't exist, return empty array
-      return NextResponse.json([]);
-    }
+    const teachers = await prisma.teacher.findMany({
+      orderBy: { name: 'asc' }
+    });
+    return NextResponse.json(teachers);
   } catch (error) {
-    console.error('Error reading teachers:', error);
-    return NextResponse.json({ error: 'Failed to read teachers' }, { status: 500 });
+    console.error('Error fetching teachers:', error);
+    return NextResponse.json([], { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-// POST - Write teachers
+// POST - Update teachers in database
 export async function POST(request: NextRequest) {
   try {
-    await ensureDataDir();
-    
     const teachers = await request.json();
-    await fs.writeFile(TEACHERS_FILE, JSON.stringify(teachers, null, 2));
     
+    // Update each teacher in the database
+    const updatePromises = teachers.map((teacher: any) =>
+      prisma.teacher.upsert({
+        where: { id: teacher.id },
+        update: {
+          name: teacher.name,
+          shortName: teacher.shortName,
+          departmentId: teacher.departmentId,
+          designation: teacher.designation,
+        },
+        create: {
+          id: teacher.id,
+          name: teacher.name,
+          shortName: teacher.shortName,
+          departmentId: teacher.departmentId,
+          designation: teacher.designation,
+        },
+      })
+    );
+    
+    await Promise.all(updatePromises);
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error writing teachers:', error);
-    return NextResponse.json({ error: 'Failed to write teachers' }, { status: 500 });
+    console.error('Error updating teachers:', error);
+    return NextResponse.json({ error: 'Failed to update teachers' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

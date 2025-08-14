@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { getActiveDepartmentsForSemester } from '../utils/timetable-utils';
 import {
     daysOfWeek,
-    getActiveDepartmentsForSemester,
     getDepartments,
     getSemesters,
     getSubjects,
@@ -56,7 +56,13 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
 
   useEffect(() => {
     getDepartments().then(setDepartments);
-    getSemesters().then(setSemesters);
+    getSemesters().then(semList => {
+      setSemesters(semList);
+      const firstActive = semList.find(s => s.isActive);
+      if (firstActive) {
+        setFormData(prev => ({ ...prev, semesterId: firstActive.id }));
+      }
+    });
     getSubjects().then(setSubjects);
     getTeachers().then(setTeachers);
   }, []);
@@ -263,9 +269,9 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
           <select
             name="timeSlotId"
             value={formData.timeSlotId}
-            onChange={handleInputChange}
-            className="w-full p-2 border border-gray-300 rounded-md text-sm"
+            className="w-full p-2 border border-gray-300 rounded-md text-sm bg-gray-100 cursor-not-allowed"
             required
+            disabled
           >
             <option value="">Select Time Slot</option>
             {timeSlotsState.map((slot: { id: string; period: number; start: string; end: string }) => (

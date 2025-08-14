@@ -3,24 +3,53 @@ import { PrismaClient } from '../../../lib/generated/prisma';
 
 const prisma = new PrismaClient();
 
+// GET - Fetch all time slots from database
 export async function GET() {
   try {
-    const slots = await prisma.timeSlot.findMany();
-    return NextResponse.json(slots);
+    const timeSlots = await prisma.timeSlot.findMany({
+      orderBy: { period: 'asc' }
+    });
+    return NextResponse.json(timeSlots);
   } catch (error) {
     console.error('Error fetching time slots:', error);
     return NextResponse.json([], { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
+// POST - Update time slots in database
 export async function POST(request: NextRequest) {
   try {
-    const updatedSlots = await request.json();
-    // Here you would update the database with the new slots
-    // For now, just return success
-    return NextResponse.json({ success: true });
+    const timeSlots = await request.json();
+    
+    // Handle both single object and array of objects
+    const slotsArray = Array.isArray(timeSlots) ? timeSlots : [timeSlots];
+    
+    // Update each time slot in the database
+    const updatePromises = slotsArray.map((slot: any) =>
+      prisma.timeSlot.upsert({
+        where: { id: slot.id },
+        update: {
+          start: slot.start,
+          end: slot.end,
+          period: slot.period,
+        },
+        create: {
+          id: slot.id,
+          start: slot.start,
+          end: slot.end,
+          period: slot.period,
+        },
+      })
+    );
+    
+    const results = await Promise.all(updatePromises);
+    return NextResponse.json(Array.isArray(timeSlots) ? { success: true } : results[0]);
   } catch (error) {
     console.error('Error updating time slots:', error);
-    return NextResponse.json({ error: 'Failed to update slots' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to update time slots' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
   }
 }

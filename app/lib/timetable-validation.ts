@@ -1,6 +1,3 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-
 // Types for timetable entries and validation
 export interface TimetableEntry {
   id: string;
@@ -79,52 +76,50 @@ export interface Room {
   availableForOtherDepartments?: boolean;
 }
 
-// Load data helper functions
-function loadJsonData<T>(filename: string): T[] {
+// Helper function to fetch data from API endpoints
+async function fetchFromApi<T>(endpoint: string): Promise<T[]> {
   try {
-    const dataPath = join(process.cwd(), 'data', filename);
-    const data = readFileSync(dataPath, 'utf-8');
-    return JSON.parse(data);
+    const response = await fetch(`/api/${endpoint}`);
+    if (!response.ok) {
+      console.error(`API error for ${endpoint}:`, response.status, response.statusText);
+      return [];
+    }
+    const data = await response.json();
+    return Array.isArray(data) ? data : [];
   } catch (error) {
-    console.warn(`Warning: Could not load ${filename}:`, error);
+    console.error(`Error fetching from ${endpoint}:`, error);
     return [];
   }
 }
 
-export function loadTimetableEntries(): TimetableEntry[] {
-  try {
-    const dataPath = join(process.cwd(), 'data', 'generated-timetable-entries.json');
-    const data = readFileSync(dataPath, 'utf-8');
-    const parsedData = JSON.parse(data);
-    return Array.isArray(parsedData) ? parsedData : (parsedData.timetableEntries || []);
-  } catch (error) {
-    console.warn('Warning: Could not load generated-timetable-entries.json:', error);
-    return [];
-  }
+export async function loadTimetableEntries(): Promise<TimetableEntry[]> {
+  return fetchFromApi<TimetableEntry>('timetable-entries');
 }
 
-export function loadDepartments(): Department[] {
-  return loadJsonData<Department>('departments.json');
+export async function loadDepartments(): Promise<Department[]> {
+  return fetchFromApi<Department>('departments');
 }
 
-export function loadSubjects(): Subject[] {
-  return loadJsonData<Subject>('subjects.json');
+export async function loadSubjects(): Promise<Subject[]> {
+  return fetchFromApi<Subject>('subjects');
 }
 
-export function loadRooms(): Room[] {
-  return loadJsonData<Room>('rooms.json');
+export async function loadRooms(): Promise<Room[]> {
+  return fetchFromApi<Room>('rooms');
 }
 
 // Validation functions
-export function validateTimetableConflicts(entries: TimetableEntry[]): ValidationResult {
+export async function validateTimetableConflicts(entries: TimetableEntry[]): Promise<ValidationResult> {
   const hardConflicts: ValidationConflict[] = [];
   const softViolations: SoftCheckViolation[] = [];
   const autoResolutions: AutoResolution[] = [];
 
   // Load reference data
-  const departments = loadDepartments();
-  const subjects = loadSubjects();
-  const rooms = loadRooms();
+  const [departments, subjects, rooms] = await Promise.all([
+    loadDepartments(),
+    loadSubjects(),
+    loadRooms()
+  ]);
 
   // Normalize room identifiers
   const normalizedEntries = normalizeRoomIds(entries, rooms);

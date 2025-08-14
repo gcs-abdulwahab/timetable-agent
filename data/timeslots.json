@@ -1,9 +1,0 @@
-[
-  { "id": "ts1", "start": "8:00", "end": "9:00", "period": 1 },
-  { "id": "ts2", "start": "9:00", "end": "10:00", "period": 2 },
-  { "id": "ts3", "start": "10:00", "end": "11:00", "period": 3 },
-  { "id": "ts4", "start": "11:15", "end": "12:15", "period": 4 },
-  { "id": "ts5", "start": "12:15", "end": "1:15", "period": 5 },
-  { "id": "ts6", "start": "1:30", "end": "2:30", "period": 6 },
-  { "id": "ts7", "start": "2:30", "end": "3:30", "period": 7 }
-]
