@@ -1,14 +1,8 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { getDaysOfWeek, getDepartments, getSemesters, getSubjects, getTeachers, getTimeSlots } from '../lib/repositories/timetableRepository';
 import { getActiveDepartmentsForSemester } from '../utils/timetable-utils';
-import {
-    daysOfWeek,
-    getDepartments,
-    getSemesters,
-    getSubjects,
-    getTeachers
-} from './data';
 
 // Type definitions
 export type TimetableEntryType = {
@@ -27,14 +21,7 @@ interface TimetableAdminProps {
   onAddEntry: (entry: Omit<TimetableEntryType, 'id'>) => void;
 }
 
-const defaultTimeSlots = [
-  { id: 'ts1', period: 1, start: '08:00', end: '09:30' },
-  { id: 'ts2', period: 2, start: '09:45', end: '11:15' },
-  { id: 'ts3', period: 3, start: '11:30', end: '13:00' },
-  { id: 'ts4', period: 4, start: '13:30', end: '15:00' },
-  { id: 'ts5', period: 5, start: '15:15', end: '16:45' },
-  { id: 'ts6', period: 6, start: '17:00', end: '18:30' }
-];
+// Remove defaultTimeSlots; will fetch from DB
 
 const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
   const [formData, setFormData] = useState({
@@ -52,7 +39,8 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
   const [semesters, setSemesters] = useState<Array<{ id: string; name: string; isActive: boolean }>>([]);
   const [subjects, setSubjects] = useState<Array<{ id: string; name: string; departmentId: string; semesterLevel: number }>>([]);
   const [teachers, setTeachers] = useState<Array<{ id: string; name: string; departmentId: string }>>([]);
-  const [timeSlotsState] = useState(defaultTimeSlots);
+  const [timeSlotsState, setTimeSlotsState] = useState<Array<{ id: string; period: number; start: string; end: string }>>([]);
+  const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
 
   useEffect(() => {
     getDepartments().then(setDepartments);
@@ -65,6 +53,8 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
     });
     getSubjects().then(setSubjects);
     getTeachers().then(setTeachers);
+    getTimeSlots().then(setTimeSlotsState);
+    getDaysOfWeek().then(setDaysOfWeek);
   }, []);
 
   // Get departments that offer BS degrees with semester-scoped filtering
