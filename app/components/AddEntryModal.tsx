@@ -1,6 +1,6 @@
 import React from "react";
+import type { Room, Semester, Subject, Teacher } from "../types/timetable";
 import type { AddEntryData } from "../types/ui";
-import type { Semester, Subject, Teacher, Room } from "../types/timetable";
 
 interface AddEntryModalProps {
   show: boolean;
@@ -13,6 +13,7 @@ interface AddEntryModalProps {
   teachers: Teacher[];
   timeSlots: Array<{ id: string; period: number; start: string; end: string }>;
   rooms: Room[];
+  days: Array<{ id: string; name: string; shortName: string; dayCode: number; isActive: boolean }>;
   formatSemesterLabel: (sem?: Semester) => string;
   onAddEntry: () => void;
 }
@@ -28,11 +29,11 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
   teachers,
   timeSlots,
   rooms,
+  days,
   formatSemesterLabel,
   onAddEntry
 }) => {
   if (!show) return null;
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
@@ -132,26 +133,26 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-3">
             <label className="block text-sm font-medium mb-1">Days</label>
             <div className="flex flex-wrap gap-2">
-              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
-                <label key={day} className="flex items-center gap-1">
+              {days.filter(dayObj => dayObj.isActive).map(dayObj => (
+                <label key={dayObj.id} className="flex items-center gap-1">
                   <input
                     type="checkbox"
-                    checked={addEntryData.selectedDays.includes(day)}
+                    checked={addEntryData.selectedDays.includes(dayObj.name)}
                     onChange={e => {
                       if (e.target.checked) {
                         setAddEntryData({
                           ...addEntryData,
-                          selectedDays: [...addEntryData.selectedDays, day]
+                          selectedDays: [...addEntryData.selectedDays, dayObj.name]
                         });
                       } else {
                         setAddEntryData({
                           ...addEntryData,
-                          selectedDays: addEntryData.selectedDays.filter(d => d !== day)
+                          selectedDays: addEntryData.selectedDays.filter(d => d !== dayObj.name)
                         });
                       }
                     }}
                   />
-                  <span>{day}</span>
+                  <span>{dayObj.shortName || dayObj.name}</span>
                 </label>
               ))}
             </div>

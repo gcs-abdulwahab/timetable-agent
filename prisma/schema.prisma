@@ -1,96 +1,112 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-  model Teacher {
-    id           String   @id
-    name         String
-    shortName    String
-    departmentId String
-    designation  String?
-  }
+model Department {
+  id                     Int               @id @default(autoincrement())
+  name                   String
+  shortName              String
+  offersBSDegree         Boolean
+  bsSemesterAvailability Json?
+  teachers               Teacher[]
+  subjects               Subject[]
+  rooms                  Room[]
+  timetableEntries       TimetableEntry[]
+}
 
-  model Department {
-    id           String   @id
-    name         String
-    shortName    String
-    offersBSDegree Boolean
-    bsSemesterAvailability Json?
-  }
+model Teacher {
+  id                Int               @id @default(autoincrement())
+  name              String
+  shortName         String
+  designation       String?
+  departmentId      Int
+  department        Department        @relation(fields: [departmentId], references: [id])
+  timetableEntries  TimetableEntry[]
+}
 
-  model Semester {
-  id        String   @id
-  name      String
-  code      String?
-  year      Int?
-  term      String?
-  isActive  Boolean?
-  startDate String?
-  endDate   String?
-  }
+model Semester {
+  id                Int               @id @default(autoincrement())
+  name              String
+  code              String?
+  year              Int?
+  term              String?
+  isActive          Boolean           @default(false)
+  startDate         DateTime?
+  endDate           DateTime?
+  subjects          Subject[]
+  timetableEntries  TimetableEntry[]
+}
 
-  model Subject {
-    id              String   @id
-    name            String
-    code            String
-    creditHours     Int
-    color           String
-    departmentId    String
-    semesterLevel   Int
-    isCore          Boolean
-    semesterId      String?
-  }
+model Subject {
+  id                Int               @id @default(autoincrement())
+  name              String
+  code              String
+  creditHours       Int
+  color             String
+  departmentId      Int
+  semesterLevel     Int
+  isCore            Boolean           @default(false)
+  semesterId        Int?
+  department        Department        @relation(fields: [departmentId], references: [id])
+  semester          Semester?         @relation(fields: [semesterId], references: [id])
+  timetableEntries  TimetableEntry[]
+}
 
-  model Room {
-    id                     String   @id
-    name                   String
-    capacity               Int
-    type                   String
-    building               String?
-    floor                  Int?
-    hasProjector           Boolean?
-    hasAC                  Boolean?
-    description            String?
-    programTypes           Json
-    primaryDepartmentId    String?
-    availableForOtherDepartments Boolean?
-  }
+model Room {
+  id                          Int               @id @default(autoincrement())
+  name                        String
+  capacity                    Int
+  type                        String
+  building                    String?
+  floor                       Int?
+  hasProjector                Boolean?
+  hasAC                       Boolean?
+  description                 String?  
+  primaryDepartmentId         Int?
+  availableForOtherDepartments Boolean?
+  primaryDepartment           Department?      @relation(fields: [primaryDepartmentId], references: [id])
+  timetableEntries            TimetableEntry[]
+}
 
-  model TimeSlot {
-    id     String   @id
-    start  String
-    end    String
-    period Int
-  }
+model TimeSlot {
+  id                Int               @id @default(autoincrement())
+  start             DateTime
+  end               DateTime
+  period            Int
+  timetableEntries  TimetableEntry[]
+}
 
-  model Day {
-    id           String   @id
-    name         String
-    shortName    String
-    dayCode      Int      @unique
-    isActive     Boolean
-    workingHours String
-  }
+model Day {
+  id                Int               @id @default(autoincrement()) 
+  name              String
+  shortName         String
+  dayCode           Int               @unique
+  isActive          Boolean
+  workingHours      String
+  timetableEntries  TimetableEntry[]
+}
 
-  model TimetableEntry {
-    id           String   @id
-    subjectId    String
-    teacherId    String
-    timeSlotId   String
-    day          String
-    room         String
-    semesterId   String
-    departmentId String
-  }
+model TimetableEntry {
+  id                Int               @id @default(autoincrement())
+  subjectId         Int
+  teacherId         Int
+  timeSlotId        Int
+  dayId             Int
+  roomId            Int
+  semesterId        Int
+  departmentId      Int
+
+  subject           Subject           @relation(fields: [subjectId], references: [id])
+  teacher           Teacher           @relation(fields: [teacherId], references: [id])
+  timeSlot          TimeSlot          @relation(fields: [timeSlotId], references: [id])
+  day               Day               @relation(fields: [dayId], references: [id])
+  room              Room              @relation(fields: [roomId], references: [id])
+  semester          Semester          @relation(fields: [semesterId], references: [id])
+  department        Department        @relation(fields: [departmentId], references: [id])
+}

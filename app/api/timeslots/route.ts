@@ -9,7 +9,15 @@ export async function GET() {
     const timeSlots = await prisma.timeSlot.findMany({
       orderBy: { period: 'asc' }
     });
-    return NextResponse.json(timeSlots);
+    
+    // Convert DateTime objects to time strings
+    const formattedSlots = timeSlots.map(slot => ({
+      ...slot,
+      start: slot.start.toTimeString().slice(0, 5),
+      end: slot.end.toTimeString().slice(0, 5)
+    }));
+    
+    return NextResponse.json(formattedSlots);
   } catch (error) {
     console.error('Error fetching time slots:', error);
     return NextResponse.json([], { status: 500 });
@@ -21,31 +29,37 @@ export async function GET() {
 // POST - Update time slots in database
 export async function POST(request: NextRequest) {
   try {
-    const timeSlots = await request.json();
+    const data = await request.json();
     
-    // Handle both single object and array of objects
-    const slotsArray = Array.isArray(timeSlots) ? timeSlots : [timeSlots];
+    // Convert time strings to DateTime objects
+    const timeToDate = (timeStr: string) => {
+      const [hours, minutes] = timeStr.split(':').map(Number);
+      const date = new Date();
+      date.setHours(hours, minutes, 0, 0);
+      return date;
+    };
     
-    // Update each time slot in the database
-    const updatePromises = slotsArray.map((slot: any) =>
-      prisma.timeSlot.upsert({
-        where: { id: slot.id },
-        update: {
-          start: slot.start,
-          end: slot.end,
-          period: slot.period,
-        },
-        create: {
-          id: slot.id,
-          start: slot.start,
-          end: slot.end,
-          period: slot.period,
-        },
-      })
-    );
-    
-    const results = await Promise.all(updatePromises);
-    return NextResponse.json(Array.isArray(timeSlots) ? { success: true } : results[0]);
+    const result = await prisma.timeSlot.upsert({
+      where: { 
+        id: data.id || 0 
+      },
+      update: {
+        start: timeToDate(data.start),
+        end: timeToDate(data.end),
+        period: data.period,
+      },
+      create: {
+        start: timeToDate(data.start),
+        end: timeToDate(data.end),
+        period: data.period,
+      },
+    });
+
+    return NextResponse.json({
+      ...result,
+      start: result.start.toTimeString().slice(0, 5),
+      end: result.end.toTimeString().slice(0, 5),
+    });
   } catch (error) {
     console.error('Error updating time slots:', error);
     return NextResponse.json({ error: 'Failed to update time slots' }, { status: 500 });

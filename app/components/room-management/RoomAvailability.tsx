@@ -1,20 +1,11 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Room, Subject, Teacher, TimetableEntry, timeSlots } from '../data';
 
-// Function to get room type color
-const getRoomTypeColor = (roomType: string) => {
-  const typeColors = {
-    'Laboratory': 'bg-purple-50 border-l-4 border-purple-400',
-    'Classroom': 'bg-blue-50 border-l-4 border-blue-400',
-    'Auditorium': 'bg-green-50 border-l-4 border-green-400',
-    'Conference': 'bg-yellow-50 border-l-4 border-yellow-400',
-    'Other': 'bg-gray-50 border-l-4 border-gray-400'
-  };
-  
-  return typeColors[roomType as keyof typeof typeColors] || 'bg-gray-50 border-l-4 border-gray-400';
-};
+import React, { useEffect, useState } from 'react';
+import { Room, Subject, Teacher, TimetableEntry, allocations as staticAllocations, rooms as staticRooms, semesters as staticSemesters, subjects as staticSubjects, teachers as staticTeachers, timeSlots } from '../data';
+
+
+
 
 interface RoomAvailabilityProps {
   selectedRoomId?: string;
@@ -22,81 +13,20 @@ interface RoomAvailabilityProps {
 
 const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) => {
   const [mounted, setMounted] = useState(false);
-  const [rooms, setRooms] = useState<Room[]>([]);
-  const [allocations, setAllocations] = useState<TimetableEntry[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [rooms] = useState<Room[]>(staticRooms);
+  const [allocations] = useState<TimetableEntry[]>(staticAllocations);
+  const [loading] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState<string>(selectedRoomId || '');
   const [selectedDay, setSelectedDay] = useState<string>('all');
-  const [semesters, setSemesters] = useState<{ id: string; name: string }[]>([]);
-  const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [semesters] = useState<{ id: string; name: string }[]>(staticSemesters);
+  const [subjects] = useState<Subject[]>(staticSubjects);
+  const [teachers] = useState<Teacher[]>(staticTeachers);
 
   const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
-  // Load rooms and allocations from API (always fetch fresh data)
+  // No API fetch, use static data
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setMounted(true);
-        setLoading(true);
-        console.log('Loading rooms and allocation data from API...');
-        
-        // Fetch both rooms and allocations in parallel
-        const [roomsResponse, allocationsResponse, semestersResponse, subjectsResponse, teachersResponse] = await Promise.all([
-          fetch('/api/rooms'),
-          fetch('/api/allocations'),
-          fetch('/api/semesters'),
-          fetch('/api/subjects'),
-          fetch('/api/teachers')
-        ]);
-        
-        console.log('Rooms fetch response status:', roomsResponse.status);
-        console.log('Allocations fetch response status:', allocationsResponse.status);
-        
-        if (!roomsResponse.ok) {
-          throw new Error(`Failed to fetch rooms data: ${roomsResponse.status} ${roomsResponse.statusText}`);
-        }
-        
-        if (!allocationsResponse.ok) {
-          throw new Error(`Failed to fetch allocations data: ${allocationsResponse.status} ${allocationsResponse.statusText}`);
-        }
-
-        if (!semestersResponse.ok) throw new Error(`Failed to fetch semesters data: ${semestersResponse.status} ${semestersResponse.statusText}`);
-        if (!subjectsResponse.ok) throw new Error(`Failed to fetch subjects data: ${subjectsResponse.status} ${subjectsResponse.statusText}`);
-        if (!teachersResponse.ok) throw new Error(`Failed to fetch teachers data: ${teachersResponse.status} ${teachersResponse.statusText}`);
-        
-        const roomsData = await roomsResponse.json();
-        const allocationsData = await allocationsResponse.json();
-        const semestersData = await semestersResponse.json();
-        const subjectsData = await subjectsResponse.json();
-        const teachersData = await teachersResponse.json();
-        
-        console.log('Fetched rooms data:', roomsData.length, 'rooms');
-        console.log('Fetched allocations data:', allocationsData.length, 'allocations');
-        console.log('Fetched semesters data:', semestersData.length, 'semesters');
-        console.log('Fetched subjects data:', subjectsData.length, 'subjects');
-        console.log('Fetched teachers data:', teachersData.length, 'teachers');
-        console.log('First room:', roomsData[0]);
-        console.log('First allocation:', allocationsData[0]);
-        
-        setRooms(roomsData);
-        setAllocations(allocationsData);
-        setSemesters(semestersData);
-        setSubjects(subjectsData);
-        setTeachers(teachersData);
-      } catch (error) {
-        console.error('Error loading data:', error);
-        setRooms([]);
-        setAllocations([]);
-        setSemesters([]);
-        setSubjects([]);
-        setTeachers([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    loadData();
+    setMounted(true);
   }, []);
 
   // Set initial selected room if provided
@@ -171,7 +101,7 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
 
         {/* Room Information */}
         {currentRoom && (
-          <div className={`p-4 rounded-lg mb-6 ${getRoomTypeColor(currentRoom.type || 'Other')}`}>
+          <div className="p-4 rounded-lg mb-6 bg-gray-50 border-l-4 border-gray-300">
             <h3 className="text-lg font-semibold mb-2">{currentRoom.name}</h3>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
               <div>
@@ -186,9 +116,7 @@ const RoomAvailability: React.FC<RoomAvailabilityProps> = ({ selectedRoomId }) =
               <div>
                 <span className="font-medium">Floor:</span> {currentRoom.floor || 'N/A'}
               </div>
-              <div>
-                <span className="font-medium">Programs:</span> {(currentRoom.programTypes || []).join(', ') || 'N/A'}
-              </div>
+              
               <div>
                 <span className="font-medium">Projector:</span> {currentRoom.hasProjector ? 'Yes' : 'No'}
               </div>

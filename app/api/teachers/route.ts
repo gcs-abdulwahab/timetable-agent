@@ -18,37 +18,79 @@ export async function GET() {
   }
 }
 
-// POST - Update teachers in database
+// POST - Create a new teacher in the database
 export async function POST(request: NextRequest) {
   try {
-    const teachers = await request.json();
+    const teacherData = await request.json();
     
-    // Update each teacher in the database
-    const updatePromises = teachers.map((teacher: any) =>
-      prisma.teacher.upsert({
-        where: { id: teacher.id },
-        update: {
-          name: teacher.name,
-          shortName: teacher.shortName,
-          departmentId: teacher.departmentId,
-          designation: teacher.designation,
-        },
-        create: {
-          id: teacher.id,
-          name: teacher.name,
-          shortName: teacher.shortName,
-          departmentId: teacher.departmentId,
-          designation: teacher.designation,
-        },
-      })
-    );
+    const newTeacher = await prisma.teacher.create({
+      data: {
+        name: teacherData.name,
+        shortName: teacherData.shortName,
+        departmentId: teacherData.departmentId,
+        designation: teacherData.designation,
+      },
+    });
     
-    await Promise.all(updatePromises);
-    return NextResponse.json({ success: true });
+    return NextResponse.json(newTeacher, { status: 201 });
   } catch (error) {
-    console.error('Error updating teachers:', error);
-    return NextResponse.json({ error: 'Failed to update teachers' }, { status: 500 });
+    console.error('Error creating teacher:', error);
+    return NextResponse.json({ error: 'Failed to create teacher' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
+  }
+}
+export async function PUT(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    let id = searchParams.get('id');
+
+    const teacherData = await request.json();
+    if (!id && teacherData.id) {
+      id = teacherData.id;
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: 'Teacher ID is required' }, { status: 400 });
+    }
+
+    const updatedTeacher = await prisma.teacher.update({
+      where: { id: parseInt(id, 10) },
+      data: {
+        name: teacherData.name,
+        shortName: teacherData.shortName,
+        departmentId: teacherData.departmentId,
+        designation: teacherData.designation,
+      },
+    });
+
+    return NextResponse.json(updatedTeacher, { status: 200 });
+  } catch (error) {
+    console.error('Error updating teacher:', error);
+    return NextResponse.json({ error: 'Failed to update teacher' }, { status: 500 });
+  }
+}
+export async function DELETE(request: NextRequest) {
+  try {
+    const { searchParams } = new URL(request.url);
+    let id = searchParams.get('id');
+
+    if (!id) {
+      const body = await request.json().catch(() => null);
+      id = body?.id;
+    }
+
+    if (!id) {
+      return NextResponse.json({ error: 'Teacher ID is required' }, { status: 400 });
+    }
+
+    await prisma.teacher.delete({
+      where: { id: parseInt(id, 10) },
+    });
+
+    return NextResponse.json({ message: 'Teacher deleted successfully' }, { status: 200 });
+  } catch (error) {
+    console.error('Error deleting teacher:', error);
+    return NextResponse.json({ error: 'Failed to delete teacher' }, { status: 500 });
   }
 }

@@ -1,4 +1,4 @@
-import { getSemesters, getSubjects, getTeachers, getTimetableEntries } from './data';
+import { getSemesters, getSubjects, getTeachers, getTimetableEntries } from '../lib/data-fetcher';
 
 export interface ConflictInfo {
   type: 'teacher' | 'room';

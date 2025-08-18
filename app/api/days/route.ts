@@ -21,17 +21,10 @@ export async function GET() {
 // POST - Update days in database
 export async function POST(request: NextRequest) {
   try {
-    const dayUpdate = await request.json();
-    // Only update the provided day
+    const { id, isActive } = await request.json();
     await prisma.day.update({
-      where: { id: dayUpdate.id },
-      data: {
-        name: dayUpdate.name,
-        shortName: dayUpdate.shortName,
-        dayCode: dayUpdate.dayCode,
-        isActive: dayUpdate.active, // match frontend field name
-        workingHours: dayUpdate.workingHours,
-      },
+      where: { id },
+      data: { isActive },
     });
     return NextResponse.json({ success: true });
   } catch (error) {

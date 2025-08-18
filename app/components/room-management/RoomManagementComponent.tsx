@@ -1,50 +1,39 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Room } from '../TimetableNew';
+import { Room } from '../../types/types';
 import { Button } from '../ui/button';
 import AddRoomModal from './AddRoomModal';
 
-// Function to generate background colors for different rooms
-const getRoomBackgroundColor = (index: number, roomType: string) => {
-  const colorVariations = [
-    'bg-blue-50 hover:bg-blue-100 border-l-4 border-blue-300',
-    'bg-green-50 hover:bg-green-100 border-l-4 border-green-300', 
-    'bg-purple-50 hover:bg-purple-100 border-l-4 border-purple-300',
-    'bg-yellow-50 hover:bg-yellow-100 border-l-4 border-yellow-300',
-    'bg-pink-50 hover:bg-pink-100 border-l-4 border-pink-300',
-    'bg-indigo-50 hover:bg-indigo-100 border-l-4 border-indigo-300',
-    'bg-red-50 hover:bg-red-100 border-l-4 border-red-300',
-    'bg-teal-50 hover:bg-teal-100 border-l-4 border-teal-300',
-    'bg-orange-50 hover:bg-orange-100 border-l-4 border-orange-300',
-    'bg-cyan-50 hover:bg-cyan-100 border-l-4 border-cyan-300'
-  ];
-  
-  // Add type-specific base colors
-  const typeColors = {
-    'Laboratory': 'bg-purple-50 hover:bg-purple-100 border-l-4 border-purple-400',
-    'Classroom': 'bg-blue-50 hover:bg-blue-100 border-l-4 border-blue-400',
-    'Auditorium': 'bg-green-50 hover:bg-green-100 border-l-4 border-green-400',
-    'Conference': 'bg-yellow-50 hover:bg-yellow-100 border-l-4 border-yellow-400',
-    'Other': 'bg-gray-50 hover:bg-gray-100 border-l-4 border-gray-400'
-  };
-  
-  // Use type-specific color if available, otherwise cycle through variations
-  return typeColors[roomType as keyof typeof typeColors] || colorVariations[index % colorVariations.length];
-};
+interface Department {
+  id: number;
+  name: string;
+  shortName: string;
+}
 
 interface RoomManagementComponentProps {
-  onRoomSelect?: (roomId: string) => void;
+  onRoomSelect?: (roomId: number) => void;
 }
+
+const typeColors = {
+  'Laboratory': 'bg-purple-50 hover:bg-purple-100 border-l-4 border-purple-400',
+  'Classroom': 'bg-blue-50 hover:bg-blue-100 border-l-4 border-blue-400',
+  'Auditorium': 'bg-green-50 hover:bg-green-100 border-l-4 border-green-400',
+  'Conference': 'bg-yellow-50 hover:bg-yellow-100 border-l-4 border-yellow-400',
+  'Other': 'bg-gray-50 hover:bg-gray-100 border-l-4 border-gray-400'
+};
+
+const getRoomBackgroundColor = (index: number, roomType: string) => {
+  return typeColors[roomType as keyof typeof typeColors] || typeColors['Other'];
+};
 
 const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoomSelect }) => {
   const [mounted, setMounted] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
-  const [departments, setDepartments] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState<string>('all');
-  const [filterProgram, setFilterProgram] = useState<string>('all');
   const [filterDepartment, setFilterDepartment] = useState<string>('all');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingRoom, setEditingRoom] = useState<Room | null>(null);
@@ -59,7 +48,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
         // Validate and ensure each room has required properties
         const validatedRooms = roomsData.map((room: Partial<Room>) => ({
           ...room,
-          programTypes: room.programTypes || [], // Ensure programTypes is always an array
+          
           type: room.type || 'Other',
           capacity: room.capacity || 0,
           hasProjector: room.hasProjector || false,
@@ -101,10 +90,6 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
     fetchDepartments();
   }, []);
 
-  const generateRoomId = (name: string) => {
-    return `room-${name.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}`;
-  };
-
   const handleEdit = (room: Room) => {
     setEditingRoom(room);
     setShowAddModal(true);
@@ -118,56 +103,49 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
   // Save room (add or update)
   const handleSaveRoom = async (roomData: Omit<Room, 'id'>) => {
     try {
-      if (editingRoom) {
-        // Update existing room
-        const updatedRoom = { ...roomData, id: editingRoom.id } as Room;
-        const response = await fetch('/api/rooms', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedRoom),
-        });
+      // Ensure departmentId and other numeric fields are integers if required by backend
+      const sanitizeRoom = (room: Partial<Room>) => ({
+        ...room,
+        capacity: Number(room.capacity) || 0,
+        primaryDepartmentId: room.primaryDepartmentId ? Number(room.primaryDepartmentId) : undefined,
+      });
 
-        if (response.ok) {
-          await fetchRooms(); // Refresh rooms list
-        } else {
-          const error = await response.json();
-          alert(error.error || 'Failed to update room');
-          return;
-        }
+      // The API uses upsert, so we always use POST
+      const roomToSave = editingRoom 
+        ? sanitizeRoom({ ...roomData, id: editingRoom.id })
+        : sanitizeRoom(roomData);
+
+      const response = await fetch('/api/rooms', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(roomToSave),
+      });
+
+      if (response.ok) {
+        await fetchRooms(); // Refresh rooms list
+        setEditingRoom(null);
       } else {
-        // Add new room
-        const newRoom = {
-          ...roomData,
-          id: generateRoomId(roomData.name),
-        };
-
-        const response = await fetch('/api/rooms', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newRoom),
-        });
-
-        if (response.ok) {
-          await fetchRooms(); // Refresh rooms list
-        } else {
-          const error = await response.json();
-          alert(error.error || 'Failed to add room');
-          return;
+        const errorText = await response.text();
+        let errorMessage = editingRoom ? 'Failed to update room' : 'Failed to add room';
+        try {
+          const error = JSON.parse(errorText);
+          errorMessage = error.error || errorMessage;
+        } catch {
+          // If the response is not JSON, use the raw text
+          errorMessage = errorText || errorMessage;
         }
+        alert(errorMessage);
       }
-
-      setEditingRoom(null);
     } catch (error) {
       console.error('Error saving room:', error);
       alert('Failed to save room');
     }
   };
 
-  const handleDelete = async (roomId: string) => {
+  const handleDelete = async (roomId: number | undefined) => {
+    if (!roomId) return;
     if (confirm('Are you sure you want to delete this room?')) {
       try {
         const response = await fetch(`/api/rooms?id=${roomId}`, {
@@ -185,25 +163,24 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
         alert('Failed to delete room');
       }
     }
-  };  const filteredRooms = rooms.filter(room => {
+  };
+  
+  const filteredRooms = rooms.filter(room => {
     const matchesSearch = room.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          room.building?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          room.description?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesType = filterType === 'all' || room.type === filterType;
-    const roomProgramTypes = room.programTypes || []; // Safe fallback
-    const matchesProgram = filterProgram === 'all' || roomProgramTypes.includes(filterProgram as 'Inter' | 'BS');
-    const matchesDepartment = filterDepartment === 'all' || room.primaryDepartmentId === filterDepartment;
+    const matchesDepartment = filterDepartment === 'all' || String(room.primaryDepartmentId) === filterDepartment;
     
-    return matchesSearch && matchesType && matchesProgram && matchesDepartment;
+    return matchesSearch && matchesType && matchesDepartment;
   });
 
   const roomTypes = ['all', 'Classroom', 'Laboratory', 'Auditorium', 'Conference', 'Other'];
-  const programTypes = ['all', 'Inter', 'BS'];
 
-  const getDepartmentName = (departmentId?: string) => {
+  const getDepartmentName = (departmentId?: number) => {
     if (!departmentId) return 'General';
-    const dept = departments.find((d: any) => d.id === departmentId);
+    const dept = departments.find((d) => d.id === departmentId);
     return dept?.shortName || 'Unknown';
   };
 
@@ -221,7 +198,7 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
       </div>
 
       {/* Search and Filter Controls */}
-      <div className="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="md:col-span-1">
           <input
             type="text"
@@ -246,25 +223,12 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
         </div>
         <div>
           <select
-            value={filterProgram}
-            onChange={(e) => setFilterProgram(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {programTypes.map(program => (
-              <option key={program} value={program}>
-                {program === 'all' ? 'All Programs' : program}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <select
             value={filterDepartment}
             onChange={(e) => setFilterDepartment(e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="all">All Departments</option>
-            {departments.map((dept: any) => (
+            {departments.map((dept) => (
               <option key={dept.id} value={dept.id}>
                 {dept.shortName}
               </option>
@@ -273,18 +237,24 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
         </div>
       </div>
 
-      {/* Add/Edit Room Modal */}
-      <AddRoomModal
-        isOpen={showAddModal}
-        onClose={() => setShowAddModal(false)}
-        onSave={handleSaveRoom}
-        editingRoom={editingRoom}
-      />
+  {/* Add/Edit Room Modal removed */}
 
       {/* Rooms Summary */}
       <div className="mb-4 text-sm text-gray-600">
         Showing {filteredRooms.length} of {rooms.length} rooms
       </div>
+
+      {/* Add/Edit Room Modal */}
+      <AddRoomModal
+        isOpen={showAddModal}
+        onClose={() => {
+          setShowAddModal(false);
+          setEditingRoom(null);
+        }}
+        onSave={handleSaveRoom}
+        editingRoom={editingRoom}
+        departments={departments}
+      />
 
       {/* Color Legend */}
       <div className="mb-6 p-4 bg-gray-50 rounded-lg">
@@ -321,7 +291,6 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
               <th className="border border-gray-300 px-4 py-2 text-left">Room Name</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Type</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Capacity</th>
-              <th className="border border-gray-300 px-4 py-2 text-left">Programs</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Department</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Building</th>
               <th className="border border-gray-300 px-4 py-2 text-left">Facilities</th>
@@ -347,17 +316,6 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
                   </span>
                 </td>
                 <td className="border border-gray-300 px-4 py-2">{room.capacity}</td>
-                <td className="border border-gray-300 px-4 py-2">
-                  <div className="flex space-x-1">
-                    {(room.programTypes || []).map(program => (
-                      <span key={program} className={`px-2 py-1 rounded text-xs ${
-                        program === 'Inter' ? 'bg-orange-100 text-orange-800' : 'bg-indigo-100 text-indigo-800'
-                      }`}>
-                        {program}
-                      </span>
-                    ))}
-                  </div>
-                </td>
                 <td className="border border-gray-300 px-4 py-2">
                   {getDepartmentName(room.primaryDepartmentId)}
                 </td>
@@ -398,9 +356,9 @@ const RoomManagementComponent: React.FC<RoomManagementComponentProps> = ({ onRoo
                     >
                       Delete
                     </button>
-                    {onRoomSelect && (
+                    {onRoomSelect && room.id && (
                       <button
-                        onClick={() => onRoomSelect(room.id)}
+                        onClick={() => onRoomSelect(room.id as number)}
                         className="bg-emerald-500 text-white px-3 py-1 rounded text-sm hover:bg-emerald-600 transition-colors"
                       >
                         View Availability

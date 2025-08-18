@@ -13,16 +13,6 @@ interface Semester {
 }
 
 const SemesterInfoComponent = () => {
-  // Set all semesters active
-  const handleSetAllActive = async () => {
-    const updated = semesters.map(s => ({ ...s, isActive: true }));
-    setSemesters(updated);
-    try {
-      for (const sem of updated) {
-        await updateSemester(sem);
-      }
-    } catch {}
-  };
   const [semesters, setSemesters] = useState<Semester[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -188,14 +178,6 @@ const SemesterInfoComponent = () => {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 to-purple-100 rounded-xl shadow-lg p-6 mb-8">
-      <div className="flex justify-end mb-2">
-        <button
-          className="bg-green-600 text-white px-4 py-2 rounded-lg shadow hover:bg-green-700 transition-colors font-semibold"
-          onClick={handleSetAllActive}
-        >
-          Set All Semesters Active
-        </button>
-      </div>
       <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
         <svg className="w-7 h-7 mr-2 text-purple-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6l4 2" /></svg>
         Semester Information

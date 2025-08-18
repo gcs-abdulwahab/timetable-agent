@@ -85,7 +85,7 @@ export interface TimetableEntry {
 }
 
 // Helper function to fetch data from API endpoints
-async function fetchFromApi<T>(endpoint: string): Promise<T[]> {
+export async function fetchFromApi<T>(endpoint: string): Promise<T[]> {
   try {
     const response = await fetch(`/api/${endpoint}`);
     if (!response.ok) {

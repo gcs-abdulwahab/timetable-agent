@@ -101,8 +101,14 @@ const TimetableManager: React.FC = () => {
               Manage Schedule
             </Link>
             <Link
-              href="/manage-departments"
+              href="/teachers"
               className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium inline-block"
+            >
+              Manage Teachers
+            </Link>
+            <Link
+              href="/departments"
+              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium inline-block"
             >
               Manage Departments
             </Link>

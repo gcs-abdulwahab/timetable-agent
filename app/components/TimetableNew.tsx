@@ -2,8 +2,8 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import type { Room, Semester, Subject, Teacher, TimetableEntry } from "../types/timetable";
 import type { AddEntryData, ConflictTooltip, DeleteConfirmation, Notification } from "../types/ui";
 import { getActiveDepartmentsForSemester } from "../utils/timetable-utils";
-import { ConflictTooltipModal, DeleteConfirmationModal, EditEntryModal } from "./TimetableModals";
 import AddEntryModal from "./AddEntryModal";
+import { ConflictTooltipModal, DeleteConfirmationModal, EditEntryModal } from "./TimetableModals";
 
 // Define TimetableProps type locally
 type TimetableProps = {
@@ -51,6 +51,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
   const [teachers, setTeachers] = useState<Array<{ id: string; name: string; departmentId: string }>>([]);
   const [timeSlots, setTimeSlots] = useState<Array<{ id: string; period: number; start: string; end: string }>>([]);
   const [rooms, setRooms] = useState<Array<Room>>([]);
+  const [days, setDays] = useState<Array<{ id: string; name: string; shortName: string; dayCode: number; isActive: boolean }>>([]);
   const [semesterMode, setSemesterMode] = useState<'odd' | 'even' | 'mixed'>('mixed');
 
   // Hardcoded timeslots for demonstration
@@ -90,6 +91,9 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
     fetch('/api/rooms')
       .then(res => res.json())
       .then(setRooms);
+    fetch('/api/days')
+      .then(res => res.json())
+      .then(setDays);
   }, []);
 
   // Derive the semester-scoped department list whenever activeSemesterTab changes
@@ -672,6 +676,7 @@ const Timetable: React.FC<TimetableProps> = ({ entries, onUpdateEntries }) => {
           teachers={teachers}
           timeSlots={timeSlots}
           rooms={rooms}
+          days={days}
           formatSemesterLabel={formatSemesterLabel}
           onAddEntry={() => {
             // Create new entries for each selected day

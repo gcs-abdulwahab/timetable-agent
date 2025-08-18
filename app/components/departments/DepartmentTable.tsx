@@ -1,21 +1,22 @@
-import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import {
-  Table,
-  TableHeader,
-  TableRow,
-  TableHead,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+import { useEffect, useState } from "react"
 
 export function DepartmentTable() {
   const [departments, setDepartments] = useState<any[]>([])
   const [name, setName] = useState("")
   const [shortName, setShortName] = useState("")
-  const [editId, setEditId] = useState<string | null>(null)
+  const [offersBSDegree, setOffersBSDegree] = useState(true)
+  const [editId, setEditId] = useState<number | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
   useEffect(() => {
@@ -31,8 +32,8 @@ export function DepartmentTable() {
   async function handleSave() {
     const method = editId ? "PATCH" : "POST"
     const body = editId
-      ? { id: editId, name, shortName }
-      : { name, shortName }
+      ? { id: editId, name, shortName, offersBSDegree }
+      : { name, shortName, offersBSDegree }
 
     await fetch("/api/departments", {
       method,
@@ -57,6 +58,7 @@ export function DepartmentTable() {
   function resetForm() {
     setName("")
     setShortName("")
+    setOffersBSDegree(true)
     setEditId(null)
   }
 
@@ -90,6 +92,15 @@ export function DepartmentTable() {
                 value={shortName}
                 onChange={(e) => setShortName(e.target.value)}
               />
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={offersBSDegree}
+                  onChange={e => setOffersBSDegree(e.target.checked)}
+                  id="offersBSDegree"
+                />
+                <label htmlFor="offersBSDegree">Offers BS Degree</label>
+              </div>
               <Button onClick={handleSave}>Save</Button>
             </div>
           </DialogContent>
@@ -101,6 +112,7 @@ export function DepartmentTable() {
           <TableRow>
             <TableHead>Name</TableHead>
             <TableHead>Short Name</TableHead>
+            <TableHead>Offers BS Degree</TableHead>
             <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -109,6 +121,7 @@ export function DepartmentTable() {
             <TableRow key={dept.id}>
               <TableCell>{dept.name}</TableCell>
               <TableCell>{dept.shortName}</TableCell>
+              <TableCell>{dept.offersBSDegree ? "Yes" : "No"}</TableCell>
               <TableCell className="flex gap-2">
                 <Button
                   variant="outline"
@@ -117,6 +130,7 @@ export function DepartmentTable() {
                     setEditId(dept.id)
                     setName(dept.name)
                     setShortName(dept.shortName)
+                    setOffersBSDegree(!!dept.offersBSDegree)
                     setIsDialogOpen(true)
                   }}
                 >
