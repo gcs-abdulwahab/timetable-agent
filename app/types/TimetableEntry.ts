@@ -3,7 +3,7 @@ export interface TimetableEntry {
   subjectId: number;
   teacherId: number;
   timeSlotId: number;
-  dayId: number;
+  dayIds: number[];
   roomId: number;
   // semesterId and departmentId removed: derive these from subjectId
 }
