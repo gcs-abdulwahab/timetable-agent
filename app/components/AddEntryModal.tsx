@@ -2,7 +2,7 @@ import React from "react";
 import type { Day } from "../types/Day";
 import type { Department } from "../types/Department";
 import type { TimeSlot } from "../types/TimeSlot";
-import type { Room, Semester, Subject, Teacher } from "../types/timetable";
+import type { Room, Semester, Subject, Teacher } from "../types";
 import type { AddEntryData } from "../types/ui";
 
 interface AddEntryModalProps {

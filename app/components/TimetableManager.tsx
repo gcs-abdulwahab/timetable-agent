@@ -72,7 +72,11 @@ const TimetableManager: React.FC = () => {
       .then(setRooms);
     fetch('/api/days')
       .then(res => res.json())
-      .then(setDays);
+      .then((data) => {
+      setDays(data);
+      console.log('Loaded days:', data);
+      });
+    
   }, []);
 
 
@@ -95,11 +99,7 @@ const TimetableManager: React.FC = () => {
           </h1>
         </div>
 
-        <ConflictsAlert conflicts={validation.conflicts} />
-
-
-        {showConflicts && <ConflictViewer />}
-
+        
 
         <TimetableNew
           departments={departments}
@@ -107,6 +107,7 @@ const TimetableManager: React.FC = () => {
           rooms={rooms}
           teachers={teachers}
           subjects={subjects}
+          days={days}
           timeSlots={timeSlots.map(ts => ({
             ...ts,
             start: typeof ts.start === 'string' ? ts.start : ts.start.toISOString(),

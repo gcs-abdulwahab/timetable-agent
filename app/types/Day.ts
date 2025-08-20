@@ -3,7 +3,6 @@ export interface Day {
   name: string;
   shortName: string;
   dayCode: number;
-  isActive: boolean;
-  workingHours: string;
+  isActive: boolean;  
   institutionId?: number;
 }
