@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '../../../lib/generated/prisma';
+import type { Day } from '../../types/Day';
 
 const prisma = new PrismaClient();
 
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, timeSlotId, dayIds, roomId } = body as TimetableEntryUpdateShape;
+    const { id, timeSlotId, dayIds, roomId, updatedDays } = body as TimetableEntryUpdateShape & { updatedDays?: Day[] };
     if (!id) {
       return NextResponse.json({ error: 'Missing entry id' }, { status: 400 });
     }
@@ -90,7 +91,12 @@ export async function PUT(request: NextRequest) {
     // Only update provided fields
     const updateData: Record<string, unknown> = {};
     if (typeof timeSlotId === 'number') updateData.timeSlotId = timeSlotId;
-    if (Array.isArray(dayIds)) updateData.dayIds = dayIds;
+    // Prefer updatedDays if provided, else dayIds
+    if (Array.isArray(updatedDays)) {
+      updateData.dayIds = updatedDays;
+    } else if (Array.isArray(dayIds)) {
+      updateData.dayIds = dayIds;
+    }
     if (typeof roomId === 'number') updateData.roomId = roomId;
 
     const updated = await prisma.timetableEntry.update({

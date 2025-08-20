@@ -79,10 +79,19 @@ const Timetable: React.FC<TimetableProps> = ({
 	};
 
 	// Handler for saving edit (close modal)
-	const handleSaveEdit = () => {
+	const handleSaveEdit = async () => {
 		setShowEditModal(false);
 		setEditEntry(null);
-		// TODO: Add API call to persist changes if needed
+		// Refetch entries from backend after edit
+		try {
+			const res = await fetch('/api/timetable-entries');
+			if (res.ok) {
+				const updatedEntries = await res.json();
+				setEntryList(updatedEntries);
+			}
+		} catch (err) {
+			console.error('Failed to refresh timetable entries', err);
+		}
 	};
 
 	// Render timetable grid
@@ -150,7 +159,8 @@ const Timetable: React.FC<TimetableProps> = ({
 																entry={entry}
 																subjectName={subject ? subject.name : undefined}
 																teacherName={teacher ? teacher.name : undefined}
-																roomName={room ? room.name : undefined}
+                                roomName={room ? room.name : undefined}
+                                days = {days}
 																onEditEntry={handleEditEntry}
 															/>
 														</div>
@@ -168,20 +178,21 @@ const Timetable: React.FC<TimetableProps> = ({
 				</tbody>
 			</table>
 			{/* Edit modal */}
-			<EditEntryModal
-				show={showEditModal}
-				setShowEditEntry={setShowEditModal}
-				semesters={semesters}
-				visibleDepartments={departments}
-				subjects={subjects}
-				teachers={teachers}
-				timeSlots={timeSlots}
-				rooms={rooms}
-				days={days}
-				formatSemesterLabel={sem => sem?.name ?? ""}
-				onSaveEdit={handleSaveEdit}
-				initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
-			/>
+			   <EditEntryModal
+				   show={showEditModal}
+				   setShowEditEntry={setShowEditModal}
+				   semesters={semesters}
+				   visibleDepartments={departments}
+				   subjects={subjects}
+				   teachers={teachers}
+				   timeSlots={timeSlots}
+				   rooms={rooms}
+				   days={days}
+				   formatSemesterLabel={sem => sem?.name ?? ""}
+				   onSaveEdit={handleSaveEdit}
+				   initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
+				   editEntryId={editEntry ? editEntry.id : undefined}
+			   />
 		</div>
 	);
 };

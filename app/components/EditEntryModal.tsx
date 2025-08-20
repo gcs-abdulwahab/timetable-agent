@@ -17,6 +17,7 @@ interface EditEntryModalProps {
   formatSemesterLabel: (sem?: Semester) => string;
   onSaveEdit: () => void;
   initialSelectedDays?: string[]; // <-- add this prop
+  editEntryId?: number; // <-- add this prop to receive the entry ID
 }
 
 const EditEntryModal: React.FC<EditEntryModalProps> = ({
@@ -24,39 +25,71 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
   days,
   setShowEditEntry,
   onSaveEdit,
-  initialSelectedDays = [] // <-- default to empty array
+  initialSelectedDays = [],
+  ...props
 }) => {
-  const [selectedDays, setSelectedDays] = React.useState<string[]>(initialSelectedDays);
+    // Ensure selectedDays is an array of integers
+    const [selectedDays, setSelectedDays] = React.useState<number[]>(initialSelectedDays.map(Number));
   React.useEffect(() => {
-    setSelectedDays(initialSelectedDays);
-  }, [initialSelectedDays]); // <-- fix: only run when initialSelectedDays changes
+      setSelectedDays(initialSelectedDays.map(Number));
+    console.log('initialSelectedDays:', initialSelectedDays);
+    
+  }, [initialSelectedDays]);
+
+  // Assume props.editEntryId is passed from parent (add to parent if not present)
+    const handleSave = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        
+        console.log('handle save '+ props.editEntryId);
+        // Save to database
+        if (props.editEntryId) {
+      // Get the updated days array based on selectedDays
+    const updatedDays = selectedDays.map(id => Number(id));
+      console.log('Updated Days:', updatedDays);
+    try {
+      const response = await fetch('/api/timetable-entries', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+        id: props.editEntryId,
+        updatedDays,
+        }),
+      });
+      if (response.ok) {
+        console.log('Changes saved successfully!');
+      } else {
+        console.log('Failed to save changes.', updatedDays);
+      }
+    } catch (error) {
+    console.log('An error occurred while saving changes.');
+    }
+    }
+    onSaveEdit();
+    setShowEditEntry(false);
+  };
 
   if (!show) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
         <h2 className="text-lg font-bold mb-4">Edit Timetable Entry</h2>
-        <form
-          onSubmit={e => {
-            e.preventDefault();
-            onSaveEdit();
-          }}
-        >
+        <form onSubmit={handleSave}>
           <div className="mb-3">
             <label className="block text-sm font-medium mb-1">Days</label>
             <div className="flex flex-wrap gap-2">
               {days.filter(dayObj => dayObj.isActive).map(dayObj => (
                 <label key={dayObj.id} className="flex items-center gap-1">
-                  <input
-                    type="checkbox"
-                    checked={selectedDays.includes(String(dayObj.dayCode))}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setSelectedDays(prev => [...prev, String(dayObj.dayCode)]);
-                      } else {
-                        setSelectedDays(prev => prev.filter(d => d !== String(dayObj.dayCode)));
-                      }
-                    }}
+                    <input
+                      type="checkbox"
+                      checked={selectedDays.includes(dayObj.id)}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelectedDays(prev => [...prev, dayObj.id]);
+                        } else {
+                          setSelectedDays(prev => prev.filter(d => d !== dayObj.id));
+                        }
+                      }}
                   />
                   <span>{dayObj.shortName || dayObj.name}</span>
                 </label>

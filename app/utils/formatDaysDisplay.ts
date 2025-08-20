@@ -1,3 +1,4 @@
+
 /**
  * Formats an array of day numbers into a string, using dashes for consecutive ranges.
  * Examples:
@@ -7,6 +8,8 @@
  * [1,3] => "1,3"
  */
 export function formatDaysDisplay(days: number[]): string {
+
+
   if (days.length === 0) return "";
   const sorted = [...days].sort((a, b) => a - b);
   const result: string[] = [];
@@ -25,5 +28,5 @@ export function formatDaysDisplay(days: number[]): string {
     }
     i++;
   }
-  return result.join(", ");
+  return `(${result.join(", ")})`;
 }
