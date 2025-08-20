@@ -7,6 +7,7 @@ import type {
   Teacher,
   TimeSlot,
   TimetableEntry,
+  Subject
 } from "../types";
 import EntryBadge from "./EntryBadge";
 
@@ -19,7 +20,7 @@ type TimetableProps = {
 	timeSlots: TimeSlot[];
 	semesters: Semester[];
 	entries: TimetableEntry[];
-	subjects: { id: number; name: string }[];
+	subjects: Subject[];
 };
 
 type AddEntryData = {
@@ -51,8 +52,32 @@ const Timetable: React.FC<TimetableProps> = ({
 	// ...existing code...
 
 	// Main render: wrap all content in a single parent div
+
+		const activeSemesters = semesters ? semesters.filter(s => s.isActive) : [];
+		const [selectedSemesterId, setSelectedSemesterId] = React.useState(activeSemesters?.[0]?.id);
+
+  // Filter entries only those subjects that belong to that semesterid
+  // from timetable entry  we get the subject id  and from that we can get the semester id and then filter on that semester basis
+  const filteredEntries = selectedSemesterId
+    ? entries.filter(e => e.subjectId && subjects.find(s => s.id === e.subjectId && s.semesterId === selectedSemesterId))
+    : entries;
+
 	return (
 		<div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
+			{/* Semesters tab bar */}
+					{activeSemesters && activeSemesters.length > 0 && (
+						<div className="mb-4 flex gap-2">
+							{activeSemesters.map(sem => (
+								<button
+									key={sem.id}
+									className={`px-4 py-2 rounded-lg border text-sm font-semibold transition-colors ${selectedSemesterId === sem.id ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-blue-700 border-blue-300 hover:bg-blue-50'}`}
+									onClick={() => setSelectedSemesterId(sem.id)}
+								>
+									{sem.name}
+								</button>
+							))}
+						</div>
+					)}
 			<table className="w-full border-collapse bg-white rounded shadow">
 				<thead>
 					<tr>
@@ -77,14 +102,13 @@ const Timetable: React.FC<TimetableProps> = ({
 							<td className="border p-2 font-semibold bg-gray-50">
 								{dept.name}
 							</td>
-							{timeSlots.map((slot) => {
-								// Find entries for this department and timeslot
-								const deptEntries = entries.filter(
-									(e) =>
-										e.timeSlotId === slot.id &&
-										e.subjectId &&
-										departments.some((d) => d.id === dept.id)
-								);
+											{timeSlots.map((slot) => {
+												// Find entries for this department and timeslot, matching subject's departmentId
+												const deptEntries = filteredEntries.filter((e) => {
+													if (e.timeSlotId !== slot.id || !e.subjectId) return false;
+													const subject = subjects.find(s => s.id === e.subjectId);
+													return subject && subject.departmentId === dept.id;
+												});
 								return (
 									<td key={slot.id} className="border p-2 align-top">
 										{deptEntries.length > 0 ? (
