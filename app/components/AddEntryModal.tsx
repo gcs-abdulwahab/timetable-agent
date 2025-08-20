@@ -133,28 +133,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-3">
             <label className="block text-sm font-medium mb-1">Days</label>
             <div className="flex flex-wrap gap-2">
-              {days.filter(dayObj => dayObj.isActive).map(dayObj => (
-                <label key={dayObj.id} className="flex items-center gap-1">
-                  <input
-                    type="checkbox"
-                    checked={addEntryData.selectedDays.map(String).includes(String(dayObj.dayCode))}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setAddEntryData({
-                          ...addEntryData,
-                          selectedDays: [...addEntryData.selectedDays.map(String), String(dayObj.dayCode)]
-                        });
-                      } else {
-                        setAddEntryData({
-                          ...addEntryData,
-                          selectedDays: addEntryData.selectedDays.map(String).filter(d => d !== String(dayObj.dayCode))
-                        });
-                      }
-                    }}
-                  />
-                  <span>{dayObj.shortName || dayObj.name}</span>
-                </label>
-              ))}
+             
             </div>
           </div>
           <div className="mb-3">

@@ -4,6 +4,14 @@ import { PrismaClient } from '../../../lib/generated/prisma';
 const prisma = new PrismaClient();
 
 // Minimal local types matching Prisma model for validation in this API route
+type TimetableEntryUpdateShape = {
+  id: number;
+  timeSlotId?: number;
+  dayIds?: number[];
+  roomId?: number;
+};
+
+// Minimal local types matching Prisma model for validation in this API route
 type TimetableEntryCreateShape = {
   subjectId: number;
   teacherId: number;
@@ -67,5 +75,31 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error updating timetable entries:', error);
     return NextResponse.json({ error: 'Failed to update entries' }, { status: 500 });
+  }
+}
+
+// PUT handler for updating timeslot, dayIds, and roomId of a single entry
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, timeSlotId, dayIds, roomId } = body as TimetableEntryUpdateShape;
+    if (!id) {
+      return NextResponse.json({ error: 'Missing entry id' }, { status: 400 });
+    }
+
+    // Only update provided fields
+    const updateData: Record<string, unknown> = {};
+    if (typeof timeSlotId === 'number') updateData.timeSlotId = timeSlotId;
+    if (Array.isArray(dayIds)) updateData.dayIds = dayIds;
+    if (typeof roomId === 'number') updateData.roomId = roomId;
+
+    const updated = await prisma.timetableEntry.update({
+      where: { id },
+      data: updateData,
+    });
+    return NextResponse.json(updated);
+  } catch (error) {
+    console.error('Error updating timetable entry:', error);
+    return NextResponse.json({ error: 'Failed to update entry' }, { status: 500 });
   }
 }
