@@ -69,19 +69,32 @@ const Timetable: React.FC<TimetableProps> = ({
 		: entryList;
 
 	// State for edit modal
-	const [showEditModal, setShowEditModal] = React.useState(false);
+  const [showEditModal, setShowEditModal] = React.useState(false);
+  // State for add modal
+  const [showAddModal, setShowAddModal] = React.useState(false);
 	const [editEntry, setEditEntry] = React.useState<TimetableEntry | null>(null);
+	const [addContext, setAddContext] = React.useState<{ departmentId: number; timeSlotId: number } | null>(null);
 
 	// Handler for edit button
 	const handleEditEntry = (entry: TimetableEntry) => {
+		console.log("Entryyy "+ entry.id)
 		setEditEntry(entry);
+		setAddContext(null);
 		setShowEditModal(true);
+	};
+
+	// Handler for add button
+	const handleAddEntry = (departmentId: number, timeSlotId: number) => {
+		setEditEntry(null); // No entry, so modal is for adding
+		setAddContext({ departmentId, timeSlotId });
+		setShowAddModal(true);
 	};
 
 	// Handler for saving edit (close modal)
 	const handleSaveEdit = async () => {
 		setShowEditModal(false);
 		setEditEntry(null);
+		setAddContext(null);
 		// Refetch entries from backend after edit
 		try {
 			const res = await fetch('/api/timetable-entries');
@@ -137,39 +150,51 @@ const Timetable: React.FC<TimetableProps> = ({
 										className="border p-2 align-top"
 										onDrop={handleDrop(slot.id)}
 										onDragOver={handleDragOver}
-									>
-										{deptEntries.length > 0 ? (
-											<ul>
-												{deptEntries.map((entry) => {
-													const subject = subjects.find(
-														(s) => s.id === entry.subjectId
-													);
-													const teacher = teachers.find(
-														(t) => t.id === entry.teacherId
-													);
-													const room = rooms.find((r) => r.id === entry.roomId);
+                  >
+                      <button
+                        className="mb-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
+                        onClick={() => handleAddEntry(dept.id, slot.id)}
+                      >
+                        + Add
+                      </button>
 
-													return (
-														<div
-															key={entry.id}
-															draggable
-															onDragStart={handleDragStart(entry.id)}
-														>
-															<EntryBadge
-																entry={entry}
-																subjectName={subject ? subject.name : undefined}
-																teacherName={teacher ? teacher.name : undefined}
-                                roomName={room ? room.name : undefined}
-                                days = {days}
-																onEditEntry={handleEditEntry}
-															/>
-														</div>
-													);
-												})}
-											</ul>
-										) : (
-											<span className="text-gray-400">—</span>
-										)}
+
+
+																		{deptEntries.length > 0 ? (
+																			<>
+																				<ul>
+																					{deptEntries.map((entry) => {
+																						const subject = subjects.find(
+																							(s) => s.id === entry.subjectId
+																						);
+																						const teacher = teachers.find(
+																							(t) => t.id === entry.teacherId
+																						);
+																						const room = rooms.find((r) => r.id === entry.roomId);
+
+																						return (
+																							<div
+																								key={entry.id}
+																								draggable
+																								onDragStart={handleDragStart(entry.id)}
+                                              >
+                                                
+																								<EntryBadge
+																									entry={entry}
+																									subjectName={subject ? subject.name : undefined}
+																									teacherName={teacher ? teacher.name : undefined}
+																									roomName={room ? room.name : undefined}
+																									days = {days}
+																									onEditEntry={handleEditEntry}
+																								/>
+																							</div>
+																						);
+																					})}
+																				</ul>
+																			</>
+																		) : (
+																			<span className="text-gray-400">—</span>
+																		)}
 									</td>
 								);
 							})}
@@ -178,21 +203,23 @@ const Timetable: React.FC<TimetableProps> = ({
 				</tbody>
 			</table>
 			{/* Edit modal */}
-			   <EditEntryModal
-				   show={showEditModal}
-				   setShowEditEntry={setShowEditModal}
-				   semesters={semesters}
-				   visibleDepartments={departments}
-				   subjects={subjects}
-				   teachers={teachers}
-				   timeSlots={timeSlots}
-				   rooms={rooms}
-				   days={days}
-				   formatSemesterLabel={sem => sem?.name ?? ""}
-				   onSaveEdit={handleSaveEdit}
-				   initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
-				   editEntryId={editEntry ? editEntry.id : undefined}
-			   />
+				<EditEntryModal
+					show={showEditModal}
+					setShowEditEntry={setShowEditModal}
+					semesters={semesters}
+					visibleDepartments={departments}
+					subjects={subjects}
+					teachers={teachers}
+					timeSlots={timeSlots}
+					rooms={rooms}
+					days={days}
+					formatSemesterLabel={sem => sem?.name ?? ""}
+					onSaveEdit={handleSaveEdit}
+					initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
+					editEntryId={editEntry ? editEntry.id : undefined}
+					addDepartmentId={addContext?.departmentId}
+					addTimeSlotId={addContext?.timeSlotId}
+				/>
 		</div>
 	);
 };

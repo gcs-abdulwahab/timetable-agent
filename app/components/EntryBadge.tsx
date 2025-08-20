@@ -41,7 +41,7 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 					{teacherName ? teacherName : `#${entry.teacherId}`}
 				</div>
 				<div className="text-xs text-gray-700 mb-1">
-					{roomName ? roomName : `#${entry.roomId}`}
+					Room: {roomName ? roomName : `#${entry.roomId}`}
 				</div>
                 <div className="text-xs text-gray-700">
                     <strong>
@@ -55,7 +55,10 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 					className="absolute top-2 right-2 px-2 py-1 text-xs bg-blue-200 text-blue-900 rounded hover:bg-blue-300"
 					onClick={(e) => {
 						e.stopPropagation();
-						if (onEditEntry) onEditEntry(entry);
+                        if (onEditEntry) {
+                            
+                            onEditEntry(entry)
+                        };
 					}}
 				>
 					Edit
