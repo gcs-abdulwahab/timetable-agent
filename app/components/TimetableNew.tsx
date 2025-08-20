@@ -10,6 +10,7 @@ import type {
   TimeSlot,
   TimetableEntry
 } from "../types";
+import AddEntryModal from "./AddEntryModal";
 import EditEntryModal from "./EditEntryModal";
 import EntryBadge from "./EntryBadge";
 
@@ -219,6 +220,21 @@ const Timetable: React.FC<TimetableProps> = ({
 					editEntryId={editEntry ? editEntry.id : undefined}
 					addDepartmentId={addContext?.departmentId}
 					addTimeSlotId={addContext?.timeSlotId}
+				/>
+				<AddEntryModal
+					show={showAddModal}
+					setShowAddEntry={setShowAddModal}
+					addEntryData={{ departmentId: addContext?.departmentId, timeSlotId: addContext?.timeSlotId }}
+					setAddEntryData={() => {}}
+					semesters={semesters}
+					visibleDepartments={departments}
+					subjects={subjects}
+					teachers={teachers}
+					timeSlots={timeSlots}
+					rooms={rooms}
+					days={days}
+					formatSemesterLabel={sem => sem?.name ?? ""}
+					onAddEntry={() => setShowAddModal(false)}
 				/>
 		</div>
 	);
