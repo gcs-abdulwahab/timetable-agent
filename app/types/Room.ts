@@ -1,5 +1,5 @@
 export interface Room {
-  id?: number;
+  id: number;
   name: string;
   capacity: number;
   type: string;

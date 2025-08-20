@@ -17,7 +17,6 @@ model Department {
   teachers               Teacher[]
   subjects               Subject[]
   rooms                  Room[]
-  timetableEntries       TimetableEntry[]
 }
 
 model Teacher {
@@ -40,7 +39,6 @@ model Semester {
   startDate         DateTime?
   endDate           DateTime?
   subjects          Subject[]
-  timetableEntries  TimetableEntry[]
 }
 
 model Subject {
@@ -88,25 +86,18 @@ model Day {
   shortName         String
   dayCode           Int               @unique
   isActive          Boolean
-  workingHours      String
-  timetableEntries  TimetableEntry[]
+  
 }
-
 model TimetableEntry {
-  id                Int               @id @default(autoincrement())
-  subjectId         Int
-  teacherId         Int
-  timeSlotId        Int
-  dayId             Int
-  roomId            Int
-  semesterId        Int
-  departmentId      Int
+  id          Int       @id @default(autoincrement())
+  subjectId   Int
+  teacherId   Int
+  timeSlotId  Int
+  roomId      Int
+  dayIds      Int[]     // Array of integers instead of single dayId
 
-  subject           Subject           @relation(fields: [subjectId], references: [id])
-  teacher           Teacher           @relation(fields: [teacherId], references: [id])
-  timeSlot          TimeSlot          @relation(fields: [timeSlotId], references: [id])
-  day               Day               @relation(fields: [dayId], references: [id])
-  room              Room              @relation(fields: [roomId], references: [id])
-  semester          Semester          @relation(fields: [semesterId], references: [id])
-  department        Department        @relation(fields: [departmentId], references: [id])
+  subject     Subject    @relation(fields: [subjectId], references: [id])
+  teacher     Teacher    @relation(fields: [teacherId], references: [id])
+  timeSlot    TimeSlot   @relation(fields: [timeSlotId], references: [id])
+  room        Room       @relation(fields: [roomId], references: [id])
 }

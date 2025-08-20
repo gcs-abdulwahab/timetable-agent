@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import TeacherManagementComponent from '../components/TeacherManagementComponent';
-import type { Department } from '../lib/data-fetcher';
-import { fetchFromApi } from '../lib/data-fetcher';
+import type { Department } from '../types/Department';
 
 export default function TeacherManagement() {
   const [departments, setDepartments] = useState<Department[]>([]);
@@ -12,8 +11,9 @@ export default function TeacherManagement() {
   useEffect(() => {
     const loadDepartments = async () => {
       try {
-        const data = await fetchFromApi<Department>('departments');
-        setDepartments(data);
+        const res = await fetch('/api/departments');
+        const data = await res.json();
+        setDepartments(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error loading departments:', error);
       } finally {

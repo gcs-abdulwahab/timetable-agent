@@ -1,4 +1,10 @@
-import { getSemesters, getSubjects, getTeachers, getTimetableEntries } from '../lib/data-fetcher';
+// Use API routes directly instead of data-fetcher
+
+async function fetchArray(endpoint: string) {
+  const res = await fetch(`/api/${endpoint}`);
+  const data = await res.json();
+  return Array.isArray(data) ? data : [];
+}
 
 export interface ConflictInfo {
   type: 'teacher' | 'room';
@@ -9,21 +15,21 @@ export interface ConflictInfo {
 }
 
 export async function checkScheduleConflicts(): Promise<ConflictInfo[]> {
-  const teachers = await getTeachers();
-  const timetableEntries = await getTimetableEntries();
-  const subjects = await getSubjects();
-  const semesters = await getSemesters();
+  const teachers: any[] = await fetchArray('teachers');
+  const timetableEntries: any[] = await fetchArray('timetable-entries');
+  const subjects: any[] = await fetchArray('subjects');
+  const semesters: any[] = await fetchArray('semesters');
   const conflicts: ConflictInfo[] = [];
   
   // Group entries by time slot and day
-  const timeSlotGroups = timetableEntries.reduce((groups, entry) => {
+  const timeSlotGroups = timetableEntries.reduce((groups: Record<string, any[]>, entry: any) => {
     const key = `${entry.timeSlotId}_${entry.day}`;
     if (!groups[key]) {
       groups[key] = [];
     }
     groups[key].push(entry);
     return groups;
-  }, {} as Record<string, typeof timetableEntries>);
+  }, {} as Record<string, any[]>);
 
   // Check each time slot for conflicts
   Object.entries(timeSlotGroups).forEach(([timeSlotKey, entries]) => {

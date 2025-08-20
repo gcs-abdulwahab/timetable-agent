@@ -1,21 +1,17 @@
-'use client';
+ 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { getDaysOfWeek, getDepartments, getSemesters, getSubjects, getTeachers, getTimeSlots } from '../lib/repositories/timetableRepository';
-import { getActiveDepartmentsForSemester } from '../utils/timetable-utils';
 
-// Type definitions
-export type TimetableEntryType = {
-  id?: string;
-  semesterId: string;
-  departmentId: string;
-  subjectId: string;
-  teacherId: string;
-  timeSlotId: string;
-  day: string;
-  room: string; // made required to match TimetableEntry
-  note?: string;
-};
+import {
+  getDaysOfWeek,
+  getDepartments,
+  getSemesters,
+  getSubjects,
+  getTeachers,
+  getTimeSlots
+} from '../lib/repositories/timetableRepository';
+import { TimetableEntry as TimetableEntryType } from '../types';
+import { getActiveDepartmentsForSemester } from '../utils/timetable-utils';
 
 interface TimetableAdminProps {
   onAddEntry: (entry: Omit<TimetableEntryType, 'id'>) => void;
@@ -24,22 +20,29 @@ interface TimetableAdminProps {
 // Remove defaultTimeSlots; will fetch from DB
 
 const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
-  const [formData, setFormData] = useState({
-    semesterId: '',
-    departmentId: '',
-    subjectId: '',
-    teacherId: '',
-    timeSlotId: '',
+  const [formData, setFormData] = useState<{
+    semesterId?: number;
+    departmentId?: number;
+    subjectId?: number;
+    teacherId?: number;
+    timeSlotId?: number;
+    room: string;
+  }>({
+    semesterId: undefined,
+    departmentId: undefined,
+    subjectId: undefined,
+    teacherId: undefined,
+    timeSlotId: undefined,
     room: ''
   });
   const [selectedDays, setSelectedDays] = useState<string[]>([]);
 
   // State for fetched data
-  const [departments, setDepartments] = useState<Array<{ id: string; name: string; offersBSDegree: boolean; shortName: string }>>([]);
-  const [semesters, setSemesters] = useState<Array<{ id: string; name: string; isActive: boolean }>>([]);
-  const [subjects, setSubjects] = useState<Array<{ id: string; name: string; departmentId: string; semesterLevel: number }>>([]);
-  const [teachers, setTeachers] = useState<Array<{ id: string; name: string; departmentId: string }>>([]);
-  const [timeSlotsState, setTimeSlotsState] = useState<Array<{ id: string; period: number; start: string; end: string }>>([]);
+  const [departments, setDepartments] = useState<Array<{ id: number; name: string; offersBSDegree: boolean; shortName: string }>>([]);
+  const [semesters, setSemesters] = useState<Array<{ id: number; name: string; isActive: boolean }>>([]);
+  const [subjects, setSubjects] = useState<Array<{ id: number; name: string; departmentId: number; semesterLevel: number }>>([]);
+  const [teachers, setTeachers] = useState<Array<{ id: number; name: string; departmentId: number }>>([]);
+  const [timeSlotsState, setTimeSlotsState] = useState<Array<{ id: number; period: number; start: string; end: string }>>([]);
   const [daysOfWeek, setDaysOfWeek] = useState<string[]>([]);
 
   useEffect(() => {
@@ -59,7 +62,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
 
   // Get departments that offer BS degrees with semester-scoped filtering
   const getBSDepartmentsForSemester = () => {
-    if (!formData.semesterId) {
+    if (formData.semesterId === undefined || formData.semesterId === null) {
       return departments.filter(d => d.offersBSDegree);
     }
     return getActiveDepartmentsForSemester(formData.semesterId, departments, semesters);
@@ -67,14 +70,14 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
 
   // Get teachers filtered by selected department
   const getFilteredTeachers = () => {
-    if (!formData.departmentId) return [];
+    if (formData.departmentId === undefined || formData.departmentId === null) return [];
     return teachers.filter(teacher => teacher.departmentId === formData.departmentId);
   };
 
   // Get subjects for the selected department and semester
   const getDepartmentSubjects = () => {
-    if (!formData.departmentId || !formData.semesterId) return [];
-    
+    if (formData.departmentId === undefined || formData.semesterId === undefined) return [];
+
     // For now, show subjects that match the department (semester filtering can be enhanced later)
     return subjects.filter(subject => 
       subject.departmentId === formData.departmentId &&
@@ -84,21 +87,26 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (formData.subjectId && formData.teacherId && formData.timeSlotId && selectedDays.length > 0) {
+    if (formData.subjectId !== undefined && formData.teacherId !== undefined && formData.timeSlotId !== undefined && selectedDays.length > 0) {
       selectedDays.forEach((day) => {
+        // Convert day string to dayId by finding index in daysOfWeek (1-based)
+        const dayIndex = daysOfWeek.indexOf(day);
+        const dayId = dayIndex >= 0 ? dayIndex + 1 : 0;
         onAddEntry({
-          ...formData,
-          day,
-          note: ''
+          subjectId: formData.subjectId!,
+          teacherId: formData.teacherId!,
+          timeSlotId: formData.timeSlotId!,
+          dayId,
+          roomId: formData.room ? Number(formData.room) : 0
         });
       });
       // Reset form
       setFormData({
-        semesterId: '',
-        departmentId: '',
-        subjectId: '',
-        teacherId: '',
-        timeSlotId: '',
+        semesterId: undefined,
+        departmentId: undefined,
+        subjectId: undefined,
+        teacherId: undefined,
+        timeSlotId: undefined,
         room: ''
       });
       setSelectedDays([]);
@@ -107,13 +115,19 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value,
-      // Reset dependent fields when semester or department changes
-      ...(name === 'semesterId' && { departmentId: '', teacherId: '', subjectId: '', classId: '' }),
-      ...(name === 'departmentId' && { teacherId: '', subjectId: '', classId: '' })
-    }));
+    // Fields that should be numbers
+    const numericFields = ['semesterId', 'departmentId', 'subjectId', 'teacherId', 'timeSlotId'];
+    if (numericFields.includes(name)) {
+      const parsed = value === '' ? undefined : parseInt(value, 10);
+      setFormData(prev => ({
+        ...prev,
+        [name]: parsed,
+        ...(name === 'semesterId' && { departmentId: undefined, teacherId: undefined, subjectId: undefined }),
+        ...(name === 'departmentId' && { teacherId: undefined, subjectId: undefined })
+      }));
+      return;
+    }
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   return (
@@ -150,7 +164,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             disabled={!formData.semesterId}
           >
             <option value="">Select Department</option>
-            {getBSDepartmentsForSemester().map((department: { id: string; name: string; offersBSDegree: boolean; shortName: string }) => (
+            {getBSDepartmentsForSemester().map((department: { id: number; name: string; offersBSDegree: boolean; shortName: string }) => (
               <option key={department.id} value={department.id}>
                 {department.name}
               </option>
@@ -188,7 +202,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             disabled={!formData.departmentId}
           >
             <option value="">Select Teacher</option>
-            {getFilteredTeachers().map((teacher: { id: string; name: string; departmentId: string }) => (
+            {getFilteredTeachers().map((teacher: { id: number; name: string; departmentId: number }) => (
               <option key={teacher.id} value={teacher.id}>
                 {teacher.name}
               </option>
@@ -264,7 +278,7 @@ const TimetableAdmin: React.FC<TimetableAdminProps> = ({ onAddEntry }) => {
             disabled
           >
             <option value="">Select Time Slot</option>
-            {timeSlotsState.map((slot: { id: string; period: number; start: string; end: string }) => (
+            {timeSlotsState.map((slot: { id: number; period: number; start: string; end: string }) => (
               <option key={slot.id} value={slot.id}>
                 Period {slot.period} ({slot.start}-{slot.end})
               </option>

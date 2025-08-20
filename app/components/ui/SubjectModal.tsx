@@ -1,20 +1,21 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Subject, Department } from '../data';
+import React, { useEffect, useState } from 'react';
+import { Department } from '../../types/Department';
+import { Subject } from '../../types/Subject';
 import { Button } from './button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from './dialog';
+import { Checkbox } from './checkbox';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from './dialog';
 import { Input } from './input';
 import { Label } from './label';
-import { Checkbox } from './checkbox';
 
 interface SubjectModalProps {
   isOpen: boolean;
   onClose: () => void;
   mode: 'add' | 'edit';
   initialSubject?: Subject | null;
-  departmentId: string;
-  semesterLevel: number;
+  departmentId: number;
+  semesterLevel?: number;
   departments: Department[];
   onSubmit: (subject: Subject | Omit<Subject, 'id'>) => void;
 }
@@ -31,33 +32,18 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
 }) => {
   const [formData, setFormData] = useState<Omit<Subject, 'id'>>({
     name: '',
-    shortName: '',
+  shortName: '',
     code: '',
     creditHours: 3,
-    color: 'bg-blue-100',
-    departmentId: '',
-    semesterLevel: 1,
+    departmentId: departmentId,
     isCore: true,
     isMajor: true,
-    teachingDepartmentIds: []
+    teachingDepartmentIds: [departmentId]
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Color options for subjects
-  const colorOptions = [
-    { value: 'bg-blue-100', label: 'Light Blue', preview: 'bg-blue-100' },
-    { value: 'bg-green-100', label: 'Light Green', preview: 'bg-green-100' },
-    { value: 'bg-yellow-100', label: 'Light Yellow', preview: 'bg-yellow-100' },
-    { value: 'bg-red-100', label: 'Light Red', preview: 'bg-red-100' },
-    { value: 'bg-purple-100', label: 'Light Purple', preview: 'bg-purple-100' },
-    { value: 'bg-indigo-100', label: 'Light Indigo', preview: 'bg-indigo-100' },
-    { value: 'bg-pink-100', label: 'Light Pink', preview: 'bg-pink-100' },
-    { value: 'bg-teal-100', label: 'Light Teal', preview: 'bg-teal-100' },
-    { value: 'bg-orange-100', label: 'Light Orange', preview: 'bg-orange-100' },
-    { value: 'bg-gray-100', label: 'Light Gray', preview: 'bg-gray-100' },
-  ];
 
   // Initialize form data when modal opens or when props change
   useEffect(() => {
@@ -81,15 +67,14 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
         
         setFormData({
           name: initialSubject.name,
-          shortName: initialSubject.shortName,
+          shortName: initialSubject.shortName || '',
           code: initialSubject.code,
           creditHours: initialSubject.creditHours,
-          color: initialSubject.color,
-          departmentId: initialSubject.departmentId, // Fixed in edit mode
-          semesterLevel: initialSubject.semesterLevel, // Fixed in edit mode
+          departmentId: initialSubject.departmentId || departmentId, // Fixed in edit mode
           isCore: initialSubject.isCore,
           isMajor: isMajorValue,
-          teachingDepartmentIds: teachingDepartmentIdsValue
+          teachingDepartmentIds: teachingDepartmentIdsValue.map(id => Number(id)),
+          semesterId: initialSubject.semesterId
         });
       } else {
         // Add mode - set default values
@@ -98,9 +83,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
           shortName: '',
           code: '',
           creditHours: 3,
-          color: 'bg-blue-100',
           departmentId,
-          semesterLevel,
           isCore: true,
           isMajor: true,
           teachingDepartmentIds: [departmentId]
@@ -111,17 +94,18 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
     }
   }, [isOpen, mode, initialSubject, departmentId, semesterLevel]);
 
-  const handleInputChange = (field: keyof typeof formData, value: string | number | boolean | string[]) => {
+  const handleInputChange = (field: keyof typeof formData, value: string | number | boolean | number[] | string[]) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value
     }));
     
     // Clear error when user starts typing
-    if (errors[field]) {
+    const key = String(field);
+    if (errors[key]) {
       setErrors((prev) => ({
         ...prev,
-        [field]: ''
+        [key]: ''
       }));
     }
   };
@@ -133,7 +117,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
       newErrors.name = 'Subject name is required';
     }
 
-    if (!formData.shortName.trim()) {
+    if ((formData.shortName || '').trim().length === 0) {
       newErrors.shortName = 'Short name is required';
     }
 
@@ -198,9 +182,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
       shortName: '',
       code: '',
       creditHours: 3,
-      color: 'bg-blue-100',
-      departmentId: '',
-      semesterLevel: 1,
+      departmentId: departmentId,
       isCore: true,
       isMajor: true,
       teachingDepartmentIds: []
@@ -400,32 +382,7 @@ const SubjectModal: React.FC<SubjectModalProps> = ({
             </div>
           )}
           {/* Simple color picker */}
-          <div className="space-y-1">
-            <Label className="text-sm">Color Theme</Label>
-            <div className="grid grid-cols-10 gap-1">
-              {colorOptions.map((colorOption) => (
-                <label
-                  key={colorOption.value}
-                  className={`cursor-pointer border-2 rounded p-1 transition-colors ${
-                    formData.color === colorOption.value 
-                      ? 'border-blue-500 bg-blue-50' 
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="color"
-                    value={colorOption.value}
-                    checked={formData.color === colorOption.value}
-                    onChange={(e) => handleInputChange('color', e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className={`w-full h-4 rounded ${colorOption.preview}`}></div>
-                </label>
-              ))}
-            </div>
-          </div>
-
+          
           <DialogFooter className="pt-2">
             <Button 
               type="button" 

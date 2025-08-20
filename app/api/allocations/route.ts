@@ -1,64 +1,102 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { PrismaClient } from '../../../lib/generated/prisma';
 
-const ALLOCATIONS_FILE = path.join(process.cwd(), 'data', 'allocations.json');
+const prisma = new PrismaClient();
+
+function makeErrorResponse(err: unknown, attempted?: unknown) {
+  const eRec = (err && typeof err === 'object') ? (err as Record<string, unknown>) : {};
+  const base = {
+    name: typeof eRec.name === 'string' ? eRec.name : 'Error',
+    message: typeof eRec.message === 'string' ? eRec.message : String(err),
+    code: typeof eRec.code === 'string' ? eRec.code : undefined,
+    meta: eRec.meta,
+    stack: process.env.NODE_ENV === 'development' && typeof eRec.stack === 'string' ? eRec.stack : undefined,
+  };
+  return NextResponse.json({ error: base.message, details: base, attempted }, { status: 500 });
+}
 
 export async function GET() {
   try {
-    const data = await fs.readFile(ALLOCATIONS_FILE, 'utf8');
-    const allocations = JSON.parse(data);
-    return NextResponse.json(allocations);
-  } catch (error) {
-    console.error('Error reading allocations file:', error);
-    // Return empty array if file doesn't exist or has error
-    return NextResponse.json([]);
+    const entries = await prisma.timetableEntry.findMany();
+    return NextResponse.json(entries);
+  } catch (_err) {
+    console.error('GET /api/allocations error:', _err);
+    return makeErrorResponse(_err);
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
+// Type for timetable entry input
+type TimetableEntryInput = {
+  subjectId: number;
+  teacherId: number;
+  timeSlotId: number;
+  dayId: number;
+  roomId: number;
+};
+
+// Function to validate and normalize a single entry
+function normalizeEntry(entry: TimetableEntryInput) {
+  const data = {
+    subjectId: entry.subjectId,
+    teacherId: entry.teacherId,
+    timeSlotId: entry.timeSlotId,
+    dayId: entry.dayId,
+    roomId: entry.roomId
+  };
+
+  if (!Number.isFinite(data.subjectId)) throw new Error('Invalid subjectId');
+  if (!Number.isFinite(data.teacherId)) throw new Error('Invalid teacherId');
+  if (!Number.isFinite(data.timeSlotId)) throw new Error('Invalid timeSlotId');
+  if (!Number.isFinite(data.dayId)) throw new Error('Invalid dayId');
+  if (!Number.isFinite(data.roomId)) throw new Error('Invalid roomId');
+
+  return data;
+}
+
+// POST endpoint for adding a single entry
 export async function POST(request: NextRequest) {
+  let body: unknown;
   try {
-    const allocations = await request.json();
-    
-    // Validate that allocations is an array
-    if (!Array.isArray(allocations)) {
-      return NextResponse.json(
-        { error: 'Allocations must be an array' },
-        { status: 400 }
-      );
+    body = await request.json();
+    console.log('POST /api/allocations received:', JSON.stringify(body, null, 2));
+
+    // Only accept single objects, not arrays
+    if (Array.isArray(body)) {
+      return NextResponse.json({ 
+        error: 'Arrays are not accepted. Send a single entry only.' 
+      }, { status: 400 });
     }
 
-    // Ensure the data directory exists
-    const dataDir = path.dirname(ALLOCATIONS_FILE);
+    if (!body || typeof body !== 'object') {
+      return NextResponse.json({ 
+        error: 'Invalid entry format. Must be a single object.' 
+      }, { status: 400 });
+    }
+
+    // Reject if input contains an id field
+    if ('id' in body) {
+      return NextResponse.json({ 
+        error: 'New entries should not include an id field.' 
+      }, { status: 400 });
+    }
+
     try {
-      await fs.access(dataDir);
-    } catch {
-      await fs.mkdir(dataDir, { recursive: true });
+      const data = normalizeEntry(body as TimetableEntryInput);
+      const entry = await prisma.timetableEntry.create({ data });
+      return NextResponse.json({ 
+        success: true, 
+        entry 
+      }, { status: 201 });
+    } catch (err) {
+      console.error('Failed to create entry:', err);
+      return makeErrorResponse(err, body);
     }
-
-    // Write the allocations to the file
-    await fs.writeFile(ALLOCATIONS_FILE, JSON.stringify(allocations, null, 2), 'utf8');
-    
-    return NextResponse.json({ success: true, count: allocations.length });
-  } catch (error) {
-    console.error('Error saving allocations file:', error);
-    return NextResponse.json(
-      { error: 'Failed to save allocations' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function DELETE() {
-  try {
-    // Clear allocations by writing empty array
-    await fs.writeFile(ALLOCATIONS_FILE, '[]', 'utf8');
-    return NextResponse.json({ success: true, message: 'Allocations cleared' });
-  } catch (error) {
-    console.error('Error clearing allocations file:', error);
-    return NextResponse.json(
-      { error: 'Failed to clear allocations' },
-      { status: 500 }
-    );
+  } catch (err) {
+    console.error('POST /api/allocations error:', err);
+    return makeErrorResponse(err, body);
+  } finally {
+    await prisma.$disconnect();
   }
 }

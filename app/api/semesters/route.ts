@@ -19,73 +19,58 @@ export async function GET() {
   }
 }
 
-// ✅ POST - Bulk update or create semesters
+// POST - Create a new semester
 export async function POST(request: NextRequest) {
   try {
-    const semesters = await request.json();
-
-    const updatePromises = semesters.map((semester: any) =>
-      prisma.semester.upsert({
-        where: { id: semester.id },
-        update: {
-          name: semester.name,
-          code: semester.code,
-          isActive: semester.isActive,
-        },
-        create: {
-          id: semester.id,
-          name: semester.name,
-          code: semester.code,
-          isActive: semester.isActive,
-        },
-      })
-    );
-
-    await Promise.all(updatePromises);
-    return NextResponse.json({ success: true });
+    const data = await request.json();
+    const newSemester = await prisma.semester.create({
+      data,
+    });
+    return NextResponse.json(newSemester, { status: 201 });
   } catch (error) {
-    console.error('Error updating semesters:', error);
-    return NextResponse.json({ error: 'Failed to update semesters' }, { status: 500 });
+    console.error('Error creating semester:', error);
+    return NextResponse.json({ error: 'Failed to create semester' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }
 }
 
-// ✅ PATCH - Edit a single semester
-export async function PATCH(request: NextRequest) {
+// PUT - Update an existing semester
+export async function PUT(request: NextRequest) {
   try {
-    const semester = await request.json();
-    if (!semester.id) {
-      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
+    if (!id) {
+      return NextResponse.json({ error: 'Semester ID is required' }, { status: 400 });
     }
 
-    const updated = await prisma.semester.update({
-      where: { id: semester.id },
-      data: {
-        name: semester.name,  
-        code: semester.code,
-        isActive: semester.isActive,
-      },
+    const data = await request.json();
+    const updatedSemester = await prisma.semester.update({
+      where: { id: parseInt(id, 10) },
+      data,
     });
-    return NextResponse.json(updated);
+    return NextResponse.json(updatedSemester);
   } catch (error) {
-    console.error('Error editing semester:', error);
-    return NextResponse.json({ error: 'Failed to edit semester' }, { status: 500 });
+    console.error('Error updating semester:', error);
+    return NextResponse.json({ error: 'Failed to update semester' }, { status: 500 });
   } finally {
     await prisma.$disconnect();
   }
 }
 
-// ✅ DELETE - Remove a semester
+// DELETE - Delete a semester
 export async function DELETE(request: NextRequest) {
   try {
-    const { id } = await request.json();
+    const { searchParams } = new URL(request.url);
+    const id = searchParams.get('id');
     if (!id) {
-      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+      return NextResponse.json({ error: 'Semester ID is required' }, { status: 400 });
     }
 
-    await prisma.semester.delete({ where: { id } });
-    return NextResponse.json({ success: true });
+    await prisma.semester.delete({
+      where: { id: parseInt(id, 10) },
+    });
+    return NextResponse.json({ message: 'Semester deleted successfully' }, { status: 200 });
   } catch (error) {
     console.error('Error deleting semester:', error);
     return NextResponse.json({ error: 'Failed to delete semester' }, { status: 500 });

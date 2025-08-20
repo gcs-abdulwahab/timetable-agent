@@ -3,10 +3,37 @@ import { PrismaClient } from '../../../lib/generated/prisma';
 
 const prisma = new PrismaClient();
 
+// Minimal local types matching Prisma model for validation in this API route
+type TimetableEntryCreateShape = {
+  subjectId: number;
+  teacherId: number;
+  timeSlotId: number;
+  dayId: number;
+  roomId: number;
+  semesterId?: number | null;
+  departmentId?: number | null;
+  [k: string]: unknown;
+};
+
 export async function GET() {
   try {
-    const entries = await prisma.timetableEntry.findMany();
-    return NextResponse.json(entries);
+    const entries = await prisma.timetableEntry.findMany({
+      include: { subject: { select: { id: true, semesterId: true, departmentId: true } } },
+    });
+
+    // Normalize response so consumers can read semesterId/departmentId derived from subject
+    const mapped = entries.map((e: Record<string, unknown>) => {
+      const subject = (e.subject as Record<string, unknown> | undefined) ?? undefined;
+      const semesterId = subject ? (subject['semesterId'] as number | undefined) : (e['semesterId'] as number | undefined);
+      const departmentId = subject ? (subject['departmentId'] as number | undefined) : (e['departmentId'] as number | undefined);
+      return {
+        ...e,
+        semesterId,
+        departmentId,
+      };
+    });
+
+    return NextResponse.json(mapped);
   } catch (error) {
     console.error('Error fetching timetable entries:', error);
     return NextResponse.json([], { status: 500 });
@@ -16,12 +43,25 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const updatedEntries = await request.json();
+
     // Remove all existing entries (for full replace)
     await prisma.timetableEntry.deleteMany({});
-    // Add new entries
-    const createPromises = updatedEntries.map((entry: any) =>
-      prisma.timetableEntry.create({ data: entry })
-    );
+
+    // Ensure each entry has semesterId and departmentId (backfill from subject when missing)
+    const createPromises = updatedEntries.map(async (entry: TimetableEntryCreateShape) => {
+  const toCreate = { ...entry } as TimetableEntryCreateShape;
+
+      if (toCreate.subjectId && (!('semesterId' in toCreate) || !('departmentId' in toCreate))) {
+        const subj = await prisma.subject.findUnique({ where: { id: toCreate.subjectId } });
+        if (subj) {
+          if (!('semesterId' in toCreate)) toCreate.semesterId = subj.semesterId ?? undefined;
+          if (!('departmentId' in toCreate)) toCreate.departmentId = subj.departmentId ?? undefined;
+        }
+      }
+
+  return prisma.timetableEntry.create({ data: toCreate as unknown as never });
+    });
+
     await Promise.all(createPromises);
     return NextResponse.json({ success: true });
   } catch (error) {

@@ -1,5 +1,43 @@
+import React from 'react';
+
+// Add TypeScript interfaces for modal props and domain shapes
+type ID = number;
+
+interface Semester { id: ID; name?: string; }
+interface Department { id: ID; name: string; }
+interface Subject { id: ID; name: string; departmentId: ID; semesterId: ID; }
+interface Teacher { id: ID; name: string; departmentId: ID; }
+interface TimeSlot { id: ID; period: number; start: string; end: string; }
+interface Room { id: ID; name: string; capacity?: number; type?: string; }
+
+interface AddEntryData {
+  selectedSemester: ID | '';
+  selectedDepartment: ID | '';
+  selectedSubject: ID | '';
+  selectedTeacher: ID | '';
+  selectedTimeSlot: ID | '';
+  selectedDays: string[];
+  room: string;
+}
+
+interface AddEntryModalProps {
+  show: boolean;
+  addEntryData: AddEntryData;
+  setAddEntryData: (d: AddEntryData | ((prev: AddEntryData) => AddEntryData)) => void;
+  setShowAddEntry: (v: boolean) => void;
+  semesters: Semester[];
+  visibleDepartments: Department[];
+  subjects: Subject[];
+  teachers: Teacher[];
+  timeSlots: TimeSlot[];
+  rooms: Room[];
+  days?: string[];
+  onAddEntry: () => void;
+  formatSemesterLabel: (s: Semester) => string;
+}
+
 // Add Entry Modal
-export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddEntry, semesters, visibleDepartments, subjects, teachers, timeSlots, rooms, onAddEntry, formatSemesterLabel }) {
+export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddEntry, semesters, visibleDepartments, subjects, teachers, timeSlots, rooms, days, onAddEntry, formatSemesterLabel }: AddEntryModalProps) {
   if (!show) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
@@ -47,14 +85,15 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
             <label className="block text-sm font-semibold text-gray-700 mb-1">Department</label>
             <select
               value={addEntryData.selectedDepartment}
-              onChange={(e) => {
-                setAddEntryData(prev => ({
-                  ...prev,
-                  selectedDepartment: e.target.value,
-                  selectedSubject: '',
-                  selectedTeacher: '',
-                }));
-              }}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  const val = e.target.value === '' ? '' : Number(e.target.value);
+                  setAddEntryData(prev => ({
+                    ...prev,
+                    selectedDepartment: val as AddEntryData['selectedDepartment'],
+                    selectedSubject: '',
+                    selectedTeacher: '',
+                  }));
+                }}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
             >
               <option value="">Select Department</option>
@@ -68,8 +107,11 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
             <label className="block text-sm font-semibold text-gray-700 mb-1">Subject/Course</label>
             <select
               value={addEntryData.selectedSubject}
-              onChange={(e) => setAddEntryData(prev => ({ ...prev, selectedSubject: e.target.value }))
-              }
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  const val = e.target.value === '' ? '' : Number(e.target.value);
+                  setAddEntryData(prev => ({ ...prev, selectedSubject: val as AddEntryData['selectedSubject'] }));
+                }
+                }
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
               disabled={!addEntryData.selectedSemester || !addEntryData.selectedDepartment}
             >
@@ -86,15 +128,16 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
             <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher (Optional)</label>
             <select
               value={addEntryData.selectedTeacher}
-              onChange={(e) => {
-                setAddEntryData(prev => ({ ...prev, selectedTeacher: e.target.value }));
-              }}
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+                  const val = e.target.value === '' ? '' : Number(e.target.value);
+                  setAddEntryData(prev => ({ ...prev, selectedTeacher: val as AddEntryData['selectedTeacher'] }));
+                }}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
               disabled={!addEntryData.selectedSubject}
             >
               <option value="">Select Teacher (Optional)</option>
               {(() => {
-                const selectedSubject = subjects.find(s => s.id === addEntryData.selectedSubject);
+                const selectedSubject = subjects.find(s => s.id === addEntryData.selectedSubject as number);
                 const filteredTeachers = selectedSubject 
                   ? teachers.filter(teacher => teacher.departmentId === selectedSubject.departmentId)
                   : [];
@@ -110,7 +153,7 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
             <input
               type="text"
               value={(() => {
-                const slot = timeSlots.find(s => s.id === addEntryData.selectedTimeSlot);
+                const slot = timeSlots.find(s => s.id === (addEntryData.selectedTimeSlot as number));
                 return slot ? `Period ${slot.period} (${slot.start} - ${slot.end})` : '';
               })()}
               readOnly
@@ -121,12 +164,15 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">Days</label>
             <div className="grid grid-cols-3 gap-2">
-              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"].map(day => (
+              {(() => {
+                const defaultDays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"] as string[];
+                const availableDays = Array.isArray(days) && days.length ? days : defaultDays;
+                return availableDays.map((day: string) => (
                 <label key={day} className="flex items-center space-x-1">
                   <input
                     type="checkbox"
                     checked={addEntryData.selectedDays.includes(day)}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       if (e.target.checked) {
                         setAddEntryData(prev => ({ ...prev, selectedDays: [...prev.selectedDays, day] }));
                       } else {
@@ -137,7 +183,8 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
                   />
                   <span className="text-xs">{day.substring(0, 3)}</span>
                 </label>
-              ))}
+              ));
+              })()}
             </div>
           </div>
           {/* Room */}
@@ -145,7 +192,7 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
             <label className="block text-sm font-semibold text-gray-700 mb-1">Room (Optional)</label>
             <select
               value={addEntryData.room}
-              onChange={(e) => {
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
                 setAddEntryData(prev => ({ ...prev, room: e.target.value }));
               }}
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
@@ -192,7 +239,28 @@ export function AddEntryModal({ show, addEntryData, setAddEntryData, setShowAddE
 }
 
 // Edit Entry Modal
-export function EditEntryModal({ show, editingData, editingEntry, editFormData, setEditFormData, setEditingEntry, setEditingData, subjects, teachers, timeSlots }) {
+interface EditFormData {
+  subjectId: ID | '';
+  teacherId: ID | '';
+  room: string;
+  timeSlotId: ID | '';
+  selectedDays: string[];
+}
+
+interface EditEntryModalProps {
+  show: boolean;
+  editingData: unknown;
+  editingEntry: unknown;
+  editFormData: EditFormData;
+  setEditFormData: (d: EditFormData | ((prev: EditFormData) => EditFormData)) => void;
+  setEditingEntry: (v: unknown) => void;
+  setEditingData: (v: unknown) => void;
+  subjects: Subject[];
+  teachers: Teacher[];
+  timeSlots: TimeSlot[];
+}
+
+export function EditEntryModal({ show, editingData, editingEntry, editFormData, setEditFormData, setEditingEntry, setEditingData, subjects, teachers, timeSlots }: EditEntryModalProps) {
   if (!show || !editingData || !editingEntry) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
@@ -202,8 +270,8 @@ export function EditEntryModal({ show, editingData, editingEntry, editFormData, 
             <label className="block text-sm font-semibold text-gray-700 mb-1">Subject</label>
             <select
               value={editFormData.subjectId}
-              onChange={e => setEditFormData(prev => ({ ...prev, subjectId: e.target.value }))
-              }
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditFormData(prev => ({ ...prev, subjectId: e.target.value === '' ? '' : Number(e.target.value) }))
+                }
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
             >
               <option value="">Select Subject</option>
@@ -216,8 +284,8 @@ export function EditEntryModal({ show, editingData, editingEntry, editFormData, 
             <label className="block text-sm font-semibold text-gray-700 mb-1">Teacher</label>
             <select
               value={editFormData.teacherId}
-              onChange={e => setEditFormData(prev => ({ ...prev, teacherId: e.target.value }))
-              }
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditFormData(prev => ({ ...prev, teacherId: e.target.value === '' ? '' : Number(e.target.value) }))
+                }
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
             >
               <option value="">Select Teacher</option>
@@ -240,7 +308,7 @@ export function EditEntryModal({ show, editingData, editingEntry, editFormData, 
             <label className="block text-sm font-semibold text-gray-700 mb-1">Time Slot</label>
             <select
               value={editFormData.timeSlotId}
-              onChange={e => setEditFormData(prev => ({ ...prev, timeSlotId: e.target.value }))
+              onChange={(e: React.ChangeEvent<HTMLSelectElement>) => setEditFormData(prev => ({ ...prev, timeSlotId: e.target.value === '' ? '' : Number(e.target.value) }))
               }
               className="w-full border border-gray-300 rounded px-3 py-2 text-sm"
             >
@@ -258,13 +326,13 @@ export function EditEntryModal({ show, editingData, editingEntry, editFormData, 
                   <input
                     type="checkbox"
                     checked={editFormData.selectedDays.includes(day)}
-                    onChange={e => {
-                      if (e.target.checked) {
-                        setEditFormData(prev => ({ ...prev, selectedDays: [...prev.selectedDays, day] }));
-                      } else {
-                        setEditFormData(prev => ({ ...prev, selectedDays: prev.selectedDays.filter(d => d !== day) }));
-                      }
-                    }}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        if (e.target.checked) {
+                          setEditFormData(prev => ({ ...prev, selectedDays: [...prev.selectedDays, day] }));
+                        } else {
+                          setEditFormData(prev => ({ ...prev, selectedDays: prev.selectedDays.filter(d => d !== day) }));
+                        }
+                      }}
                     className="text-sm"
                   />
                   <span className="text-xs">{day.substring(0, 3)}</span>
@@ -310,7 +378,25 @@ export function EditEntryModal({ show, editingData, editingEntry, editFormData, 
 }
 
 // Delete Confirmation Modal
-export function DeleteConfirmationModal({ show, deleteConfirmation, confirmDeleteEntry, setDeleteConfirmation, timeSlots, formatDaysDisplay }) {
+const ESC_LABEL_SUFFIX = ' (ESC)';
+
+interface TimetableEntryView { timeSlotId: ID; room?: string }
+interface DeleteConfirmation {
+  subject: Subject;
+  teacher: Teacher;
+  entries: TimetableEntryView[];
+}
+
+interface DeleteConfirmationModalProps {
+  show: boolean;
+  deleteConfirmation: DeleteConfirmation | null;
+  confirmDeleteEntry: () => void;
+  setDeleteConfirmation: (v: DeleteConfirmation | null) => void;
+  timeSlots: TimeSlot[];
+  formatDaysDisplay: (entries: TimetableEntryView[]) => string;
+}
+
+export function DeleteConfirmationModal({ show, deleteConfirmation, confirmDeleteEntry, setDeleteConfirmation, timeSlots, formatDaysDisplay }: DeleteConfirmationModalProps) {
   if (!show || !deleteConfirmation) return null;
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999]">
@@ -338,7 +424,7 @@ export function DeleteConfirmationModal({ show, deleteConfirmation, confirmDelet
                 <p><strong>Teacher:</strong> {deleteConfirmation.teacher.name}</p>
                 <p><strong>Days:</strong> {formatDaysDisplay(deleteConfirmation.entries)}</p>
                 <p><strong>Time Slot:</strong> {(() => {
-                  const timeSlot = timeSlots.find(ts => ts.id === deleteConfirmation.entries[0]?.timeSlotId);
+                  const timeSlot = timeSlots.find((ts: TimeSlot) => ts.id === deleteConfirmation.entries[0]?.timeSlotId);
                   return timeSlot ? `Period ${timeSlot.period} (${timeSlot.start} - ${timeSlot.end})` : 'Unknown';
                 })()}</p>
                 {deleteConfirmation.entries[0]?.room && (
@@ -373,7 +459,14 @@ export function DeleteConfirmationModal({ show, deleteConfirmation, confirmDelet
 }
 
 // Conflict Tooltip Modal
-export function ConflictTooltipModal({ show, conflictTooltip, setConflictTooltip }) {
+interface ConflictTooltip { show: boolean; content: string; x: number; y: number }
+interface ConflictTooltipModalProps {
+  show: boolean;
+  conflictTooltip: ConflictTooltip;
+  setConflictTooltip: (c: ConflictTooltip) => void;
+}
+
+export function ConflictTooltipModal({ show, conflictTooltip, setConflictTooltip }: ConflictTooltipModalProps) {
   if (!show) return null;
   return (
     <>

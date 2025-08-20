@@ -2,11 +2,11 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { Department, Subject, Semester, getOfferedLevelsForDept, setOfferedLevelsForDept, countSubjectsForDeptLevel } from './data';
-import SubjectModal from './ui/SubjectModal';
-import InlineAlert from './ui/InlineAlert';
+import { Department, Semester, Subject, countSubjectsForDeptLevel, getOfferedLevelsForDept, setOfferedLevelsForDept } from './data';
 import ConfirmationDialog from './ui/ConfirmationDialog';
+import InlineAlert from './ui/InlineAlert';
 import SemesterToggle from './ui/SemesterToggle';
+import SubjectModal from './ui/SubjectModal';
 
 // Constants
 const LEVELS = [1, 2, 3, 4, 5, 6, 7, 8] as const;
@@ -750,16 +750,12 @@ const SemesterManagementComponent = () => {
                         <div className="text-xs text-blue-600 mb-1">{subject.code}</div>
                         <div className="text-xs text-green-600 mb-1">{subject.creditHours} credit hours</div>
                         <div className="text-xs text-purple-600 mb-1">
-                          {departments.find(d => d.id === subject.departmentId)?.name || 'Unknown Department'} - Semester {subject.semesterLevel}
+                          {departments.find(d => d.id === subject.departmentId)?.name || 'Unknown Department'}
                         </div>
                         <div className="text-xs text-orange-600">
                           {subject.isCore ? 'Core' : 'Elective'}
                         </div>
-                        {/* Color preview */}
-                        <div className="mt-2 flex items-center space-x-2">
-                          <div className={`w-4 h-4 rounded ${subject.color} border border-gray-300`}></div>
-                          <span className="text-xs text-gray-500">Color</span>
-                        </div>
+                        {/* Color removed */}
                       </div>
                     ))}
                   </div>
@@ -815,7 +811,7 @@ const SemesterManagementComponent = () => {
         mode={modalMode}
         initialSubject={editingSubject}
         departmentId={selectedDepartmentId || departments[0]?.id || ''}
-        semesterLevel={selectedLevel}
+  // semesterLevel removed
         departments={departments}
         onSubmit={(subjectData) => {
           if (modalMode === 'edit') {

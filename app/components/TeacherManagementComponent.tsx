@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Department, fetchFromApi, Teacher } from '../lib/data-fetcher';
+import type { Department } from '../types/Department';
+import type { Teacher } from '../types/Teacher';
 
 interface TeacherManagementProps {
   departments: Department[];
@@ -17,7 +18,7 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
     name: '',
     shortName: '',
     designation: '',
-    departmentId: '',
+  departmentId: 0,
   });
 
   // Fetch teachers on component mount
@@ -28,8 +29,9 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
   const loadTeachers = async () => {
     setLoading(true);
     try {
-      const data = await fetchFromApi<Teacher>('teachers');
-      setTeachers(data);
+      const res = await fetch('/api/teachers');
+      const data = await res.json();
+      setTeachers(Array.isArray(data) ? data : []);
       setError('');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Error fetching teachers');
@@ -59,7 +61,7 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
           name: '',
           shortName: '',
           designation: '',
-          departmentId: '',
+          departmentId: 0,
         });
       } else {
         const error = await response.json();
@@ -93,11 +95,12 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
     }
   };
 
-  const handleDeleteTeacher = async (id: string) => {
+  const handleDeleteTeacher = async (id?: number) => {
+    if (!id) return;
     if (!confirm('Are you sure you want to delete this teacher?')) return;
 
     try {
-      const response = await fetch(`/api/teachers/${id}`, {
+      const response = await fetch(`/api/teachers/${String(id)}`, {
         method: 'DELETE',
       });
       
@@ -224,7 +227,7 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
                 <label className="block text-sm font-medium text-gray-700">Department</label>
                 <select
                   value={newTeacher.departmentId}
-                  onChange={(e) => setNewTeacher({ ...newTeacher, departmentId: e.target.value })}
+                  onChange={(e) => setNewTeacher({ ...newTeacher, departmentId: parseInt(e.target.value, 10) || 0 })}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 >
@@ -294,7 +297,7 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
                 <label className="block text-sm font-medium text-gray-700">Department</label>
                 <select
                   value={editingTeacher.departmentId}
-                  onChange={(e) => setEditingTeacher({ ...editingTeacher, departmentId: e.target.value })}
+                  onChange={(e) => setEditingTeacher({ ...editingTeacher, departmentId: parseInt(e.target.value, 10) || 0 })}
                   className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                   required
                 >

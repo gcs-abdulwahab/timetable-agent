@@ -1,4 +1,7 @@
 import React from "react";
+import type { Day } from "../types/Day";
+import type { Department } from "../types/Department";
+import type { TimeSlot } from "../types/TimeSlot";
 import type { Room, Semester, Subject, Teacher } from "../types/timetable";
 import type { AddEntryData } from "../types/ui";
 
@@ -8,12 +11,12 @@ interface AddEntryModalProps {
   setAddEntryData: (data: AddEntryData) => void;
   setShowAddEntry: (show: boolean) => void;
   semesters: Semester[];
-  visibleDepartments: Array<{ id: string; name: string; offersBSDegree: boolean; shortName: string }>;
+  visibleDepartments: Department[];
   subjects: Subject[];
   teachers: Teacher[];
-  timeSlots: Array<{ id: string; period: number; start: string; end: string }>;
+  timeSlots: TimeSlot[];
   rooms: Room[];
-  days: Array<{ id: string; name: string; shortName: string; dayCode: number; isActive: boolean }>;
+  days: Day[];
   formatSemesterLabel: (sem?: Semester) => string;
   onAddEntry: () => void;
 }
@@ -47,10 +50,9 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-3">
             <label className="block text-sm font-medium mb-1">Semester</label>
             <select
-              className="w-full border rounded p-2"
-              value={addEntryData.selectedSemester}
-              onChange={e => setAddEntryData({ ...addEntryData, selectedSemester: e.target.value })}
-              required
+              className="w-full border rounded p-2 bg-gray-100"
+              value={String(addEntryData.selectedSemester || '')}
+              disabled
             >
               <option value="">Select Semester</option>
               {semesters.map(sem => (
@@ -63,10 +65,9 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-3">
             <label className="block text-sm font-medium mb-1">Department</label>
             <select
-              className="w-full border rounded p-2"
+              className="w-full border rounded p-2 bg-gray-100"
               value={addEntryData.selectedDepartment}
-              onChange={e => setAddEntryData({ ...addEntryData, selectedDepartment: e.target.value })}
-              required
+              disabled
             >
               <option value="">Select Department</option>
               {visibleDepartments.map(dep => (
@@ -80,13 +81,13 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
             <label className="block text-sm font-medium mb-1">Subject</label>
             <select
               className="w-full border rounded p-2"
-              value={addEntryData.selectedSubject}
-              onChange={e => setAddEntryData({ ...addEntryData, selectedSubject: e.target.value })}
+              value={String(addEntryData.selectedSubject || '')}
+              onChange={e => setAddEntryData({ ...addEntryData, selectedSubject: e.target.value === '' ? '' : Number(e.target.value) })}
               required
             >
               <option value="">Select Subject</option>
               {subjects
-                .filter(s => s.departmentId === addEntryData.selectedDepartment)
+                .filter(s => s.departmentId === Number(addEntryData.selectedDepartment) && s.semesterId === Number(addEntryData.selectedSemester))
                 .map(sub => (
                   <option key={sub.id} value={sub.id}>
                     {sub.name}
@@ -98,13 +99,13 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
             <label className="block text-sm font-medium mb-1">Teacher</label>
             <select
               className="w-full border rounded p-2"
-              value={addEntryData.selectedTeacher}
-              onChange={e => setAddEntryData({ ...addEntryData, selectedTeacher: e.target.value })}
+              value={String(addEntryData.selectedTeacher || '')}
+              onChange={e => setAddEntryData({ ...addEntryData, selectedTeacher: e.target.value === '' ? '' : Number(e.target.value) })}
               required
             >
               <option value="">Select Teacher</option>
               {teachers
-                .filter(t => t.departmentId === addEntryData.selectedDepartment)
+                .filter(t => t.departmentId === Number(addEntryData.selectedDepartment))
                 .map(teacher => (
                   <option key={teacher.id} value={teacher.id}>
                     {teacher.name}
@@ -115,9 +116,8 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
           <div className="mb-3">
             <label className="block text-sm font-medium mb-1">Time Slot</label>
             <select
-              className="w-full border rounded p-2"
-              value={addEntryData.selectedTimeSlot}
-              onChange={e => setAddEntryData({ ...addEntryData, selectedTimeSlot: e.target.value })}
+              className="w-full border rounded p-2 bg-gray-100"
+              value={String(addEntryData.selectedTimeSlot || '')}
               required
               disabled
             >
@@ -137,17 +137,17 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
                 <label key={dayObj.id} className="flex items-center gap-1">
                   <input
                     type="checkbox"
-                    checked={addEntryData.selectedDays.includes(dayObj.name)}
+                    checked={addEntryData.selectedDays.map(String).includes(String(dayObj.dayCode))}
                     onChange={e => {
                       if (e.target.checked) {
                         setAddEntryData({
                           ...addEntryData,
-                          selectedDays: [...addEntryData.selectedDays, dayObj.name]
+                          selectedDays: [...addEntryData.selectedDays.map(String), String(dayObj.dayCode)]
                         });
                       } else {
                         setAddEntryData({
                           ...addEntryData,
-                          selectedDays: addEntryData.selectedDays.filter(d => d !== dayObj.name)
+                          selectedDays: addEntryData.selectedDays.map(String).filter(d => d !== String(dayObj.dayCode))
                         });
                       }
                     }}
@@ -161,7 +161,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({
             <label className="block text-sm font-medium mb-1">Room</label>
             <select
               className="w-full border rounded p-2"
-              value={addEntryData.room}
+              value={String(addEntryData.room || '')}
               onChange={e => setAddEntryData({ ...addEntryData, room: e.target.value })}
             >
               <option value="">Select Room</option>

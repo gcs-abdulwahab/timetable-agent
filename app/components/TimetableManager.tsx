@@ -1,20 +1,21 @@
 'use client';
 
-import Link from 'next/link';
+import { Day, Semester, TimeSlot } from '@/lib/generated/prisma';
 import React, { useEffect, useState } from 'react';
+import type { Department, Room, Teacher, TimetableEntry } from "../types";
+import type { Subject } from "../types/Subject";
 import ConflictViewer from './ConflictViewer';
-import TimetableAdmin, { TimetableEntryType } from './TimetableAdmin';
+import ConflictsAlert from './ConflictsAlert';
 import TimetableNew from './TimetableNew';
 import { validateTimetable } from './conflictChecker';
-import { TimetableEntry } from './data';
 import { generateStats } from './timetableUtils';
+
+
 
 const TimetableManager: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [entries, setEntries] = useState<TimetableEntry[]>([]);
   const [validation, setValidation] = useState<{ isValid: boolean; conflicts: { details: string }[] }>({ isValid: true, conflicts: [] });
-  const [showAdmin, setShowAdmin] = useState(false);
-  const [showStats, setShowStats] = useState(false);
   const [showConflicts, setShowConflicts] = useState(false);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ const TimetableManager: React.FC = () => {
       if (response.ok) {
         const dbEntries = await response.json();
         setEntries(dbEntries);
+        console.log('Loaded timetable entries:', dbEntries);
         validateTimetable().then(setValidation);
       }
     } catch (error) {
@@ -36,45 +38,43 @@ const TimetableManager: React.FC = () => {
     }
   };
 
-  const saveAllocations = async (updatedEntries: TimetableEntry[]) => {
-    try {
-      const response = await fetch('/api/allocations', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updatedEntries),
+  // State for fetched data
+  const [semesters, setSemesters] = useState<Semester[]>();
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [teachers, setTeachers] = useState<Teacher[]>([]);
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [days, setDays] = useState<Day[]>([]);
+
+
+  // Fetch data on mount
+  useEffect(() => {
+    fetch('/api/semesters')
+      .then(res => res.json())
+      .then(setSemesters);
+    fetch('/api/departments')
+      .then(res => res.json())
+      .then(setDepartments);
+    fetch('/api/subjects')
+      .then(res => res.json())
+      .then(setSubjects);
+    fetch('/api/teachers')
+      .then(res => res.json())
+      .then(setTeachers);
+    fetch('/api/timeslots')
+      .then(res => res.json())
+      .then((data) => {
+        setTimeSlots(data);
       });
-      if (!response.ok) {
-        throw new Error('Failed to save allocations');
-      }
-      validateTimetable().then(setValidation);
-    } catch (error) {
-      console.error('Error saving allocations:', error);
-      alert('Failed to save allocations. Please try again.');
-    }
-  };
+    fetch('/api/rooms')
+      .then(res => res.json())
+      .then(setRooms);
+    fetch('/api/days')
+      .then(res => res.json())
+      .then(setDays);
+  }, []);
 
-  const handleAddEntry = async (newEntry: Omit<TimetableEntryType, 'id'>) => {
-    const entry: TimetableEntry = {
-      ...newEntry,
-      id: `e${Date.now()}`
-    };
-    const updatedEntries = [...entries, entry];
-    setEntries(updatedEntries);
-    await saveAllocations(updatedEntries);
-  };
-
-  const handleUpdateEntries = async (updatedEntries: TimetableEntry[]) => {
-    setEntries(updatedEntries);
-    await saveAllocations(updatedEntries);
-  };
-
-  const handleClearStorage = async () => {
-    const emptyEntries: TimetableEntry[] = [];
-    setEntries(emptyEntries);
-    await saveAllocations(emptyEntries);
-  };
 
   const stats = generateStats(entries);
 
@@ -93,129 +93,27 @@ const TimetableManager: React.FC = () => {
           <h1 className="text-2xl font-bold text-gray-800">
             College Timetable Management
           </h1>
-          <div className="space-x-2">
-            <Link
-              href="/manage-schedule"
-              className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium inline-block"
-            >
-              Manage Schedule
-            </Link>
-            <Link
-              href="/teachers"
-              className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium inline-block"
-            >
-              Manage Teachers
-            </Link>
-            <Link
-              href="/departments"
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium inline-block"
-            >
-              Manage Departments
-            </Link>
-            <Link
-              href="/room-management"
-              className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors text-sm font-medium inline-block"
-            >
-              Room Management
-            </Link>
-            <button
-              onClick={() => setShowAdmin(!showAdmin)}
-              className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium"
-            >
-              {showAdmin ? 'Hide' : 'Show'} Admin Panel
-            </button>
-            <button
-              onClick={() => setShowStats(!showStats)}
-              className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors text-sm font-medium"
-            >
-              {showStats ? 'Hide' : 'Show'} Statistics
-            </button>
-            <button
-              onClick={() => setShowConflicts(!showConflicts)}
-              className={`px-4 py-2 rounded-md transition-colors text-sm font-medium text-white ${
-                validation.conflicts.length > 0
-                  ? 'bg-red-600 hover:bg-red-700'
-                  : 'bg-gray-400 hover:bg-gray-500'
-              }`}
-            >
-              {showConflicts ? 'Hide' : 'Show'} Conflicts ({validation.conflicts.length})
-            </button>
-            <button
-              onClick={handleClearStorage}
-              className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors text-sm font-medium"
-              title="Clear stored data and reset to default"
-            >
-              Reset Data
-            </button>
-          </div>
         </div>
 
-        {/* Conflicts Alert */}
-        {validation.conflicts.length > 0 && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <strong className="font-bold">Conflicts Detected:</strong>
-            <ul className="mt-2">
-              {validation.conflicts.map((conflict, index) => (
-                <li key={index} className="text-sm">• {conflict.details}</li>
-              ))}
-            </ul>
-          </div>
-        )}
+        <ConflictsAlert conflicts={validation.conflicts} />
 
-        {/* Statistics Panel */}
-        {showStats && (
-          <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-4">Timetable Statistics</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div>
-                <h3 className="font-semibold text-gray-700 mb-2">Day Distribution</h3>
-                <div className="space-y-1">
-                  {Object.entries(stats.dayDistribution).map(([day, count]) => (
-                    <div key={day} className="flex justify-between text-sm">
-                      <span>{day}:</span>
-                      <span>{count} classes</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-700 mb-2">Teacher Workload (Top 5)</h3>
-                <div className="space-y-1">
-                  {Object.entries(stats.teacherLoad)
-                    .sort(([,a], [,b]) => b - a)
-                    .slice(0, 5)
-                    .map(([teacherId, count]) => (
-                    <div key={teacherId} className="flex justify-between text-sm">
-                      <span>{teacherId}:</span>
-                      <span>{count} classes</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div>
-                <h3 className="font-semibold text-gray-700 mb-2">Summary</h3>
-                <div className="space-y-1 text-sm">
-                  <div>Total Entries: {stats.totalEntries}</div>
-                  <div>Conflicts: {validation.conflicts.length}</div>
-                  <div>Teachers: {Object.keys(stats.teacherLoad).length}</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* Admin Panel */}
-        {showAdmin && (
-          <TimetableAdmin onAddEntry={handleAddEntry} />
-        )}
+        {showConflicts && <ConflictViewer />}
 
-        {/* Conflict Viewer */}
-        {showConflicts && (
-          <ConflictViewer />
-        )}
 
-        {/* Main Timetable */}
-        <TimetableNew entries={entries} onUpdateEntries={handleUpdateEntries} />
+        <TimetableNew
+          departments={departments}
+          entries={entries}
+          rooms={rooms}
+          teachers={teachers}
+          subjects={subjects}
+          timeSlots={timeSlots.map(ts => ({
+            ...ts,
+            start: typeof ts.start === 'string' ? ts.start : ts.start.toISOString(),
+            end: typeof ts.end === 'string' ? ts.end : ts.end.toISOString(),
+          }))}
+          semesters={semesters ?? []}
+        />
       </div>
     </div>
   );

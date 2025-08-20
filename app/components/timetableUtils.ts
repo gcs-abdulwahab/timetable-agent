@@ -1,6 +1,6 @@
 // Additional timetable management functions and utilities
 
-import { Subject, Teacher, TimeSlot, TimetableEntry } from './data';
+import type { Subject, Teacher, TimeSlot, TimetableEntry } from '../types';
 
 // Function to check for conflicts
 export const checkConflicts = (entries: TimetableEntry[]): string[] => {
