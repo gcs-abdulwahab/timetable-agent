@@ -1,22 +1,11 @@
 import React from "react";
 
 
-interface Subject {
-  id: number;
-  name: string;
-  departmentId: number;
-  semesterId?: number;
-}
-
-interface Room {
-  id: number;
-  name: string;
-}
-
-interface Teacher {
-  id: number;
-  name: string;
-}
+import type {
+  Room,
+  Subject,
+  Teacher
+} from "../types";
 
 interface AddEntryModalProps {
   show: boolean;
@@ -38,6 +27,17 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ show, setShowAddEntry, de
   const [selectedRoomId, setSelectedRoomId] = React.useState<number | undefined>(undefined);
   const [selectedTeacherId, setSelectedTeacherId] = React.useState<number | undefined>(undefined);
   const [alertMsg, setAlertMsg] = React.useState<string | null>(null);
+
+  // Filter teachers based on selected subject's subjectDepartments
+  const filteredTeachers = React.useMemo(() => {
+    if (selectedSubjectId !== undefined) {
+      const subject = subjects.find(s => s.id === selectedSubjectId);
+      if (subject && Array.isArray((subject as Subject).subjectDepartments)) {
+        return teachers.filter(t => (subject as Subject).subjectDepartments?.includes(t.departmentId));
+      }
+    }
+    return teachers;
+  }, [selectedSubjectId, subjects, teachers]);
 
   React.useEffect(() => {
     setLocalEntryAdded(false);
@@ -119,7 +119,14 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ show, setShowAddEntry, de
             <select
               className="w-full border rounded p-2"
               value={selectedSubjectId ?? ""}
-              onChange={e => setSelectedSubjectId(Number(e.target.value))}
+              onChange={e => {
+                const subjectId = Number(e.target.value);
+                setSelectedSubjectId(subjectId);
+                const subject = filteredSubjects.find(sub => sub.id === subjectId);
+                if (subject) {
+                  console.log('subjectDepartments:', subject?.subjectDepartments);
+                }
+              }}
               required
             >
               <option value="">Select Subject</option>
@@ -150,7 +157,7 @@ const AddEntryModal: React.FC<AddEntryModalProps> = ({ show, setShowAddEntry, de
               onChange={e => setSelectedTeacherId(e.target.value === "" ? undefined : Number(e.target.value))}
             >
               <option value="">No Teacher</option>
-              {teachers.map(teacher => (
+              {filteredTeachers.map(teacher => (
                 <option key={teacher.id} value={teacher.id}>{teacher.name}</option>
               ))}
             </select>
