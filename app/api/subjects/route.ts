@@ -1,10 +1,45 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '../../../lib/generated/prisma';
 
-// Force Node.js runtime to guarantee access to Node APIs
-export const runtime = 'nodejs';
-
 const prisma = new PrismaClient();
+export async function POST(request: NextRequest) {
+  try {
+    const body = await request.json();
+
+    // ✅ Validate required fields
+    if (!body.name || !body.code || !body.departmentId || !body.semesterId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+
+    // ✅ subjectDepartments must be an array (optional)
+    if (body.subjectDepartments && !Array.isArray(body.subjectDepartments)) {
+      return NextResponse.json({ error: 'subjectDepartments must be an array' }, { status: 400 });
+    }
+
+    // ✅ Create subject with integer array for departments
+    const subject = await prisma.subject.create({
+      data: {
+        name: body.name,
+        code: body.code,
+        creditHours: body.creditHours ?? 3,
+        departmentId: body.departmentId, // main department
+        semesterId: body.semesterId,
+        isCore: body.isCore ?? false,
+        subjectDepartments: body.subjectDepartments ?? [], // PostgreSQL int[] array
+      },
+    });
+
+    return NextResponse.json(subject, { status: 201 });
+
+  } catch (error) {
+    console.error('Error creating subject:', error);
+    return NextResponse.json({ error: 'Failed to create subject' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+// End of API methods
+
 
 // GET - Fetch all subjects from database
 export async function GET() {
@@ -25,64 +60,6 @@ export async function GET() {
   }
 }
 
-// POST - Create a new subject
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
-    if (!body.name || !body.code || !body.departmentId || !body.semesterId) {
-      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
-    }
-    const subject = await prisma.subject.create({
-      data: {
-        name: body.name,
-        code: body.code,
-        creditHours: body.creditHours ?? 3,
-        departmentId: body.departmentId,
-        semesterId: body.semesterId,
-        isCore: body.isCore ?? false,
-        color: body.color ?? '#2196f3', // default blue
-        semesterLevel: body.semesterLevel ?? 1, // default level
-      },
-    });
-    return NextResponse.json(subject, { status: 201 });
-  } catch (error) {
-    console.error('Error creating subject:', error);
-    return NextResponse.json({ error: 'Failed to create subject' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
-}
-
-// PUT - Update an existing subject
-export async function PUT(request: NextRequest) {
-  try {
-    const { searchParams } = new URL(request.url);
-    const id = searchParams.get('id');
-    if (!id) {
-      return NextResponse.json({ error: 'Subject ID is required' }, { status: 400 });
-    }
-    const body = await request.json();
-    const subject = await prisma.subject.update({
-      where: { id: parseInt(id, 10) },
-      data: {
-        name: body.name,
-        code: body.code,
-        creditHours: body.creditHours ?? 3,
-        departmentId: body.departmentId,
-        semesterId: body.semesterId,
-        isCore: body.isCore ?? false,
-        color: body.color ?? '#2196f3',
-        semesterLevel: body.semesterLevel ?? 1,
-      },
-    });
-    return NextResponse.json(subject, { status: 200 });
-  } catch (error) {
-    console.error('Error updating subject:', error);
-    return NextResponse.json({ error: 'Failed to update subject' }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
-  }
-}
 
 
 
@@ -106,3 +83,37 @@ export async function DELETE(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
+
+// PUT - Update a subject
+export async function PUT(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { id, name, code, creditHours, departmentId, semesterId, isCore, subjectDepartments } = body;
+    if (!id || !name || !code || !departmentId || !semesterId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    if (subjectDepartments && !Array.isArray(subjectDepartments)) {
+      return NextResponse.json({ error: 'subjectDepartments must be an array' }, { status: 400 });
+    }
+    // Update subject
+    const updated = await prisma.subject.update({
+      where: { id: parseInt(id, 10) },
+      data: {
+        name,
+        code,
+        creditHours: creditHours ?? 3,
+        departmentId,
+        semesterId,
+        isCore: isCore ?? false,
+        subjectDepartments: subjectDepartments ?? [],
+      },
+    });
+    return NextResponse.json(updated, { status: 200 });
+  } catch (error) {
+    console.error('Error updating subject:', error);
+    return NextResponse.json({ error: 'Failed to update subject' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+

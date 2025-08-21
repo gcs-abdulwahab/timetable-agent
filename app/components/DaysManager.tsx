@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Day } from '../types';
 
-interface Day {
-  id: string;
-  name: string;
-  shortName: string;
-  dayCode: number;
-  isActive: boolean;
-  workingHours?: number;
-}
 
 interface DaysManagerProps {
   days: Day[];
@@ -15,7 +8,7 @@ interface DaysManagerProps {
 }
 
 const DaysManager: React.FC<DaysManagerProps> = ({ days, setDays }) => {
-  const [isEditingDay, setIsEditingDay] = useState<string | null>(null);
+  const [isEditingDay, setIsEditingDay] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,7 +28,7 @@ const DaysManager: React.FC<DaysManagerProps> = ({ days, setDays }) => {
   }, [setDays]);
 
   // Update day (only allow changing active status)
-  const updateDay = async (id: string, updatedDay: Partial<Day>) => {
+  const updateDay = async (id: number, updatedDay: Partial<Day>) => {
     const updatedDays = days.map(day => 
       day.id === id ? { ...day, ...updatedDay } : day
     );

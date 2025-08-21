@@ -16,7 +16,7 @@ model Department {
   bsSemesterAvailability Json?
   teachers               Teacher[]
   subjects               Subject[]
-  rooms                  Room[]
+  rooms                  Room[]  
 }
 
 model Teacher {
@@ -45,25 +45,15 @@ model Subject {
   id                Int               @id @default(autoincrement())
   name              String
   code              String
-  creditHours       Int
-  color             String
+  creditHours       Int  
   departmentId      Int  
   isCore            Boolean           @default(false)
   semesterId        Int?
   department        Department        @relation(fields: [departmentId], references: [id])
   semester          Semester?         @relation(fields: [semesterId], references: [id])
   timetableEntries  TimetableEntry[]
-  departments       Department[]      @relation("SubjectDepartments")
-// Join table for many-to-many Subject <-> Department
-model SubjectDepartments {
-  subject   Subject   @relation(fields: [subjectId], references: [id])
-  subjectId Int
-  department Department @relation(fields: [departmentId], references: [id])
-  departmentId Int
-  @@id([subjectId, departmentId])
+  subjectDepartments Int[]
 }
-}
-
 model Room {
   id                          Int               @id @default(autoincrement())
   name                        String

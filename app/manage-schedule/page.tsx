@@ -2,21 +2,18 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { TimeSlot } from '../components/data';
+import type { TimeSlot, Day} from '../types';
+
 import DaysManager from '../components/DaysManager';
-import Navigation from '../components/Navigation';
 import SemesterInfoComponent from '../components/SemesterInfoComponent';
 import TimeSlotsManager from '../components/TimeSlotsManager';
 
-interface Day {
-  id: string;
-  name: string;
-  active: boolean;
-}
 
 const ManageSchedulePage = () => {
+  
   const [slots, setSlots] = useState<TimeSlot[]>([]);
   const [days, setDays] = useState<Day[]>([]);
+
   useEffect(() => {
     const loadData = async () => {
       try {
@@ -36,7 +33,7 @@ const ManageSchedulePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navigation />
+    
       <div className="p-6">
         <div className="max-w-7xl mx-auto">
           {/* Semester Info Section */}

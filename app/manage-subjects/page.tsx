@@ -1,12 +1,13 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { toast } from "sonner";
 import { Department } from '../types/Department';
 import { Semester } from '../types/Semester';
 import { Subject } from '../types/Subject';
 
 type SubjectFormProps = {
-  subject: Partial<Subject>;
+  subject: Partial<Subject> & { departmentIds?: number[] }; // Add departmentIds as optional
   departments: Department[];
   semesters: Semester[];
   onChange: (field: string, value: unknown) => void;
@@ -21,7 +22,35 @@ const SubjectForm: React.FC<SubjectFormProps> = ({ subject, departments, semeste
     <div className="grid grid-cols-2 gap-4">
       <input type="text" name="name" value={subject.name || ''} onChange={e => onChange('name', e.target.value)} placeholder="Subject Name" className="border p-2 rounded-md" />
       <input type="text" name="code" value={subject.code || ''} onChange={e => onChange('code', e.target.value)} placeholder="Subject Code" className="border p-2 rounded-md" />
-  <input type="number" name="creditHours" value={subject.creditHours || ''} onChange={e => onChange('creditHours', parseInt(e.target.value, 10))} placeholder="Credit Hours" className="border p-2 rounded-md" />
+      <input type="number" name="creditHours" value={subject.creditHours || ''} onChange={e => onChange('creditHours', parseInt(e.target.value, 10))} placeholder="Credit Hours" className="border p-2 rounded-md" />
+      {subject.isCore ? (
+        <select
+          name="departmentId"
+          value={subject.departmentId || ''}
+          onChange={e => onChange('departmentId', parseInt(e.target.value, 10))}
+          className="border p-2 rounded-md"
+          disabled={!isCreating}
+        >
+          <option value="">Select Department</option>
+          {departments.map(dep => <option key={dep.id} value={dep.id}>{dep.name}</option>)}
+        </select>
+      ) : (
+        <div className="col-span-2">
+          <label className="block mb-1 font-medium">Select Departments</label>
+          <select
+            name="departmentIds"
+            multiple
+            value={Array.isArray(subject.departmentIds) ? subject.departmentIds.map(String) : []}
+            onChange={e => {
+              const selected = Array.from(e.target.selectedOptions).map(opt => parseInt(opt.value, 10));
+              onChange('departmentIds', selected);
+            }}
+            className="border p-2 rounded-md w-full"
+          >
+            {departments.map(dep => <option key={dep.id} value={dep.id}>{dep.name}</option>)}
+          </select>
+        </div>
+      )}
       <select name="semesterId" value={subject.semesterId || ''} onChange={e => onChange('semesterId', parseInt(e.target.value, 10))} className="border p-2 rounded-md">
         <option value="">Select Semester</option>
         {semesters.map(sem => <option key={sem.id} value={sem.id}>{sem.name}</option>)}
@@ -55,13 +84,23 @@ const api = {
       semestersRes.json(),
     ]);
   },
-  save: async (subject: Partial<Subject>, isCreating: boolean) => {
+  save: async (subject: Partial<Subject> & { departmentIds?: number[] }, isCreating: boolean) => {
     const url = isCreating ? '/api/subjects' : `/api/subjects?id=${subject.id}`;
     const method = isCreating ? 'POST' : 'PUT';
+    // Always send departmentId from dropdown
+    // For non-core, also send subjectDepartments as array of departmentIds
+    const payload = {
+      ...subject,
+      departmentId: subject.departmentId,
+      subjectDepartments: !subject.isCore && Array.isArray(subject.departmentIds)
+        ? subject.departmentIds
+        : undefined,
+    };
+    delete payload.departmentIds;
     const response = await fetch(url, {
       method,
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(subject),
+      body: JSON.stringify(payload),
     });
     if (!response.ok) throw new Error('Failed to save subject');
   },
@@ -98,14 +137,21 @@ const ManageSubjects: React.FC = () => {
     }
   };
 
-  const openEdit = (subject: Subject) => setFormState({ subject: { ...subject }, isCreating: false });
+  const openEdit = (subject: Subject) => {
+    // If not core, pre-select departmentIds from subjectDepartments
+    const subjectEdit: Partial<Subject> & { departmentIds?: number[] } = { ...subject };
+    if (!subject.isCore && Array.isArray(subject.subjectDepartments)) {
+      subjectEdit.departmentIds = subject.subjectDepartments;
+    }
+    setFormState({ subject: subjectEdit, isCreating: false });
+  };
   const openCreate = () => setFormState({
     subject: {
       name: '',
       code: '',
       creditHours: 3,
       departmentId: departments[0]?.id || 0,
-      isCore: false,
+      isCore: true,
       semesterId: semesters[0]?.id || 0,
     },
     isCreating: true,
@@ -113,9 +159,9 @@ const ManageSubjects: React.FC = () => {
   const closeForm = () => setFormState({ subject: null, isCreating: false });
 
   const handleDelete = async (id: number) => {
-    if (!confirm('Are you sure you want to delete this subject?')) return;
     try {
       await api.delete(id);
+      toast.success("Subject deleted successfully");
       fetchAll();
     } catch (err: unknown) {
       setError((err as Error).message);
@@ -126,6 +172,7 @@ const ManageSubjects: React.FC = () => {
     if (!formState.subject) return;
     try {
       await api.save(formState.subject, formState.isCreating);
+      toast.success(formState.isCreating ? "Subject added successfully" : "Subject updated successfully");
       closeForm();
       fetchAll();
     } catch (err: unknown) {
@@ -145,7 +192,7 @@ const ManageSubjects: React.FC = () => {
   };
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
+  if (error) return <div className="text-red-500">Error: {error}</div>;
 
   return (
     <div className="container mx-auto p-4">

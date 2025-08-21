@@ -14,6 +14,7 @@ export interface Subject {
   // Optional fields to preserve existing data shape
   isMajor?: boolean; // Major (taught by same department) vs Minor (taught by other departments)
   teachingDepartmentIds?: number[]; // Department(s) that actually teach this subject (numeric ids)
+  subjectDepartments?: number[]; // Departments for non-core subject (from DB)
 }
 
 // Zod schema for Subject with proper coercions
