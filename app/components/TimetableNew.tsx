@@ -11,7 +11,7 @@ import type {
   TimetableEntry
 } from "../types";
 import AddEntryModal from "./AddEntryModal";
-import EditEntryModal from "./EditEntryModal";
+// import EditEntryModal from "./EditEntryModal";
 import EntryBadge from "./EntryBadge";
 
 // Define types for forms and data
@@ -224,24 +224,7 @@ const Timetable: React.FC<TimetableProps> = ({
           ))}
         </tbody>
       </table>
-      {/* Edit modal */}
-      <EditEntryModal
-        show={showEditModal}
-        setShowEditEntry={setShowEditModal}
-        semesters={semesters}
-        visibleDepartments={departments}
-        subjects={subjects}
-        teachers={teachers}
-        timeSlots={timeSlots}
-        rooms={rooms}
-        days={days}
-        formatSemesterLabel={sem => sem?.name ?? ""}
-        onSaveEdit={handleSaveEdit}
-        initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
-        editEntryId={editEntry ? editEntry.id : undefined}
-        addDepartmentId={addEntryModalData?.departmentId}
-        addTimeSlotId={addEntryModalData?.timeSlotId}
-      />
+  {/* Edit modal removed */}
 
           
 
