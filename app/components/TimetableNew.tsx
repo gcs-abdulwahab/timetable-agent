@@ -74,28 +74,40 @@ const Timetable: React.FC<TimetableProps> = ({
   // State for add modal
   const [showAddModal, setShowAddModal] = React.useState(false);
 	const [editEntry, setEditEntry] = React.useState<TimetableEntry | null>(null);
-	const [addContext, setAddContext] = React.useState<{ departmentId: number; timeSlotId: number } | null>(null);
+	const [addEntryModalData, setAddEntryModalData] = React.useState<{ departmentId: number; timeSlotId: number } | null>(null);
+	const [addedEntries, setAddedEntries] = React.useState<{ [key: string]: boolean }>({});
+	const [selectedDepartmentforAdd, setSelectedDepartmentforAdd] = React.useState<Department | undefined>(undefined);
+	const [selectedTimeSlotforAdd, setSelectedTimeSlotforAdd] = React.useState<TimeSlot | undefined>(undefined);
 
 	// Handler for edit button
 	const handleEditEntry = (entry: TimetableEntry) => {
 		console.log("Entryyy "+ entry.id)
 		setEditEntry(entry);
-		setAddContext(null);
+		setAddEntryModalData(null);
 		setShowEditModal(true);
 	};
 
 	// Handler for add button
 	const handleAddEntry = (departmentId: number, timeSlotId: number) => {
-		setEditEntry(null); // No entry, so modal is for adding
-		setAddContext({ departmentId, timeSlotId });
+    setEditEntry(null);
+    setSelectedDepartmentforAdd(departments.find(d => d.id === departmentId));
+    setSelectedTimeSlotforAdd(timeSlots.find(t => t.id === timeSlotId));
 		setShowAddModal(true);
+	};
+
+	const handleEntryAdded = () => {
+		if (selectedDepartmentforAdd && selectedTimeSlotforAdd) {
+			const key = `${selectedDepartmentforAdd.id}_${selectedTimeSlotforAdd.id}`;
+			setAddedEntries(prev => ({ ...prev, [key]: true }));
+		}
 	};
 
 	// Handler for saving edit (close modal)
 	const handleSaveEdit = async () => {
 		setShowEditModal(false);
-		setEditEntry(null);
-		setAddContext(null);
+    setEditEntry(null);
+    
+		
 		// Refetch entries from backend after edit
 		try {
 			const res = await fetch('/api/timetable-entries');
@@ -108,135 +120,143 @@ const Timetable: React.FC<TimetableProps> = ({
 		}
 	};
 
+	// Refresh timetable entries
+	const refreshTimetable = async () => {
+    try {
+      const res = await fetch('/api/timetable-entries');
+      if (res.ok) {
+        const updatedEntries = await res.json();
+        setEntryList(updatedEntries);
+      }
+    } catch (err) {
+      console.error('Failed to refresh timetable entries', err);
+    }
+  };
+
 	// Render timetable grid
 	return (
-		<div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
-			{activeSemesters.length > 0 && (
-				<SemesterTabs semesters={activeSemesters} selectedId={selectedSemesterId} onSelect={setSelectedSemesterId} />
-			)}
-			<table className="w-full border-collapse bg-white rounded shadow">
-				<thead>
-					<tr>
-						<th className="border p-2 bg-gray-100 text-left whitespace-nowrap min-w-32">
-							Department
-						</th>
-						{timeSlots.map((slot) => (
-							<th
-								key={slot.id}
-								className="border p-2 bg-gray-100 text-center w-48 min-w-48 max-w-48"
-							>
-								Period {slot.period}
-								<br />
-								{slot.start}-{slot.end}
-							</th>
-						))}
-					</tr>
-				</thead>
-				<tbody>
-					{departments.map((dept) => (
-						<tr key={dept.id}>
-							<td className="border p-2 font-semibold bg-gray-50">
-								{dept.name}
-							</td>
-							{timeSlots.map((slot) => {
-								// Find entries for this department and timeslot, matching subject's departmentId
-								const deptEntries = filteredEntries.filter((e) => {
-									if (e.timeSlotId !== slot.id || !e.subjectId) return false;
-									const subject = subjects.find(s => s.id === e.subjectId);
-									return subject && subject.departmentId === dept.id;
-								});
-								return (
-									<td
-										key={slot.id}
-										className="border p-2 align-top"
-										onDrop={handleDrop(slot.id)}
-										onDragOver={handleDragOver}
+    <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
+      {activeSemesters.length > 0 && (
+        <SemesterTabs semesters={activeSemesters} selectedId={selectedSemesterId} onSelect={setSelectedSemesterId} />
+      )}
+      <table className="w-full border-collapse bg-white rounded shadow">
+        <thead>
+          <tr>
+            <th className="border p-2 bg-gray-100 text-left whitespace-nowrap min-w-32">
+              Department
+            </th>
+            {timeSlots.map((slot) => (
+              <th
+                key={slot.id}
+                className="border p-2 bg-gray-100 text-center w-48 min-w-48 max-w-48"
+              >
+                Period {slot.period}
+                <br />
+                {slot.start}-{slot.end}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {departments.map((dept) => (
+            <tr key={dept.id}>
+              <td className="border p-2 font-semibold bg-gray-50">
+                {dept.name}
+              </td>
+              {timeSlots.map((slot) => {
+                // Find entries for this department and timeslot, matching subject's departmentId
+                const deptEntries = filteredEntries.filter((e) => {
+                  if (e.timeSlotId !== slot.id || !e.subjectId) return false;
+                  const subject = subjects.find(s => s.id === e.subjectId);
+                  return subject && subject.departmentId === dept.id;
+                });
+                return (
+                  <td
+                    key={slot.id}
+                    className="border p-2 align-top"
+                    onDrop={handleDrop(slot.id)}
+                    onDragOver={handleDragOver}
                   >
-                      <button
-                        className="mb-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
-                        onClick={() => handleAddEntry(dept.id, slot.id)}
-                      >
-                        + Add
-                      </button>
+                    <button
+                      className="mb-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
+                      onClick={() => handleAddEntry(dept.id, slot.id)}
+                    >
+                      + Add
+                    </button>
+                    {deptEntries.length > 0 ? (
+                      <>
+                        <ul>
+                          {deptEntries.map((entry) => {
+                            const subject = subjects.find(
+                              (s) => s.id === entry.subjectId
+                            );
+                            const teacher = teachers.find(
+                              (t) => t.id === entry.teacherId
+                            );
+                            const room = rooms.find((r) => r.id === entry.roomId);
 
+                            return (
+                              <div
+                                key={entry.id}
+                                draggable
+                                onDragStart={handleDragStart(entry.id)}
+                              >
+                                <EntryBadge
+                                  entry={entry}
+                                  subjectName={subject ? subject.name : undefined}
+                                  teacherName={teacher ? teacher.name : undefined}
+                                  roomName={room ? room.name : undefined}
+                                  days={days}
+                                  onEditEntry={() => handleEditEntry(entry)}
+                                />
+                              </div>
+                            );
+                          })}
+                        </ul>
+                      </>
+                    ) : (
+                      <span className="text-gray-400">—</span>
+                    )}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      {/* Edit modal */}
+      <EditEntryModal
+        show={showEditModal}
+        setShowEditEntry={setShowEditModal}
+        semesters={semesters}
+        visibleDepartments={departments}
+        subjects={subjects}
+        teachers={teachers}
+        timeSlots={timeSlots}
+        rooms={rooms}
+        days={days}
+        formatSemesterLabel={sem => sem?.name ?? ""}
+        onSaveEdit={handleSaveEdit}
+        initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
+        editEntryId={editEntry ? editEntry.id : undefined}
+        addDepartmentId={addEntryModalData?.departmentId}
+        addTimeSlotId={addEntryModalData?.timeSlotId}
+      />
 
+          
 
-																		{deptEntries.length > 0 ? (
-																			<>
-																				<ul>
-																					{deptEntries.map((entry) => {
-																						const subject = subjects.find(
-																							(s) => s.id === entry.subjectId
-																						);
-																						const teacher = teachers.find(
-																							(t) => t.id === entry.teacherId
-																						);
-																						const room = rooms.find((r) => r.id === entry.roomId);
-
-																						return (
-																							<div
-																								key={entry.id}
-																								draggable
-																								onDragStart={handleDragStart(entry.id)}
-                                              >
-                                                
-																								<EntryBadge
-																									entry={entry}
-																									subjectName={subject ? subject.name : undefined}
-																									teacherName={teacher ? teacher.name : undefined}
-																									roomName={room ? room.name : undefined}
-																									days = {days}
-																									onEditEntry={handleEditEntry}
-																								/>
-																							</div>
-																						);
-																					})}
-																				</ul>
-																			</>
-																		) : (
-																			<span className="text-gray-400">—</span>
-																		)}
-									</td>
-								);
-							})}
-						</tr>
-					))}
-				</tbody>
-			</table>
-			{/* Edit modal */}
-				<EditEntryModal
-					show={showEditModal}
-					setShowEditEntry={setShowEditModal}
-					semesters={semesters}
-					visibleDepartments={departments}
-					subjects={subjects}
-					teachers={teachers}
-					timeSlots={timeSlots}
-					rooms={rooms}
-					days={days}
-					formatSemesterLabel={sem => sem?.name ?? ""}
-					onSaveEdit={handleSaveEdit}
-					initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
-					editEntryId={editEntry ? editEntry.id : undefined}
-					addDepartmentId={addContext?.departmentId}
-					addTimeSlotId={addContext?.timeSlotId}
-				/>
-				<AddEntryModal
-					show={showAddModal}
-					setShowAddEntry={setShowAddModal}
-					addEntryData={{ departmentId: addContext?.departmentId, timeSlotId: addContext?.timeSlotId }}
-					setAddEntryData={() => {}}
-					semesters={semesters}
-					visibleDepartments={departments}
-					subjects={subjects}
-					teachers={teachers}
-					timeSlots={timeSlots}
-					rooms={rooms}
-					days={days}
-					formatSemesterLabel={sem => sem?.name ?? ""}
-					onAddEntry={() => setShowAddModal(false)}
-				/>
-		</div>
+      <AddEntryModal
+        show={showAddModal}
+        setShowAddEntry={setShowAddModal}
+        department={selectedDepartmentforAdd}
+        timeSlot={selectedTimeSlotforAdd}
+        subjects={subjects}
+        rooms={rooms}
+        teachers={teachers}
+        semesterId={selectedSemesterId}
+        refreshTimetable={refreshTimetable}
+      />
+    </div>
 	);
 };
 

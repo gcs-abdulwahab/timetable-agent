@@ -149,9 +149,10 @@ console.log("addTimeSlotId...  " + addTimeSlotId);
 						<label className="block text-sm font-medium mb-1">Teacher</label>
 						<select
 							className="w-full border rounded px-2 py-1"
-							value={selectedTeacherID}
-							onChange={(e) => setSelectedTeacherID(Number(e.target.value))}
+							value={selectedTeacherID ?? ""}
+							onChange={(e) => setSelectedTeacherID(e.target.value === "" ? undefined : Number(e.target.value))}
 						>
+							<option value="">No Teacher</option>
 							{props.teachers.map((teacher) => (
 								<option key={teacher.id} value={String(teacher.id)}>
 									{teacher.name}

@@ -1,7 +1,7 @@
 export interface TimetableEntry {
   id: number;
   subjectId: number;
-  teacherId: number;
+  teacherId?: number;
   timeSlotId: number;
   dayIds: number[];
   roomId: number;

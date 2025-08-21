@@ -47,13 +47,21 @@ model Subject {
   code              String
   creditHours       Int
   color             String
-  departmentId      Int
-  semesterLevel     Int
+  departmentId      Int  
   isCore            Boolean           @default(false)
   semesterId        Int?
   department        Department        @relation(fields: [departmentId], references: [id])
   semester          Semester?         @relation(fields: [semesterId], references: [id])
   timetableEntries  TimetableEntry[]
+  departments       Department[]      @relation("SubjectDepartments")
+// Join table for many-to-many Subject <-> Department
+model SubjectDepartments {
+  subject   Subject   @relation(fields: [subjectId], references: [id])
+  subjectId Int
+  department Department @relation(fields: [departmentId], references: [id])
+  departmentId Int
+  @@id([subjectId, departmentId])
+}
 }
 
 model Room {
@@ -91,13 +99,13 @@ model Day {
 model TimetableEntry {
   id          Int       @id @default(autoincrement())
   subjectId   Int
-  teacherId   Int
+  teacherId   Int?
   timeSlotId  Int
   roomId      Int
   dayIds      Int[]     // Array of integers instead of single dayId
 
   subject     Subject    @relation(fields: [subjectId], references: [id])
-  teacher     Teacher    @relation(fields: [teacherId], references: [id])
+  teacher     Teacher?   @relation(fields: [teacherId], references: [id])
   timeSlot    TimeSlot   @relation(fields: [timeSlotId], references: [id])
   room        Room       @relation(fields: [roomId], references: [id])
 }
