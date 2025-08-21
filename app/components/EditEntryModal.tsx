@@ -4,6 +4,7 @@ import type { Day } from "../types/Day";
 import type { Department } from "../types/Department";
 import type { TimeSlot } from "../types/TimeSlot";
 
+
 interface EditEntryModalProps {
 	entries?: import("../types").TimetableEntry[]; // Add entries prop to get entry data
 	show: boolean;
@@ -18,9 +19,11 @@ interface EditEntryModalProps {
 	formatSemesterLabel: (sem?: Semester) => string;
 	onSaveEdit: () => void;
 	initialSelectedDays?: string[]; // <-- add this prop
+	subjectId?: number; // <-- add this prop to receive the subject ID
+	addDepartmentId?: number;
+	addTimeSlotId?: number;
 	editEntryId?: number; // <-- add this prop to receive the entry ID
-   addDepartmentId?: number;
-   addTimeSlotId?: number;
+	selectedTeacherId?: number;
 }
 
 const EditEntryModal: React.FC<EditEntryModalProps> = ({
@@ -29,30 +32,43 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 	editEntryId,
 	addDepartmentId,
 	addTimeSlotId,
+	teachers,
 	setShowEditEntry,
 	onSaveEdit,
 	initialSelectedDays = [],
+	subjectId,
 	...props
 }) => {
 	// Ensure selectedDays is an array of integers
 	const [selectedDays, setSelectedDays] = React.useState<number[]>(
 		initialSelectedDays.map(Number)
 	);
-	const [selectedTeacherID, setSelectedTeacherID] = React.useState<number>();
+			const [selectedTeacherID, setSelectedTeacherID] = React.useState<number | undefined>(props.selectedTeacherId);
 	const [selectedRoomId, setSelectedRoomId] = React.useState<number>();
-	const [selectedDepartmentId, setSelectedDepartmentId] = React.useState<number | undefined>(addDepartmentId);
-	const [selectedTimeSlotId, setSelectedTimeSlotId] = React.useState<number | undefined>(addTimeSlotId);
+	const [selectedDepartmentId, setSelectedDepartmentId] = React.useState<
+		number | undefined
+	>(addDepartmentId);
+	const [selectedTimeSlotId, setSelectedTimeSlotId] = React.useState<
+		number | undefined
+	>(addTimeSlotId);
 
-console.log("editEntryID...  " + editEntryId);
-console.log("addDepartmentId...  " + addDepartmentId);
-console.log("addTimeSlotId...  " + addTimeSlotId);
+	console.log("editEntryID...  " + editEntryId);
+	console.log("addDepartmentId...  " + addDepartmentId);
+	console.log("addTimeSlotId...  " + addTimeSlotId);
+	console.log("Teachers "+ teachers)
 
-	
-	React.useEffect(() => {
-		setSelectedDays(initialSelectedDays.map(Number));
-		if (addDepartmentId !== undefined) setSelectedDepartmentId(addDepartmentId);
-		if (addTimeSlotId !== undefined) setSelectedTimeSlotId(addTimeSlotId);
-	}, [initialSelectedDays, addDepartmentId, addTimeSlotId]);
+				React.useEffect(() => {
+					setSelectedDays(initialSelectedDays.map(Number));
+					if (addDepartmentId !== undefined) setSelectedDepartmentId(addDepartmentId);
+					if (addTimeSlotId !== undefined) setSelectedTimeSlotId(addTimeSlotId);
+					if (subjectId !== undefined) {
+						const subject = props.subjects?.find(s => s.id === subjectId);
+						console.log("Selected subject:", subject);
+					}
+					if (props.selectedTeacherId !== undefined) {
+						setSelectedTeacherID(props.selectedTeacherId);
+					}
+				}, [initialSelectedDays, addDepartmentId, addTimeSlotId, subjectId, props.subjects, props.selectedTeacherId]);
 
 	// Optionally, set initial teacher/room if passed as props (not shown here)
 	const handleSave = async (e: React.FormEvent) => {
@@ -145,21 +161,38 @@ console.log("addTimeSlotId...  " + addTimeSlotId);
 							))}
 						</select>
 					</div>
-					<div className="mb-3">
-						<label className="block text-sm font-medium mb-1">Teacher</label>
-						<select
-							className="w-full border rounded px-2 py-1"
-							value={selectedTeacherID ?? ""}
-							onChange={(e) => setSelectedTeacherID(e.target.value === "" ? undefined : Number(e.target.value))}
-						>
-							<option value="">No Teacher</option>
-							{props.teachers.map((teacher) => (
-								<option key={teacher.id} value={String(teacher.id)}>
-									{teacher.name}
-								</option>
-							))}
-						</select>
-					</div>
+								<div className="mb-3">
+									<label className="block text-sm font-medium mb-1">Subject</label>
+														<select
+															className="w-full border rounded px-2 py-1"
+															value={subjectId ?? ""}
+															disabled
+														>
+															<option value="">Select Subject</option>
+															{(props.subjects ?? []).map(sub => (
+																<option key={sub.id} value={sub.id}>{sub.name}</option>
+															))}
+														</select>
+								</div>
+								<div className="mb-3">
+									<label className="block text-sm font-medium mb-1">Teacher</label>
+									<select
+										className="w-full border rounded px-2 py-1"
+										value={selectedTeacherID ?? ""}
+										onChange={(e) =>
+											setSelectedTeacherID(
+												e.target.value === "" ? undefined : Number(e.target.value)
+											)
+										}
+									>
+										<option value="">No Teacher</option>
+										{teachers.map((teacher) => (
+											<option key={teacher.id} value={String(teacher.id)}>
+												{teacher.name}
+											</option>
+										))}
+									</select>
+								</div>
 					<div className="mb-3">
 						<label className="block text-sm font-medium mb-1">Room</label>
 						<select
