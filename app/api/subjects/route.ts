@@ -28,11 +28,23 @@ export async function GET() {
 // POST - Create a new subject
 export async function POST(request: NextRequest) {
   try {
-    const data = await request.json();
-    const newSubject = await prisma.subject.create({
-      data,
+    const body = await request.json();
+    if (!body.name || !body.code || !body.departmentId || !body.semesterId) {
+      return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
+    }
+    const subject = await prisma.subject.create({
+      data: {
+        name: body.name,
+        code: body.code,
+        creditHours: body.creditHours ?? 3,
+        departmentId: body.departmentId,
+        semesterId: body.semesterId,
+        isCore: body.isCore ?? false,
+        color: body.color ?? '#2196f3', // default blue
+        semesterLevel: body.semesterLevel ?? 1, // default level
+      },
     });
-    return NextResponse.json(newSubject, { status: 201 });
+    return NextResponse.json(subject, { status: 201 });
   } catch (error) {
     console.error('Error creating subject:', error);
     return NextResponse.json({ error: 'Failed to create subject' }, { status: 500 });
@@ -49,13 +61,21 @@ export async function PUT(request: NextRequest) {
     if (!id) {
       return NextResponse.json({ error: 'Subject ID is required' }, { status: 400 });
     }
-
-    const data = await request.json();
-    const updatedSubject = await prisma.subject.update({
+    const body = await request.json();
+    const subject = await prisma.subject.update({
       where: { id: parseInt(id, 10) },
-      data,
+      data: {
+        name: body.name,
+        code: body.code,
+        creditHours: body.creditHours ?? 3,
+        departmentId: body.departmentId,
+        semesterId: body.semesterId,
+        isCore: body.isCore ?? false,
+        color: body.color ?? '#2196f3',
+        semesterLevel: body.semesterLevel ?? 1,
+      },
     });
-    return NextResponse.json(updatedSubject);
+    return NextResponse.json(subject, { status: 200 });
   } catch (error) {
     console.error('Error updating subject:', error);
     return NextResponse.json({ error: 'Failed to update subject' }, { status: 500 });
@@ -63,6 +83,8 @@ export async function PUT(request: NextRequest) {
     await prisma.$disconnect();
   }
 }
+
+
 
 // DELETE - Delete a subject
 export async function DELETE(request: NextRequest) {
