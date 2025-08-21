@@ -49,12 +49,21 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 				</div>
                 <div className="text-xs text-gray-700">
                     <strong>
-                    {formatDaysDisplay(
-                        days
-                            .filter(day => entry.dayIds.includes(day.id))
-                            .map(day => day.dayCode)
+                    {days && days.length > 0 ? (
+                        formatDaysDisplay(
+                            days
+                                .filter(day => entry.dayIds.includes(day.id))
+                                .map(day => day.dayCode)
+                        )
+                    ) : (
+                        <span style={{ color: 'red', fontWeight: 'bold' }}>No days</span>
                     )}</strong>
                 </div>
+				<div>
+					{(!entry.dayIds || entry.dayIds.length === 0) && (
+						<span style={{ color: 'red'}}>Days not selected</span>
+					)}
+				</div>
 				<button
 					className="absolute top-2 right-2 px-2 py-1 text-xs bg-blue-200 text-blue-900 rounded hover:bg-blue-300"
 					onClick={(e) => {
