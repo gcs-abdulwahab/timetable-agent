@@ -38,7 +38,11 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 					{subjectName ? subjectName : `Subject #${entry.subjectId}`}
 				</div>
 				<div className="text-xs text-gray-700 mb-1">
-					{teacherName ? teacherName : `#${entry.teacherId}`}
+					{teacherName ? (
+						teacherName
+					) : (
+						<span style={{ color: 'red', fontWeight: 'bold' }}>TBA</span>
+					)}
 				</div>
 				<div className="text-xs text-gray-700 mb-1">
 					Room: {roomName ? roomName : `#${entry.roomId}`}
