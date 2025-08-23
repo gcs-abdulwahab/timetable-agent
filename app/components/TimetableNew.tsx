@@ -150,6 +150,8 @@ const Timetable: React.FC<TimetableProps> = ({
     }
   };
 
+  // Add helper to detect if row is last
+  const isLastRow = (rowIdx: number, totalRows: number) => rowIdx === totalRows - 1;
 
   // Render timetable grid
   return (
@@ -175,9 +177,9 @@ const Timetable: React.FC<TimetableProps> = ({
         </tr>
       </thead>
       <tbody>
-        {departments.map((dept) => (
+        {departments.map((dept, deptIdx) => (
         <tr key={dept.id}>
-          <td className="border p-2 font-semibold bg-gray-50">
+          <td className="border p-2 font-semibold bg-gray-50" style={{ width: '160px' }}>
           {dept.name}
           </td>
           {timeSlots.map((slot) => {
@@ -190,7 +192,7 @@ const Timetable: React.FC<TimetableProps> = ({
           return (
             <td
             key={slot.id}
-            className="border p-2 align-top"
+            className="border p-2 align-top relative" // <-- add relative for tooltip
             onDrop={handleDrop(slot.id)}
             onDragOver={handleDragOver}
             >
@@ -203,7 +205,7 @@ const Timetable: React.FC<TimetableProps> = ({
             {deptEntries.length > 0 ? (
               <>
               <ul>
-                {deptEntries.map((entry) => {
+                {deptEntries.map((entry, entryIdx) => {
                 const subject = subjects.find(
                   (s) => s.id === entry.subjectId
                 );
@@ -246,6 +248,7 @@ const Timetable: React.FC<TimetableProps> = ({
                         ? `Teacher ${teacher?.name || entry.teacherId} has multiple entries in this slot.`
                         : undefined
                     }
+                    isTooltipUp={isLastRow(deptIdx, departments.length)} // <-- pass to EntryBadge
                   />
                   </div>
                 );

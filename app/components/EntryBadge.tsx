@@ -16,6 +16,7 @@ export type EntryBadgeProps = {
 	hasRoomConflict?: boolean; // <-- add this prop
 	hasTeacherConflict?: boolean; // <-- add this prop
 	conflictDetails?: string; // <-- add this prop for conflict details
+	isTooltipUp?: boolean; // <-- new prop for tooltip direction
 };
 
 const EntryBadge: React.FC<EntryBadgeProps> = ({
@@ -28,6 +29,7 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 	hasRoomConflict = false, // <-- default false
 	hasTeacherConflict = false, // <-- default false
 	conflictDetails,
+	isTooltipUp = false, // <-- default false
 }) => {
 	const [showTooltip, setShowTooltip] = useState(false);
 
@@ -88,7 +90,18 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
         )}
         {/* Tooltip for conflict details */}
         {showTooltip && (hasRoomConflict || hasTeacherConflict) && (
-          <div className="absolute z-10 left-1/2 top-full mt-2 w-64 p-2 bg-white border border-red-400 rounded shadow-lg text-xs text-gray-800" style={{ transform: 'translateX(-50%)' }}>
+          <div
+            className="absolute z-10 w-64 p-2 bg-white border border-red-400 rounded shadow-lg text-xs text-gray-800"
+            style={{
+              left: '50%',
+              transform: 'translateX(-50%)',
+              top: isTooltipUp ? undefined : 'calc(100% + 4px)',
+              bottom: isTooltipUp ? 'calc(100% + 4px)' : undefined,
+              marginTop: isTooltipUp ? undefined : '0',
+              marginBottom: isTooltipUp ? '0' : undefined,
+              boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
+            }}
+          >
             <div className="font-bold text-red-700 mb-1">Conflict Details:</div>
             <div>
               {hasTeacherConflict && <div>🚨 Teacher Conflict: {conflictDetails?.includes('Teacher') ? conflictDetails : 'Teacher has multiple entries in this slot.'}</div>}
