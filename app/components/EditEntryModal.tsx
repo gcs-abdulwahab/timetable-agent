@@ -133,8 +133,16 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 	if (!show) return null;
 	return (
 		<div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-			<div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg">
-				<h2 className="text-lg font-bold mb-4">Edit Timetable Entry</h2>
+			<div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-lg relative">
+				{/* Delete button at top left */}
+				<button
+					type="button"
+					className="absolute top-4 left-4 px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 z-10"
+					onClick={handleDelete}
+				>
+					Delete
+				</button>
+				<h2 className="text-lg font-bold mb-4 text-center">Edit Timetable Entry</h2>
 				<form onSubmit={handleSave}>
 					<div className="mb-3">
 						<label className="block text-sm font-medium mb-1">Days</label>
@@ -235,28 +243,21 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 							))}
 						</select>
 					</div>
-								<div className="flex justify-end gap-2 mt-4">
-									<button
-										type="button"
-										className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-										onClick={() => setShowEditEntry(false)}
-									>
-										Cancel
-									</button>
-									<button
-										type="button"
-										className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
-										onClick={handleDelete}
-									>
-										Delete
-									</button>
-									<button
-										type="submit"
-										className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-									>
-										Save Changes
-									</button>
-								</div>
+					<div className="flex justify-end gap-2 mt-4">
+						<button
+							type="button"
+							className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+							onClick={() => setShowEditEntry(false)}
+						>
+							Cancel
+						</button>
+						<button
+							type="submit"
+							className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+						>
+							Save Changes
+						</button>
+					</div>
 				</form>
 			</div>
 		</div>

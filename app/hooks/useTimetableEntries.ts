@@ -1,7 +1,7 @@
 import { useCallback, useState } from "react";
 import type { TimetableEntry } from "../types";
 
-export function useTimetableEntries(initialEntries: TimetableEntry[]) {
+export function useTimetableEntries(initialEntries: TimetableEntry[], onEntriesChanged?: (entries: TimetableEntry[]) => void) {
   const [entryList, setEntryList] = useState<TimetableEntry[]>(initialEntries);
 
   // Drag and drop handlers
@@ -12,7 +12,11 @@ export function useTimetableEntries(initialEntries: TimetableEntry[]) {
   const handleDrop = useCallback((slotId: number) => async (event: React.DragEvent) => {
     event.preventDefault();
     const entryId = Number(event.dataTransfer.getData("entryId"));
-    setEntryList(prev => prev.map(e => e.id === entryId ? { ...e, timeSlotId: slotId } : e));
+    setEntryList(prev => {
+      const updated = prev.map(e => e.id === entryId ? { ...e, timeSlotId: slotId } : e);
+      if (onEntriesChanged) onEntriesChanged(updated); // Notify parent
+      return updated;
+    });
     // Persist change to backend
     try {
       await fetch(`/api/timetable-entries`, {
@@ -24,7 +28,7 @@ export function useTimetableEntries(initialEntries: TimetableEntry[]) {
       // Optionally handle error (e.g., show notification)
       console.error("Failed to update timeslot", err);
     }
-  }, []);
+  }, [onEntriesChanged]);
 
   const handleDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();

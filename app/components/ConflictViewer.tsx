@@ -1,11 +1,16 @@
 'use client';
 
 import React from 'react';
-import { validateTimetable } from './conflictChecker';
+import { validateTimetable, ConflictInfo } from './conflictChecker';
 
 const ConflictViewer: React.FC = () => {
-  const validation = validateTimetable();
-  const conflicts = validation.conflicts;
+  const [validation, setValidation] = React.useState<{ isValid: boolean; conflicts: ConflictInfo[] } | null>(null);
+
+  React.useEffect(() => {
+    validateTimetable().then(result => setValidation(result));
+  }, []);
+
+  const conflicts = validation?.conflicts ?? [];
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-lg">
@@ -33,10 +38,9 @@ const ConflictViewer: React.FC = () => {
           </div>
         </div>
       </div>
-
-      <div className={`mb-4 p-3 rounded-lg ${validation.isValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
+      <div className={`mb-4 p-3 rounded-lg ${validation?.isValid ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
         <div className="font-semibold">
-          {validation.isValid ? '✅ Timetable is Valid' : '❌ Timetable has Conflicts'}
+          {validation?.isValid ? '✅ Timetable is Valid' : '❌ Timetable has Conflicts'}
         </div>
       </div>
 
@@ -47,11 +51,7 @@ const ConflictViewer: React.FC = () => {
             {conflicts.map((conflict, index) => (
               <div 
                 key={index} 
-                className={`p-4 rounded-lg border-l-4 ${
-                  conflict.type === 'teacher' 
-                    ? 'bg-red-50 border-red-400' 
-                    : 'bg-orange-50 border-orange-400'
-                }`}
+                className={`p-4 rounded-lg border-l-4 bg-red-200 border-red-500`}
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-semibold text-gray-800">
@@ -79,6 +79,6 @@ const ConflictViewer: React.FC = () => {
       )}
     </div>
   );
-};
+}
 
 export default ConflictViewer;
