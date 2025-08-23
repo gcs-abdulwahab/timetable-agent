@@ -1,3 +1,17 @@
+// DELETE handler for deleting a timetable entry by id
+export async function DELETE(request: NextRequest) {
+  try {
+    const { id } = await request.json();
+    if (!id) {
+      return NextResponse.json({ error: 'Missing entry id' }, { status: 400 });
+    }
+    await prisma.timetableEntry.delete({ where: { id: Number(id) } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting timetable entry:', error);
+    return NextResponse.json({ error: 'Failed to delete entry' }, { status: 500 });
+  }
+}
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '../../../lib/generated/prisma';
 import type { Day } from '../../types/Day';

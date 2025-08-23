@@ -77,36 +77,58 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 				}, [initialSelectedDays, addDepartmentId, addTimeSlotId, subjectId, props.subjects, props.selectedTeacherId]);
 
 	// Optionally, set initial teacher/room if passed as props (not shown here)
-	const handleSave = async (e: React.FormEvent) => {
-		e.preventDefault();
 
-		// Save to database
-		const updatedDays = selectedDays.map((id) => Number(id));
-		const payload = {
-			id: editEntryId,
-			updatedDays,
-			teacherId: selectedTeacherID,
-			roomId: selectedRoomId,
-			departmentId: selectedDepartmentId,
-			timeSlotId: selectedTimeSlotId,
-		};
-		try {
-			const response = await fetch("/api/timetable-entries", {
-				method: editEntryId ? "PUT" : "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(payload),
-			});
-			if (response.ok) {
-				console.log("Changes saved successfully!");
-			} else {
-				console.log("Failed to save changes.", updatedDays);
+		const handleSave = async (e: React.FormEvent) => {
+			e.preventDefault();
+			// Save to database
+			const updatedDays = selectedDays.map((id) => Number(id));
+			const payload = {
+				id: editEntryId,
+				updatedDays,
+				teacherId: selectedTeacherID,
+				roomId: selectedRoomId,
+				departmentId: selectedDepartmentId,
+				timeSlotId: selectedTimeSlotId,
+			};
+			try {
+				const response = await fetch("/api/timetable-entries", {
+					method: editEntryId ? "PUT" : "POST",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify(payload),
+				});
+				if (response.ok) {
+					console.log("Changes saved successfully!");
+				} else {
+					console.log("Failed to save changes.", updatedDays);
+				}
+			} catch (error) {
+				console.log("An error occurred while saving changes.");
 			}
-		} catch (error) {
-			console.log("An error occurred while saving changes.");
-		}
-		onSaveEdit();
-		setShowEditEntry(false);
-	};
+			onSaveEdit();
+			setShowEditEntry(false);
+		};
+
+		// Delete timetable entry
+		const handleDelete = async () => {
+			if (!editEntryId) return;
+			try {
+				const response = await fetch("/api/timetable-entries", {
+					method: "DELETE",
+					headers: { "Content-Type": "application/json" },
+					body: JSON.stringify({ id: editEntryId }),
+				});
+				if (response.ok) {
+					console.log("Entry deleted successfully!");
+				} else {
+					const error = await response.json();
+					alert(error.error || "Failed to delete entry");
+				}
+			} catch (error) {
+				console.log("An error occurred while deleting entry.");
+			}
+			onSaveEdit();
+			setShowEditEntry(false);
+		};
 
 	if (!show) return null;
 	return (
@@ -213,21 +235,28 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 							))}
 						</select>
 					</div>
-					<div className="flex justify-end gap-2 mt-4">
-						<button
-							type="button"
-							className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
-							onClick={() => setShowEditEntry(false)}
-						>
-							Cancel
-						</button>
-						<button
-							type="submit"
-							className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-						>
-							Save Changes
-						</button>
-					</div>
+								<div className="flex justify-end gap-2 mt-4">
+									<button
+										type="button"
+										className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+										onClick={() => setShowEditEntry(false)}
+									>
+										Cancel
+									</button>
+									<button
+										type="button"
+										className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+										onClick={handleDelete}
+									>
+										Delete
+									</button>
+									<button
+										type="submit"
+										className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+									>
+										Save Changes
+									</button>
+								</div>
 				</form>
 			</div>
 		</div>

@@ -220,12 +220,21 @@ const Timetable: React.FC<TimetableProps> = ({
         visibleDepartments={departments}
         subjects={subjects}
         teachers={teachers}
-        
         timeSlots={timeSlots}
         rooms={rooms}
         days={days}
         formatSemesterLabel={sem => sem?.name ?? ""}
-        onSaveEdit={() => setShowEditModal(false)}
+        onSaveEdit={async () => {
+          setShowEditModal(false);
+          // Refresh timetable entries after delete or save
+          try {
+            const res = await fetch('/api/timetable-entries');
+            if (res.ok) {
+              const data = await res.json();
+              setEntryList(data);
+            }
+          } catch {}
+        }}
         initialSelectedDays={editEntry ? [...editEntry.dayIds].map(String) : []}
         editEntryId={editEntry ? editEntry.id : undefined}
         subjectId={editEntry ? editEntry.subjectId : undefined}
