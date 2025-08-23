@@ -160,13 +160,14 @@ const Timetable: React.FC<TimetableProps> = ({
       <table className="w-full border-collapse bg-white rounded shadow">
       <thead>
         <tr>
-        <th className="border p-2 bg-gray-100 text-left whitespace-nowrap min-w-32">
+        <th className="border p-2 bg-gray-100 text-left whitespace-nowrap" style={{ width: '160px' }}>
           Department
         </th>
         {timeSlots.map((slot) => (
           <th
           key={slot.id}
-          className="border p-2 bg-gray-100 text-center w-48 min-w-48 max-w-48"
+          className="border p-2 bg-gray-100 text-center flex-1 min-w-32"
+          style={{ minWidth: '120px', width: 'auto' }}
           >
           {formatTime(slot.start)} - {formatTime(slot.end)}
           </th>
