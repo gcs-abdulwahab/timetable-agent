@@ -14,6 +14,7 @@ import type {
 import AddEntryModal from "./AddEntryModal";
 import EditEntryModal from "./EditEntryModal";
 import EntryBadge from "./EntryBadge";
+import ConflictSummary from './ConflictSummary';
 
 // Define types for forms and data
 type TimetableProps = {
@@ -265,6 +266,14 @@ const Timetable: React.FC<TimetableProps> = ({
         ))}
       </tbody>
       </table>
+      {/* Add conflict summary below timetable */}
+      <ConflictSummary
+        teacherConflicts={localTeacherConflicts}
+        roomConflicts={localRoomConflicts}
+        entries={entryList}
+        teachers={teachers}
+        rooms={rooms}
+      />
 
       {/* Edit modal restored */}
       <EditEntryModal
