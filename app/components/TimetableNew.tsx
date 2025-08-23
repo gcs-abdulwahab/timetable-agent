@@ -1,4 +1,5 @@
 import React from "react";
+import { formatTime } from '../../lib/utils';
 import { useTimetableEntries } from "../hooks/useTimetableEntries";
 import type {
   Day,
@@ -120,6 +121,7 @@ const Timetable: React.FC<TimetableProps> = ({
     }
   };
 
+
   // Render timetable grid
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
@@ -137,9 +139,7 @@ const Timetable: React.FC<TimetableProps> = ({
           key={slot.id}
           className="border p-2 bg-gray-100 text-center w-48 min-w-48 max-w-48"
           >
-          Period {slot.period}
-          <br />
-          {slot.start}-{slot.end}
+          {formatTime(slot.start)} - {formatTime(slot.end)}
           </th>
         ))}
         </tr>

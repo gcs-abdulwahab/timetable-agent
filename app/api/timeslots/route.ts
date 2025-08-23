@@ -1,3 +1,19 @@
+// DELETE - Remove a time slot by id
+export async function DELETE(req: NextRequest) {
+  try {
+    const { id } = await req.json();
+    if (!id) {
+      return NextResponse.json({ error: 'Missing id' }, { status: 400 });
+    }
+    await prisma.timeSlot.delete({ where: { id: Number(id) } });
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting time slot:', error);
+    return NextResponse.json({ error: 'Failed to delete time slot' }, { status: 500 });
+  } finally {
+    await prisma.$disconnect();
+  }
+}
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '../../../lib/generated/prisma';
 
@@ -10,13 +26,13 @@ export async function POST(req: NextRequest) {
     if (!start || !end || typeof period !== 'number') {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
-    const newSlot = await prisma.timeSlot.create({
-      data: {
-        start: new Date(start),
-        end: new Date(end),
-        period,
-      },
-    });
+      const newSlot = await prisma.timeSlot.create({
+        data: {
+          start,
+          end,
+          period,
+        },
+      });
     return NextResponse.json(newSlot, { status: 201 });
   } catch (error) {
     console.error('Error creating time slot:', error);
@@ -32,13 +48,9 @@ export async function GET() {
     const timeSlots = await prisma.timeSlot.findMany({
       orderBy: { period: 'asc' }
     });
-    // Convert DateTime objects to time strings
-    const formattedSlots = timeSlots.map(slot => ({
-      ...slot,
-      start: slot.start.toTimeString().slice(0, 5),
-      end: slot.end.toTimeString().slice(0, 5)
-    }));
-    return NextResponse.json(formattedSlots);
+    // No conversion needed, start/end are already strings
+    return NextResponse.json(timeSlots);
+   
   } catch (error) {
     console.error('Error fetching time slots:', error);
     return NextResponse.json([], { status: 500 });
