@@ -1,13 +1,11 @@
 'use client';
 
-import { Day, Semester, TimeSlot } from '@/lib/generated/prisma';
 import React, { useEffect, useState } from 'react';
 import type { Department, Room, Teacher, TimetableEntry } from "../types";
+import { Day, Semester, TimeSlot } from '../types';
 import type { Subject } from "../types/Subject";
-import ConflictViewer from './ConflictViewer';
-import ConflictsAlert from './ConflictsAlert';
 import TimetableNew from './TimetableNew';
-import { validateTimetable } from './conflictChecker';
+
 import { generateStats } from './timetableUtils';
 
 
@@ -29,7 +27,7 @@ const TimetableManager: React.FC = () => {
         const dbEntries = await response.json();
         setEntries(dbEntries);
         console.log('Loaded timetable entries:', dbEntries);
-        validateTimetable().then(setValidation);
+
       }
     } catch (error) {
       console.error('Error loading timetable entries:', error);
@@ -82,6 +80,42 @@ const TimetableManager: React.FC = () => {
 
   const stats = generateStats(entries);
 
+  // Conflict logic: detect if same teacher is scheduled in the same slot
+  const teacherSlotConflicts = React.useMemo(() => {
+    const conflicts: { [key: string]: number[] } = {};
+    // key: `${teacherId}_${timeSlotId}`
+    entries.forEach(entry => {
+      const key = `${entry.teacherId}_${entry.timeSlotId}`;
+      if (!conflicts[key]) conflicts[key] = [];
+      conflicts[key].push(entry.id);
+    });
+    // Only keep conflicts with more than one entry
+    return Object.entries(conflicts)
+      .filter(([key, ids]) => ids.length > 1)
+      .reduce((acc, [key, ids]) => {
+        acc[key] = ids;
+        return acc;
+      }, {} as { [key: string]: number[] });
+  }, [entries]);
+
+  // Conflict logic: detect if same room is scheduled in the same slot
+  const roomSlotConflicts = React.useMemo(() => {
+    const conflicts: { [key: string]: number[] } = {};
+    // key: `${roomId}_${timeSlotId}`
+    entries.forEach(entry => {
+      const key = `${entry.roomId}_${entry.timeSlotId}`;
+      if (!conflicts[key]) conflicts[key] = [];
+      conflicts[key].push(entry.id);
+    });
+    // Only keep conflicts with more than one entry
+    return Object.entries(conflicts)
+      .filter(([key, ids]) => ids.length > 1)
+      .reduce((acc, [key, ids]) => {
+        acc[key] = ids;
+        return acc;
+      }, {} as { [key: string]: number[] });
+  }, [entries]);
+
   if (loading) {
     return (
       <div className="min-h-screen p-4 bg-gray-50 flex items-center justify-center">
@@ -95,11 +129,9 @@ const TimetableManager: React.FC = () => {
       <div className="max-w-full overflow-x-auto">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-bold text-gray-800">
-            College Timetable Management
+        College Timetable Management
           </h1>
         </div>
-
-        
 
         <TimetableNew
           departments={departments}
@@ -108,12 +140,10 @@ const TimetableManager: React.FC = () => {
           teachers={teachers}
           subjects={subjects}
           days={days}
-          timeSlots={timeSlots.map(ts => ({
-            ...ts,
-            start: typeof ts.start === 'string' ? ts.start : ts.start.toISOString(),
-            end: typeof ts.end === 'string' ? ts.end : ts.end.toISOString(),
-          }))}
+          timeSlots={timeSlots}
           semesters={semesters ?? []}
+          teacherSlotConflicts={teacherSlotConflicts} // pass to child
+          roomSlotConflicts={roomSlotConflicts} // pass to child
         />
       </div>
     </div>

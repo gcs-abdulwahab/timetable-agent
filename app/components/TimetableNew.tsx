@@ -25,6 +25,8 @@ type TimetableProps = {
 	semesters: Semester[];
 	entries: TimetableEntry[];
 	subjects: Subject[];
+	teacherSlotConflicts?: { [key: string]: number[] }; // <-- add prop
+	roomSlotConflicts?: { [key: string]: number[] }; // <-- add prop
 };
 
 // Removed unused types
@@ -52,18 +54,45 @@ const Timetable: React.FC<TimetableProps> = ({
   teachers,
   rooms,
   days,
+  teacherSlotConflicts = {}, // <-- default empty
+  roomSlotConflicts = {}, // <-- default empty
 }) => {
   // Memoize active semesters
   const activeSemesters = React.useMemo(() => semesters ? semesters.filter(s => s.isActive) : [], [semesters]);
   const [selectedSemesterId, setSelectedSemesterId] = React.useState<number | undefined>(activeSemesters?.[0]?.id);
-  React.useEffect(() => {
-    if (activeSemesters.length > 0) {
-      setSelectedSemesterId(activeSemesters[0].id);
-    }
-  }, [activeSemesters]);
 
-  // Use custom hook for entry state and drag/drop
-  const { entryList, handleDragStart, handleDrop, handleDragOver, setEntryList } = useTimetableEntries(entries);
+  // Local state for conflicts
+  const [localTeacherConflicts, setLocalTeacherConflicts] = React.useState<{ [key: string]: number[] }>(teacherSlotConflicts);
+  const [localRoomConflicts, setLocalRoomConflicts] = React.useState<{ [key: string]: number[] }>(roomSlotConflicts);
+
+  // Recalculate conflicts when entries change
+  const recalculateConflicts = React.useCallback((updatedEntries: TimetableEntry[]) => {
+    // Teacher conflicts
+    const teacherConflicts: { [key: string]: number[] } = {};
+    updatedEntries.forEach(entry => {
+      const key = `${entry.teacherId}_${entry.timeSlotId}`;
+      if (!teacherConflicts[key]) teacherConflicts[key] = [];
+      teacherConflicts[key].push(entry.id);
+    });
+    const filteredTeacher = Object.entries(teacherConflicts)
+      .filter(([_, ids]) => ids.length > 1)
+      .reduce((acc, [key, ids]) => { acc[key] = ids; return acc; }, {} as { [key: string]: number[] });
+    setLocalTeacherConflicts(filteredTeacher);
+    // Room conflicts
+    const roomConflicts: { [key: string]: number[] } = {};
+    updatedEntries.forEach(entry => {
+      const key = `${entry.roomId}_${entry.timeSlotId}`;
+      if (!roomConflicts[key]) roomConflicts[key] = [];
+      roomConflicts[key].push(entry.id);
+    });
+    const filteredRoom = Object.entries(roomConflicts)
+      .filter(([_, ids]) => ids.length > 1)
+      .reduce((acc, [key, ids]) => { acc[key] = ids; return acc; }, {} as { [key: string]: number[] });
+    setLocalRoomConflicts(filteredRoom);
+  }, []);
+
+  // Use custom hook for entry state and drag/drop, pass recalculateConflicts
+  const { entryList, handleDragStart, handleDrop, handleDragOver, setEntryList } = useTimetableEntries(entries, recalculateConflicts);
 
   // Filter entries only those subjects that belong to that semesterid
   const filteredEntries = selectedSemesterId
@@ -195,6 +224,27 @@ const Timetable: React.FC<TimetableProps> = ({
                     roomName={room ? room.name : undefined}
                     days={days}
                     onEditEntry={() => handleEditEntry(entry)}
+                    hasTeacherConflict={
+                      localTeacherConflicts[
+                        `${entry.teacherId}_${entry.timeSlotId}`
+                      ]?.includes(entry.id)
+                    }
+                    hasRoomConflict={
+                      localRoomConflicts[
+                        `${entry.roomId}_${entry.timeSlotId}`
+                      ]?.includes(entry.id)
+                    }
+                    conflictDetails={
+                      localRoomConflicts[
+                        `${entry.roomId}_${entry.timeSlotId}`
+                      ]?.includes(entry.id)
+                        ? `Room ${room?.name || entry.roomId} is double-booked for this slot.`
+                        : localTeacherConflicts[
+                            `${entry.teacherId}_${entry.timeSlotId}`
+                          ]?.includes(entry.id)
+                        ? `Teacher ${teacher?.name || entry.teacherId} has multiple entries in this slot.`
+                        : undefined
+                    }
                   />
                   </div>
                 );
