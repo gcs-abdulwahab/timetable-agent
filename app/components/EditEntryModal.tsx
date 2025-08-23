@@ -55,7 +55,7 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 	console.log("editEntryID...  " + editEntryId);
 	console.log("addDepartmentId...  " + addDepartmentId);
 	console.log("addTimeSlotId...  " + addTimeSlotId);
-	console.log("Teachers "+ teachers)
+	console.log("Teachers " + teachers)
 
 				React.useEffect(() => {
 					setSelectedDays(initialSelectedDays.map(Number));
@@ -63,7 +63,13 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 					if (addTimeSlotId !== undefined) setSelectedTimeSlotId(addTimeSlotId);
 					if (subjectId !== undefined) {
 						const subject = props.subjects?.find(s => s.id === subjectId);
-						console.log("Selected subject:", subject);
+						if (subject) {
+							const department = props.visibleDepartments?.find(d => d.id === subject.departmentId);
+							console.log("Selected subject:", subject);
+							console.log("subjectDepartments:", department);
+						} else {
+							console.log("Selected subject: not found");
+						}
 					}
 					if (props.selectedTeacherId !== undefined) {
 						setSelectedTeacherID(props.selectedTeacherId);

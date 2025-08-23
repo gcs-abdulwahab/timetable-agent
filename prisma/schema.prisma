@@ -72,8 +72,8 @@ model Room {
 
 model TimeSlot {
   id                Int               @id @default(autoincrement())
-  start             DateTime
-  end               DateTime
+  start             DateTime  @db.Time
+  end               DateTime  @db.Time
   period            Int
   timetableEntries  TimetableEntry[]
 }

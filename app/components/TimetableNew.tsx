@@ -220,6 +220,7 @@ const Timetable: React.FC<TimetableProps> = ({
         visibleDepartments={departments}
         subjects={subjects}
         teachers={teachers}
+        
         timeSlots={timeSlots}
         rooms={rooms}
         days={days}

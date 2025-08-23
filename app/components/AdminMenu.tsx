@@ -43,6 +43,12 @@ const AdminMenu: React.FC = () => {
         Manage Subjects
       </Link>
       <Link
+        href="/manage-timeslots"
+        className="bg-pink-600 text-white px-4 py-2 rounded-md hover:bg-pink-700 transition-colors text-sm font-medium inline-block"
+      >
+        Manage Timeslots
+      </Link>
+      <Link
         href="/room-management"
         className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors text-sm font-medium inline-block"
       >

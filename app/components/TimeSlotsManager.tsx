@@ -18,6 +18,19 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
     end: '',
     period: 1
   });
+  const [timerIncrement, setTimerIncrement] = useState<number>(45);
+
+  // Set default start time to last slot's end time on initial load
+  React.useEffect(() => {
+    if (slots.length > 0) {
+      const lastSlot = slots.reduce((a, b) => (a.period > b.period ? a : b));
+      setNewSlot({
+        start: lastSlot.end,
+        end: addMinutesToTime(lastSlot.end, timerIncrement),
+        period: lastSlot.period + 1
+      });
+    }
+  }, [slots, timerIncrement]);
 
   // Helper function to add minutes to time
   const addMinutesToTime = (time: string, minutes: number): string => {
@@ -30,20 +43,36 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
 
   // CRUD operations for Time Slots
   const addSlot = async () => {
-    if (!newSlot.start || !newSlot.end) return;
+    // If there are existing slots, set default start time to last slot's end time
+    const slotToAdd = { ...newSlot };
+    if (slots.length > 0 && !newSlot.start) {
+      const lastSlot = slots.reduce((a, b) => (a.period > b.period ? a : b));
+      slotToAdd.start = lastSlot.end;
+      slotToAdd.period = lastSlot.period + 1;
+      // Optionally, set default end time to 45 mins after start
+      slotToAdd.end = addMinutesToTime(slotToAdd.start, 45);
+      setNewSlot(slotToAdd);
+    }
+    if (!slotToAdd.start || !slotToAdd.end) return;
     try {
       const nextPeriod = slots.length > 0 
         ? Math.max(...slots.map(s => s.period)) + 1 
         : 1;
-      
+      // Convert time strings to ISO date-time format (today's date)
+      const today = new Date();
+      const toISODateTime = (time: string) => {
+        const [hours, mins] = time.split(":").map(Number);
+        const dt = new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, mins);
+        return dt.toISOString();
+      };
       const response = await fetch('/api/timeslots', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          start: newSlot.start,
-          end: newSlot.end,
+          start: toISODateTime(slotToAdd.start),
+          end: toISODateTime(slotToAdd.end),
           period: nextPeriod,
         }),
       });
@@ -128,7 +157,7 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
               value={newSlot.start}
               onChange={(e) => {
                 const start = e.target.value;
-                const end = addMinutesToTime(start, 45);
+                const end = addMinutesToTime(start, timerIncrement);
                 setNewSlot({ ...newSlot, start, end });
               }}
               className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -149,6 +178,15 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
               placeholder="Period"
               min="1"
             />
+            <select
+              value={timerIncrement}
+              onChange={e => setTimerIncrement(Number(e.target.value))}
+              className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={45}>45 min</option>
+              <option value={50}>50 min</option>
+              <option value={60}>60 min</option>
+            </select>
           </div>
           <button
             onClick={addSlot}
