@@ -13,7 +13,6 @@ model Department {
   name                   String
   shortName              String
   offersBSDegree         Boolean
-  bsSemesterAvailability Json?
   teachers               Teacher[]
   subjects               Subject[]
   rooms                  Room[]  

@@ -16,26 +16,18 @@ export async function GET() {
   }
 }
 
-// ✅ POST - Add a new department
+// ✅ POST - Add new department
 export async function POST(request: Request) {
   try {
-    const { id, name, shortName } = await request.json();
-
-    if (!id || !name || !shortName) {
-      return NextResponse.json({ error: 'ID, Name and Short Name are required' }, { status: 400 });
+    const { name, shortName, offersBSDegree } = await request.json();
+    if (!name || !shortName || typeof offersBSDegree !== "boolean") {
+      return NextResponse.json({ error: 'Name, Short Name, and offersBSDegree (boolean) are required' }, { status: 400 });
     }
-
     const department = await prisma.department.create({
-      data: {
-        id,
-        name,
-        shortName,
-        offersBSDegree: true // or set this based on your requirements
-      }
+      data: { name, shortName, offersBSDegree }
     });
-
     return NextResponse.json(department);
-    } catch (error) {
+  } catch (error) {
     console.error('Failed to create department:', error);
     return NextResponse.json({ error: 'Failed to create department' }, { status: 500 });
   }

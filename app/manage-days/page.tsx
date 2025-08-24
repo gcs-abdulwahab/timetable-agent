@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import DaysManager from '../components/DaysManager';
 import { Day } from '../types/Day';
 
 const ManageDays: React.FC = () => {
@@ -50,23 +51,7 @@ const ManageDays: React.FC = () => {
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-4">Manage Days</h1>
       <div className="bg-white shadow-md rounded-lg p-4">
-        <ul className="divide-y divide-gray-200">
-          {days.map((day) => (
-            <li key={day.id} className="flex items-center justify-between py-2">
-              <span className={`${day.isActive ? 'text-black' : 'text-gray-400'}`}>
-                {day.name} ({day.shortName}) - {day.isActive ? 'Active' : 'Inactive'}
-              </span>
-              <button
-                onClick={() => handleToggleActive(day)}
-                className={`px-4 py-2 rounded-md text-white ${
-                  day.isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'
-                }`}
-              >
-                {day.isActive ? 'Deactivate' : 'Activate'}
-              </button>
-            </li>
-          ))}
-        </ul>
+        <DaysManager days={days} setDays={setDays} />
       </div>
     </div>
   );

@@ -1,6 +1,4 @@
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -8,8 +6,9 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "@/components/ui/table"
-import { useEffect, useState } from "react"
+} from "@/components/ui/table";
+import { useEffect, useState } from 'react';
+import AddDepartmentComponent from './AddDepartmentComponent';
 
 export function DepartmentTable() {
   const [departments, setDepartments] = useState<any[]>([])
@@ -17,7 +16,7 @@ export function DepartmentTable() {
   const [shortName, setShortName] = useState("")
   const [offersBSDegree, setOffersBSDegree] = useState(true)
   const [editId, setEditId] = useState<number | null>(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [showAddModal, setShowAddModal] = useState(false)
 
   useEffect(() => {
     fetchDepartments()
@@ -43,7 +42,6 @@ export function DepartmentTable() {
 
     resetForm()
     fetchDepartments()
-    setIsDialogOpen(false)
   }
 
   async function handleDelete(id: string) {
@@ -63,50 +61,31 @@ export function DepartmentTable() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <h2 className="text-lg font-bold">Departments</h2>
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-          <DialogTrigger asChild>
-            <Button
-              onClick={() => {
-                resetForm()
-                setIsDialogOpen(true)
-              }}
-            >
-              Add Department
-            </Button>
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>{editId ? "Edit Department" : "Add Department"}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <Input
-                placeholder="Department Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <Input
-                placeholder="Department Short Name"
-                value={shortName}
-                onChange={(e) => setShortName(e.target.value)}
-              />
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={offersBSDegree}
-                  onChange={e => setOffersBSDegree(e.target.checked)}
-                  id="offersBSDegree"
-                />
-                <label htmlFor="offersBSDegree">Offers BS Degree</label>
+    <div className="space-y-6">
+      <h2 className="text-2xl font-bold mb-2">Manage Departments</h2>
+      <div className="flex flex-wrap gap-6 items-start">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl shadow-sm p-6 w-full max-w-xs flex flex-col items-stretch">
+          <button
+            className="mb-6 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+            onClick={() => setShowAddModal(true)}
+          >
+            Add Department
+          </button>
+          {showAddModal && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+              <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
+                <AddDepartmentComponent onDepartmentAdded={() => { fetchDepartments(); setShowAddModal(false); }} departments={departments} fetchDepartments={fetchDepartments} />
+                <button
+                  className="mt-4 px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 w-full"
+                  onClick={() => setShowAddModal(false)}
+                >
+                  Cancel
+                </button>
               </div>
-              <Button onClick={handleSave}>Save</Button>
             </div>
-          </DialogContent>
-        </Dialog>
+          )}
+        </div>
       </div>
-
       <Table>
         <TableHeader>
           <TableRow>
@@ -118,7 +97,7 @@ export function DepartmentTable() {
         </TableHeader>
         <TableBody>
           {departments.map((dept) => (
-            <TableRow key={dept.id}>
+            <TableRow key={dept.id} className={dept.offersBSDegree ? 'bg-green-100' : 'bg-yellow-100'}>
               <TableCell>{dept.name}</TableCell>
               <TableCell>{dept.shortName}</TableCell>
               <TableCell>{dept.offersBSDegree ? "Yes" : "No"}</TableCell>
@@ -131,7 +110,6 @@ export function DepartmentTable() {
                     setName(dept.name)
                     setShortName(dept.shortName)
                     setOffersBSDegree(!!dept.offersBSDegree)
-                    setIsDialogOpen(true)
                   }}
                 >
                   Edit
