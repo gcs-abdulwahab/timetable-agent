@@ -7,6 +7,12 @@ const AdminMenu: React.FC = () => {
   return (
     <div className="space-x-2 inline-block">
       <Link
+        href="/"
+        className="bg-gray-700 text-white px-4 py-2 rounded-md hover:bg-gray-800 transition-colors text-sm font-medium inline-block"
+      >
+        Home
+      </Link>
+      <Link
         href="/manage-schedule"
         className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium inline-block"
       >
@@ -19,7 +25,7 @@ const AdminMenu: React.FC = () => {
         Manage Teachers
       </Link>
       <Link
-        href="/manage-department"
+        href="/manage-departments"
         className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors text-sm font-medium inline-block"
       >
         Manage Departments

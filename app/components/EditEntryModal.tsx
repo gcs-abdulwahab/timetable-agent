@@ -45,6 +45,16 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 	);
 			const [selectedTeacherID, setSelectedTeacherID] = React.useState<number | undefined>(props.selectedTeacherId);
 	const [selectedRoomId, setSelectedRoomId] = React.useState<number>();
+
+		// Pre-select room when editing
+		React.useEffect(() => {
+			if (editEntryId && props.entries) {
+				const entry = props.entries.find(e => e.id === editEntryId);
+				if (entry && entry.roomId) {
+					setSelectedRoomId(entry.roomId);
+				}
+			}
+		}, [editEntryId, props.entries]);
 	const [selectedDepartmentId, setSelectedDepartmentId] = React.useState<
 		number | undefined
 	>(addDepartmentId);
@@ -74,6 +84,7 @@ const EditEntryModal: React.FC<EditEntryModalProps> = ({
 					if (props.selectedTeacherId !== undefined) {
 						setSelectedTeacherID(props.selectedTeacherId);
 					}
+					// Room pre-selection is handled in a separate effect above
 				}, [initialSelectedDays, addDepartmentId, addTimeSlotId, subjectId, props.subjects, props.selectedTeacherId]);
 
 	// Optionally, set initial teacher/room if passed as props (not shown here)

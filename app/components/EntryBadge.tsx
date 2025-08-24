@@ -13,10 +13,11 @@ export type EntryBadgeProps = {
 	roomName?: string;
 	days: Day[];
 	onEditEntry?: (entry: TimetableEntry) => void;
-	hasRoomConflict?: boolean; // <-- add this prop
-	hasTeacherConflict?: boolean; // <-- add this prop
-	conflictDetails?: string; // <-- add this prop for conflict details
-	isTooltipUp?: boolean; // <-- new prop for tooltip direction
+	hasRoomConflict?: boolean;
+	hasTeacherConflict?: boolean;
+	conflictDetails?: string;
+	isTooltipUp?: boolean;
+	semesters?: { id: number; name: string }[]; // <-- add semesters prop
 };
 
 const EntryBadge: React.FC<EntryBadgeProps> = ({
@@ -26,10 +27,11 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 	roomName,
 	days,
 	onEditEntry,
-	hasRoomConflict = false, // <-- default false
-	hasTeacherConflict = false, // <-- default false
+	hasRoomConflict = false,
+	hasTeacherConflict = false,
 	conflictDetails,
-	isTooltipUp = false, // <-- default false
+	isTooltipUp = false,
+	semesters = [],
 }) => {
 	const [showTooltip, setShowTooltip] = useState(false);
 
@@ -37,9 +39,7 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 	const addTwoNumbers = (a: number, b: number): number => {
 		return a + b;
 	};
-
 	
-
 	return (
 		<li className="mb-1">
 			<div
@@ -49,7 +49,13 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 				style={{ position: 'relative' }}
 			>
 				<div className="font-semibold text-blue-900 text-sm mb-1">
-					{subjectName ? subjectName : `Subject #${entry.subjectId}`}
+					{subjectName ? (
+						<>
+							{subjectName}
+						</>
+					) : (
+						`Subject #${entry.subjectId}`
+					)}
 				</div>
 				<div className="text-xs text-gray-700 mb-1">
 					{teacherName ? (

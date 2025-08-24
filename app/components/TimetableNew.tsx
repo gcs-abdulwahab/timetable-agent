@@ -12,9 +12,9 @@ import type {
   TimetableEntry
 } from "../types";
 import AddEntryModal from "./AddEntryModal";
+import ConflictSummary from './ConflictSummary';
 import EditEntryModal from "./EditEntryModal";
 import EntryBadge from "./EntryBadge";
-import ConflictSummary from './ConflictSummary';
 
 // Define types for forms and data
 type TimetableProps = {
@@ -154,6 +154,23 @@ const Timetable: React.FC<TimetableProps> = ({
   // Add helper to detect if row is last
   const isLastRow = (rowIdx: number, totalRows: number) => rowIdx === totalRows - 1;
 
+  // Helper: Detect credit hour conflicts
+  const getCreditHourConflicts = (entries: TimetableEntry[], subjects: Subject[]): number[] => {
+    const conflictEntryIds: number[] = [];
+    entries.forEach(entry => {
+      const subject = subjects.find(s => s.id === entry.subjectId);
+      if (subject && subject.creditHours === 3) {
+        if (!entry.dayIds || entry.dayIds.length < 3) {
+          conflictEntryIds.push(entry.id);
+        }
+      }
+    });
+    return conflictEntryIds;
+  };
+
+  // Detect credit hour conflicts for filtered entries
+  const creditHourConflictIds = React.useMemo(() => getCreditHourConflicts(filteredEntries, subjects), [filteredEntries, subjects]);
+
   // Render timetable grid
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
@@ -238,6 +255,7 @@ const Timetable: React.FC<TimetableProps> = ({
                         `${entry.roomId}_${entry.timeSlotId}`
                       ]?.includes(entry.id)
                     }
+                    hasCreditHourConflict={creditHourConflictIds.includes(entry.id)}
                     conflictDetails={
                       localRoomConflicts[
                         `${entry.roomId}_${entry.timeSlotId}`
@@ -247,9 +265,11 @@ const Timetable: React.FC<TimetableProps> = ({
                             `${entry.teacherId}_${entry.timeSlotId}`
                           ]?.includes(entry.id)
                         ? `Teacher ${teacher?.name || entry.teacherId} has multiple entries in this slot.`
+                        : creditHourConflictIds.includes(entry.id)
+                        ? `Credit Hour Conflict: 3 credit hour subject must have 3 days scheduled.`
                         : undefined
                     }
-                    isTooltipUp={isLastRow(deptIdx, departments.length)} // <-- pass to EntryBadge
+                    isTooltipUp={isLastRow(deptIdx, departments.length)}
                   />
                   </div>
                 );

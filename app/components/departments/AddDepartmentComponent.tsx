@@ -1,10 +1,14 @@
+import { Department } from "@/app/types";
+import { Button } from "@/components/ui/button";
 import React, { useState } from "react";
 
 interface AddDepartmentComponentProps {
   onDepartmentAdded?: () => void;
+  departments?: Department[];
+  fetchDepartments?: () => void;
 }
 
-const AddDepartmentComponent: React.FC<AddDepartmentComponentProps> = ({ onDepartmentAdded }) => {
+const AddDepartmentComponent: React.FC<AddDepartmentComponentProps> = ({ onDepartmentAdded, departments = [], fetchDepartments }) => {
   const [name, setName] = useState("");
   const [shortName, setShortName] = useState("");
   const [offersBSDegree, setOffersBSDegree] = useState(false);
@@ -28,6 +32,47 @@ const AddDepartmentComponent: React.FC<AddDepartmentComponentProps> = ({ onDepar
     } finally {
       setLoading(false);
     }
+  };
+
+  // Export to CSV
+  const exportToCSV = () => {
+    const headers = ['Name', 'Short Name', 'Offers BS Degree'];
+    const rows = departments.map(dept => [dept.name, dept.shortName, dept.offersBSDegree ? 'Yes' : 'No']);
+    let csvContent = 'data:text/csv;charset=utf-8,' + headers.join(',') + '\n';
+    csvContent += rows.map(e => e.join(",")).join("\n");
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'departments.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Import from CSV
+  const handleImportCSV = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      const text = e.target?.result as string;
+      const lines = text.split(/\r?\n/).filter(Boolean);
+      const [header, ...rows] = lines;
+      for (const row of rows) {
+        const [name, shortNameRaw, offersBSDegreeRaw] = row.split(',');
+        const shortName = shortNameRaw.replace(/\s+/g, ''); // Remove spaces
+        const offersBSDegree = offersBSDegreeRaw.trim().toLowerCase() === 'yes';
+        if (shortName) {
+          await fetch('/api/departments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, shortName, offersBSDegree })
+          });
+        }
+      }
+      if (fetchDepartments) fetchDepartments();
+    };
+    reader.readAsText(file);
   };
 
   return (
@@ -69,6 +114,17 @@ const AddDepartmentComponent: React.FC<AddDepartmentComponentProps> = ({ onDepar
       >
         {loading ? "Adding..." : "Add Department"}
       </button>
+      <div className="flex flex-col gap-3 items-start mt-6">
+        <Button onClick={exportToCSV} variant="outline" className="w-full flex items-center gap-2" type="button">
+          <span role="img" aria-label="Export">📤</span> Export to CSV
+        </Button>
+        <Button asChild variant="outline" className="w-full flex items-center gap-2">
+          <label className="cursor-pointer m-0 w-full flex items-center gap-2">
+            <span role="img" aria-label="Import">📥</span> Import from CSV
+            <input type="file" accept=".csv" style={{ display: 'none' }} onChange={handleImportCSV} />
+          </label>
+        </Button>
+      </div>
     </form>
   );
 };
