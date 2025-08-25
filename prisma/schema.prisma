@@ -74,6 +74,7 @@ model TimeSlot {
   start             String
   end               String
   period            Int
+  type              String            @default("BS") // 'BS' or 'Inter'
   timetableEntries  TimetableEntry[]
 }
 

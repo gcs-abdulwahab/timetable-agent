@@ -20,7 +20,8 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
   const [newSlot, setNewSlot] = useState<Omit<TimeSlot, 'id'>>({ 
     start: '', 
     end: '',
-    period: 1
+    period: 1,
+    type: 'BS'
   });
   const [timerIncrement, setTimerIncrement] = useState<number>(45);
 
@@ -37,7 +38,8 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
       setNewSlot({
         start: lastSlot.end,
         end: addMinutesToTime(lastSlot.end, timerIncrement),
-        period: lastSlot.period + 1
+        period: lastSlot.period + 1,
+        type: 'BS'
       });
     }
   }, [slots, timerIncrement]);
@@ -94,7 +96,8 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
         setNewSlot({ 
           start: addedSlot.end,
           end: '',
-          period: addedSlot.period + 1
+          period: addedSlot.period + 1,
+          type: 'BS'
         });
       } else {
         const error = await response.json();
@@ -163,8 +166,9 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
         {/* Add New Slot */}
         <div className="bg-gray-50 p-4 rounded-lg mb-4">
           <h3 className="text-lg font-medium mb-3">Add New Time Slot</h3>
-          <div className="grid grid-cols-3 gap-2 mb-3">
-            <div className="flex items-center space-x-2">
+          <div className="grid grid-cols-5 gap-4 mb-3">
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold mb-1">Start Time</label>
               <input
                 type="time"
                 value={newSlot.start}
@@ -173,42 +177,60 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
                   const end = addMinutesToTime(start, timerIncrement);
                   setNewSlot({ ...newSlot, start, end });
                 }}
-                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-[110px]"
                 placeholder="Start Time"
               />
               {newSlot.start && (
-                <span className="text-blue-700 font-semibold text-sm">{formatTime(newSlot.start)}</span>
+                <span className="text-blue-700 font-semibold text-xs mt-1">{formatTime(newSlot.start)}</span>
               )}
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold mb-1">End Time</label>
               <input
                 type="time"
                 value={newSlot.end}
                 onChange={(e) => setNewSlot({ ...newSlot, end: e.target.value })}
-                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-[110px]"
                 placeholder="End Time"
               />
               {newSlot.end && (
-                <span className="text-blue-700 font-semibold text-sm">{formatTime(newSlot.end)}</span>
+                <span className="text-blue-700 font-semibold text-xs mt-1">{formatTime(newSlot.end)}</span>
               )}
             </div>
-            <input
-              type="number"
-              value={newSlot.period}
-              onChange={(e) => setNewSlot({ ...newSlot, period: parseInt(e.target.value) || 1 })}
-              className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Period"
-              min="1"
-            />
-            <select
-              value={timerIncrement}
-              onChange={e => setTimerIncrement(Number(e.target.value))}
-              className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value={45}>45 min</option>
-              <option value={50}>50 min</option>
-              <option value={60}>60 min</option>
-            </select>
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold mb-1">Period</label>
+              <input
+                type="number"
+                value={newSlot.period}
+                onChange={(e) => setNewSlot({ ...newSlot, period: parseInt(e.target.value) || 1 })}
+                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-[80px]"
+                placeholder="Period"
+                min="1"
+              />
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold mb-1">Type</label>
+              <select
+                value={newSlot.type}
+                onChange={e => setNewSlot({ ...newSlot, type: e.target.value })}
+                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-[80px]"
+              >
+                <option value="BS">BS</option>
+                <option value="Inter">Inter</option>
+              </select>
+            </div>
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold mb-1">Duration</label>
+              <select
+                value={timerIncrement}
+                onChange={e => setTimerIncrement(Number(e.target.value))}
+                className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 w-full min-w-[80px]"
+              >
+                <option value={45}>45 min</option>
+                <option value={50}>50 min</option>
+                <option value={60}>60 min</option>
+              </select>
+            </div>
           </div>
           <button
             onClick={addSlot}
