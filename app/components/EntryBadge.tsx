@@ -84,16 +84,11 @@ const EntryBadge: React.FC<EntryBadgeProps> = ({
 						<span style={{ color: 'red'}}>Days not selected</span>
 					)}
 				</div>
-				{hasRoomConflict && (
-          <div className="text-xs font-bold text-red-700 mb-1 flex items-center">
-            🚨 Room Conflict
-          </div>
-        )}
-        {hasTeacherConflict && (
-          <div className="text-xs font-bold text-red-700 mb-1 flex items-center">
-            🚨 Teacher Conflict
-          </div>
-        )}
+						{(hasRoomConflict || hasTeacherConflict) && (
+							<div className="text-xs font-bold text-red-700 mb-1 flex items-center">
+								🚨 Day Conflict
+							</div>
+						)}
         {/* Tooltip for conflict details */}
         {showTooltip && (hasRoomConflict || hasTeacherConflict) && (
           <div

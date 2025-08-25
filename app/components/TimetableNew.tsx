@@ -224,53 +224,51 @@ const Timetable: React.FC<TimetableProps> = ({
               <>
               <ul>
                 {deptEntries.map((entry, entryIdx) => {
-                const subject = subjects.find(
-                  (s) => s.id === entry.subjectId
-                );
-                const teacher = teachers.find(
-                  (t) => t.id === entry.teacherId
-                );
+                const subject = subjects.find((s) => s.id === entry.subjectId);
+                const teacher = teachers.find((t) => t.id === entry.teacherId);
                 const room = rooms.find((r) => r.id === entry.roomId);
+
+                // Check teacher conflict with day overlap
+                let hasTeacherConflict = false;
+                for (const ids of Object.values(localTeacherConflicts)) {
+                  if (ids.includes(entry.id)) {
+                    // Find other conflicting entries
+                    const others = deptEntries.filter(e2 => ids.includes(e2.id) && e2.id !== entry.id);
+                    if (others.some(e2 => e2.dayIds.some(day => entry.dayIds.includes(day)))) {
+                      hasTeacherConflict = true;
+                      break;
+                    }
+                  }
+                }
+                // Check room conflict with day overlap
+                let hasRoomConflict = false;
+                for (const ids of Object.values(localRoomConflicts)) {
+                  if (ids.includes(entry.id)) {
+                    const others = deptEntries.filter(e2 => ids.includes(e2.id) && e2.id !== entry.id);
+                    if (others.some(e2 => e2.dayIds.some(day => entry.dayIds.includes(day)))) {
+                      hasRoomConflict = true;
+                      break;
+                    }
+                  }
+                }
 
                 return (
                   <div
-                  key={entry.id}
-                  draggable
-                  onDragStart={handleDragStart(entry.id)}
+                    key={entry.id}
+                    draggable
+                    onDragStart={handleDragStart(entry.id)}
                   >
-                  <EntryBadge
-                    entry={entry}
-                    subjectName={subject ? subject.name : undefined}
-                    teacherName={teacher ? teacher.name : undefined}
-                    roomName={room ? room.name : undefined}
-                    days={days}
-                    onEditEntry={() => handleEditEntry(entry)}
-                    hasTeacherConflict={
-                      localTeacherConflicts[
-                        `${entry.teacherId}_${entry.timeSlotId}`
-                      ]?.includes(entry.id)
-                    }
-                    hasRoomConflict={
-                      localRoomConflicts[
-                        `${entry.roomId}_${entry.timeSlotId}`
-                      ]?.includes(entry.id)
-                    }
-                    hasCreditHourConflict={creditHourConflictIds.includes(entry.id)}
-                    conflictDetails={
-                      localRoomConflicts[
-                        `${entry.roomId}_${entry.timeSlotId}`
-                      ]?.includes(entry.id)
-                        ? `Room ${room?.name || entry.roomId} is double-booked for this slot.`
-                        : localTeacherConflicts[
-                            `${entry.teacherId}_${entry.timeSlotId}`
-                          ]?.includes(entry.id)
-                        ? `Teacher ${teacher?.name || entry.teacherId} has multiple entries in this slot.`
-                        : creditHourConflictIds.includes(entry.id)
-                        ? `Credit Hour Conflict: 3 credit hour subject must have 3 days scheduled.`
-                        : undefined
-                    }
-                    isTooltipUp={isLastRow(deptIdx, departments.length)}
-                  />
+                    <EntryBadge
+                      entry={entry}
+                      subjectName={subject ? subject.name : undefined}
+                      teacherName={teacher ? teacher.name : undefined}
+                      roomName={room ? room.name : undefined}
+                      days={days}
+                      onEditEntry={() => handleEditEntry(entry)}
+                      isTooltipUp={isLastRow(deptIdx, departments.length)}
+                      hasTeacherConflict={hasTeacherConflict}
+                      hasRoomConflict={hasRoomConflict}
+                    />
                   </div>
                 );
                 })}

@@ -1,4 +1,5 @@
 import React from "react";
+import { formatTime } from '../../lib/utils';
 import type { Department, Teacher, TimeSlot, TimetableEntry } from "../types";
 
 interface RanaComponentProps {
@@ -9,16 +10,7 @@ interface RanaComponentProps {
 }
 
 const RanaComponent: React.FC<RanaComponentProps> = ({ departments, timeSlots, entries, teachers }) => {
-  // Helper to format time string to 12-hour format with AM/PM
-  const formatTime = (time: string) => {
-    if (!time) return '';
-    const [hourStr, minuteStr] = time.split(":");
-    let hour = parseInt(hourStr, 10);
-    const minute = parseInt(minuteStr, 10);
-    const ampm = hour >= 12 ? "PM" : "AM";
-    hour = hour % 12 || 12;
-    return `${hour}:${minute.toString().padStart(2, "0")} ${ampm}`;
-  };
+  // Use shared formatTime from utils
   // Helper to count teachers in a department
   const getTeacherCount = (deptId: number) => safeTeachers.filter(t => t.departmentId === deptId).length;
   // Use fallback for teachers in logic
@@ -57,9 +49,20 @@ const RanaComponent: React.FC<RanaComponentProps> = ({ departments, timeSlots, e
               </td>
               {timeSlots.map(slot => (
                 <td key={slot.id} className="border p-2 text-center align-top">
-                  {getEntryCount(dept.id, slot.id) > 0 ? (
-                    <span className="font-bold text-blue-700 text-lg">{getEntryCount(dept.id, slot.id)}</span>
-                  ) : null}
+                  {(() => {
+                    const count = getEntryCount(dept.id, slot.id);
+                    const teacherCount = getTeacherCount(dept.id);
+                    if (count > 0) {
+                      return (
+                        <span className={
+                          `font-bold text-lg ${count > teacherCount ? 'text-red-600' : 'text-blue-700'}`
+                        }>
+                          {count}
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
                 </td>
               ))}
             </tr>
