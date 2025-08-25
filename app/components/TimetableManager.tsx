@@ -82,38 +82,45 @@ const TimetableManager: React.FC = () => {
 
   // Conflict logic: detect if same teacher is scheduled in the same slot
   const teacherSlotConflicts = React.useMemo(() => {
+    // Only consider conflicts if timeSlotId and at least one dayId overlap
     const conflicts: { [key: string]: number[] } = {};
-    // key: `${teacherId}_${timeSlotId}`
-    entries.forEach(entry => {
-      const key = `${entry.teacherId}_${entry.timeSlotId}`;
-      if (!conflicts[key]) conflicts[key] = [];
-      conflicts[key].push(entry.id);
+    entries.forEach((entry, i) => {
+      if (entry.teacherId == null) return;
+      for (let j = i + 1; j < entries.length; j++) {
+        const other = entries[j];
+        if (other.teacherId !== entry.teacherId) continue;
+        if (other.timeSlotId !== entry.timeSlotId) continue;
+        // Only conflict if days overlap
+        const daysOverlap = entry.dayIds.some(day => other.dayIds.includes(day));
+        if (!daysOverlap) continue;
+        const key = `${entry.teacherId}_${entry.timeSlotId}`;
+        if (!conflicts[key]) conflicts[key] = [];
+        if (!conflicts[key].includes(entry.id)) conflicts[key].push(entry.id);
+        if (!conflicts[key].includes(other.id)) conflicts[key].push(other.id);
+      }
     });
-    // Only keep conflicts with more than one entry
-    return Object.entries(conflicts)
-      .filter(([key, ids]) => ids.length > 1)
-      .reduce((acc, [key, ids]) => {
-        acc[key] = ids;
-        return acc;
-      }, {} as { [key: string]: number[] });
+    return conflicts;
   }, [entries]);
 
   // Conflict logic: detect if same room is scheduled in the same slot
   const roomSlotConflicts = React.useMemo(() => {
+    // Only consider conflicts if timeSlotId and at least one dayId overlap
     const conflicts: { [key: string]: number[] } = {};
-    // key: `${roomId}_${timeSlotId}`
-    entries.forEach(entry => {
-      const key = `${entry.roomId}_${entry.timeSlotId}`;
-      if (!conflicts[key]) conflicts[key] = [];
-      conflicts[key].push(entry.id);
+    entries.forEach((entry, i) => {
+      for (let j = i + 1; j < entries.length; j++) {
+        const other = entries[j];
+        if (other.roomId !== entry.roomId) continue;
+        if (other.timeSlotId !== entry.timeSlotId) continue;
+        // Only conflict if days overlap
+        const daysOverlap = entry.dayIds.some(day => other.dayIds.includes(day));
+        if (!daysOverlap) continue;
+        const key = `${entry.roomId}_${entry.timeSlotId}`;
+        if (!conflicts[key]) conflicts[key] = [];
+        if (!conflicts[key].includes(entry.id)) conflicts[key].push(entry.id);
+        if (!conflicts[key].includes(other.id)) conflicts[key].push(other.id);
+      }
     });
-    // Only keep conflicts with more than one entry
-    return Object.entries(conflicts)
-      .filter(([key, ids]) => ids.length > 1)
-      .reduce((acc, [key, ids]) => {
-        acc[key] = ids;
-        return acc;
-      }, {} as { [key: string]: number[] });
+    return conflicts;
   }, [entries]);
 
   if (loading) {

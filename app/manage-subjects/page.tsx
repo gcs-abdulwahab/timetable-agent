@@ -89,12 +89,13 @@ const api = {
     const method = isCreating ? 'POST' : 'PUT';
     // Always send departmentId from dropdown
     // For non-core, also send subjectDepartments as array of departmentIds
+    // For core, add departmentId to subjectDepartments as single-item array
     const payload = {
       ...subject,
       departmentId: subject.departmentId,
-      subjectDepartments: !subject.isCore && Array.isArray(subject.departmentIds)
-        ? subject.departmentIds
-        : undefined,
+      subjectDepartments: subject.isCore
+        ? (subject.departmentId ? [subject.departmentId] : [])
+        : (Array.isArray(subject.departmentIds) ? subject.departmentIds : undefined),
     };
     delete payload.departmentIds;
     const response = await fetch(url, {

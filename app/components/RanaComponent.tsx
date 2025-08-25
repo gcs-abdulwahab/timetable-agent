@@ -1,0 +1,76 @@
+import React from "react";
+import { formatTime } from '../../lib/utils';
+import type { Department, Teacher, TimeSlot, TimetableEntry } from "../types";
+
+interface RanaComponentProps {
+  departments: Department[];
+  timeSlots: TimeSlot[];
+  entries: TimetableEntry[];
+  teachers: Teacher[];
+}
+
+const RanaComponent: React.FC<RanaComponentProps> = ({ departments, timeSlots, entries, teachers }) => {
+  // Use shared formatTime from utils
+  // Helper to count teachers in a department
+  const getTeacherCount = (deptId: number) => safeTeachers.filter(t => t.departmentId === deptId).length;
+  // Use fallback for teachers in logic
+  const safeTeachers = teachers ?? [];
+  // Helper to count entries for department and timeslot based on teacher's department
+  const getEntryCount = (deptId: number, slotId: number) => {
+    return entries.filter(e => {
+      const teacher = safeTeachers.find(t => t.id === e.teacherId);
+      return (
+        e.timeSlotId === slotId &&
+        teacher && teacher.departmentId === deptId
+      );
+    }).length;
+  };
+
+  return (
+    <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
+      <h2 className="text-xl font-bold mb-4">Rana Timetable Overview</h2>
+      <table className="w-full border-collapse bg-white rounded shadow">
+        <thead>
+          <tr>
+            <th className="border p-2 bg-gray-100 text-left whitespace-nowrap" style={{ width: '160px' }}>Department</th>
+            {timeSlots.map(slot => (
+              <th key={slot.id} className="border p-2 bg-gray-100 text-center" style={{ minWidth: '120px' }}>
+                {formatTime(slot.start)} - {formatTime(slot.end)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {departments.map(dept => (
+            <tr key={dept.id}>
+              <td className="border p-2 font-semibold bg-gray-50" style={{ width: '160px' }}>
+                {dept.name}
+                <span className="ml-2 text-xs text-gray-500">({getTeacherCount(dept.id)} teachers)</span>
+              </td>
+              {timeSlots.map(slot => (
+                <td key={slot.id} className="border p-2 text-center align-top">
+                  {(() => {
+                    const count = getEntryCount(dept.id, slot.id);
+                    const teacherCount = getTeacherCount(dept.id);
+                    if (count > 0) {
+                      return (
+                        <span className={
+                          `font-bold text-lg ${count > teacherCount ? 'text-red-600' : 'text-blue-700'}`
+                        }>
+                          {count}
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default RanaComponent;

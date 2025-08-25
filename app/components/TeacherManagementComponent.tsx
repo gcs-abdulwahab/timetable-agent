@@ -1,6 +1,7 @@
+
 'use client';
 
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Department } from '../types/Department';
 import type { Teacher } from '../types/Teacher';
 
@@ -118,12 +119,77 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
     <div className="bg-white rounded-lg shadow-lg p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Teacher Management</h2>
-        <button
-          onClick={() => setShowAddModal(true)}
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Add Teacher
-        </button>
+        <div className="flex items-center">
+          <button
+            onClick={() => {
+              // Export all teachers to CSV
+              const csvRows = [
+                ['Name', 'Short Name', 'Designation', 'Department'],
+                ...teachers.map(t => [
+                  t.name,
+                  t.shortName,
+                  t.designation,
+                  departments.find(d => d.id === t.departmentId)?.name || ''
+                ])
+              ];
+              const csvContent = csvRows.map(row => row.map(field => `"${String(field).replace(/"/g, '""')}"`).join(',')).join('\n');
+              const blob = new Blob([csvContent], { type: 'text/csv' });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement('a');
+              a.href = url;
+              a.download = 'teachers.csv';
+              document.body.appendChild(a);
+              a.click();
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 ml-4"
+          >
+            Export to CSV
+          </button>
+          <label className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 ml-4 cursor-pointer">
+            Import from CSV
+            <input
+              type="file"
+              accept=".csv"
+              style={{ display: 'none' }}
+              onChange={async (e) => {
+                const file = e.target.files?.[0];
+                if (!file) return;
+                const text = await file.text();
+                const lines = text.split(/\r?\n/).filter(Boolean);
+                const header = lines[0].split(',').map(h => h.replace(/"/g, '').trim());
+                const nameIdx = header.findIndex(h => h.toLowerCase().includes('name') && !h.toLowerCase().includes('short'));
+                const shortNameIdx = header.findIndex(h => h.toLowerCase().includes('short'));
+                const designationIdx = header.findIndex(h => h.toLowerCase().includes('designation'));
+                const departmentIdx = header.findIndex(h => h.toLowerCase().includes('department'));
+                const importedTeachers = lines.slice(1).map(line => {
+                  const fields = line.split(',').map(f => f.replace(/"/g, '').trim());
+                  const deptName = fields[departmentIdx];
+                  const dept = departments.find(d => d.name === deptName);
+                  return {
+                    name: fields[nameIdx] || '',
+                    shortName: fields[shortNameIdx] || '',
+                    designation: fields[designationIdx] || '',
+                    departmentId: dept?.id || 0,
+                  };
+                }).filter(t => t.name && t.departmentId);
+                // Skip teachers that already exist (same name and department)
+                const existingTeachers = teachers.map(t => `${t.name.toLowerCase()}-${t.departmentId}`);
+                const teachersToImport = importedTeachers.filter(t => !existingTeachers.includes(`${t.name.toLowerCase()}-${t.departmentId}`));
+                for (const teacher of teachersToImport) {
+                  await fetch('/api/teachers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(teacher),
+                  });
+                }
+                await loadTeachers();
+                alert(`${teachersToImport.length} teachers imported. ${importedTeachers.length - teachersToImport.length} already existed and were skipped.`);
+              }}
+            />
+          </label>
+        </div>
       </div>
 
       {error && (
@@ -142,48 +208,60 @@ const TeacherManagementComponent: React.FC<TeacherManagementProps> = ({ departme
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Short Name</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Designation</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Department</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {teachers
-                .sort((a, b) => {
-                  // First sort by department name
-                  const deptA = departments.find(d => d.id === a.departmentId)?.name || 'Unknown';
-                  const deptB = departments.find(d => d.id === b.departmentId)?.name || 'Unknown';
-                  if (deptA !== deptB) return deptA.localeCompare(deptB);
-                  // Then sort by teacher name within department
-                  return a.name.localeCompare(b.name);
-                })
-                .map((teacher) => (
-                  <tr key={teacher.id} className={`${
-                    // Add subtle background color to group by department
-                    teachers.findIndex(t => t.departmentId === teacher.departmentId) === 
-                    teachers.findIndex(t => t.id === teacher.id) ? 'border-t-2 border-gray-300' : ''
-                  }`}>
-                    <td className="px-6 py-4 whitespace-nowrap">{teacher.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{teacher.shortName}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">{teacher.designation}</td>
-                    <td className="px-6 py-4 whitespace-nowrap font-medium">
-                      {departments.find(d => d.id === teacher.departmentId)?.name || 'Unknown'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap space-x-2">
-                    <button
-                      onClick={() => setEditingTeacher(teacher)}
-                      className="text-blue-600 hover:text-blue-900"
-                    >
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteTeacher(teacher.id)}
-                      className="text-red-600 hover:text-red-900"
-                    >
-                      Delete
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {departments.map(dept => {
+                const deptTeachers = teachers.filter(t => t.departmentId === dept.id);
+                return (
+                  <React.Fragment key={dept.id + '-group'}>
+                    <tr className="bg-gray-100">
+                      <td colSpan={3} className="px-6 py-3 font-bold text-lg text-blue-700">{dept.name}</td>
+                      <td className="px-6 py-3 text-right">
+                        <button
+                          onClick={() => {
+                            setNewTeacher({ ...newTeacher, departmentId: dept.id });
+                            setShowAddModal(true);
+                          }}
+                          className="bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 text-sm"
+                        >
+                          Add Teacher
+                        </button>
+                      </td>
+                    </tr>
+                    {deptTeachers.length === 0 ? (
+                      <tr key={dept.id + '-empty'}>
+                        <td colSpan={4} className="px-6 py-4 text-gray-400 italic">No teachers in this department.</td>
+                      </tr>
+                    ) : (
+                      deptTeachers
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map(teacher => (
+                          <tr key={teacher.id}>
+                            <td className="px-6 py-4 whitespace-nowrap">{teacher.name}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{teacher.shortName}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{teacher.designation}</td>
+                            <td className="px-6 py-4 whitespace-nowrap space-x-2">
+                              <button
+                                onClick={() => setEditingTeacher(teacher)}
+                                className="text-blue-600 hover:text-blue-900"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteTeacher(teacher.id)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                Delete
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </React.Fragment>
+                );
+              })}
             </tbody>
           </table>
         </div>
