@@ -1,3 +1,10 @@
+model Program {
+  id          Int        @id @default(autoincrement())
+  name        String
+  description String?
+  createdAt   DateTime   @default(now())
+  timeSlots   TimeSlot[]
+}
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -74,7 +81,8 @@ model TimeSlot {
   start             String
   end               String
   period            Int
-  type              String            @default("BS") // 'BS' or 'Inter'
+  programId         Int?
+  program           Program?          @relation(fields: [programId], references: [id])
   timetableEntries  TimetableEntry[]
 }
 

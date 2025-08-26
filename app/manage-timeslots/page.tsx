@@ -21,7 +21,7 @@ const ManageTimeSlotsPage = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="p-6">
-        <div className="max-w-2xl mx-auto">
+  <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-800 mb-6">Manage Time Slots</h1>
           <div className="bg-white rounded-lg shadow-lg p-6">
             <TimeSlotsManager slots={slots} setSlots={setSlots} />
