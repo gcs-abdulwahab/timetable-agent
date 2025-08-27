@@ -1,5 +1,6 @@
 import React from "react";
 import { formatTime } from '../../lib/utils';
+import { usePrograms } from "../hooks/usePrograms";
 import { useTimetableEntries } from "../hooks/useTimetableEntries";
 import type {
   Day,
@@ -55,9 +56,22 @@ const Timetable: React.FC<TimetableProps> = ({
   teachers,
   rooms,
   days,
-  teacherSlotConflicts = {}, // <-- default empty
-  roomSlotConflicts = {}, // <-- default empty
+  teacherSlotConflicts = {},
+  roomSlotConflicts = {},
 }) => {
+  const { programs } = usePrograms();
+  const [selectedProgramId, setSelectedProgramId] = React.useState<number | undefined>(undefined);
+
+  React.useEffect(() => {
+    if (programs.length > 0 && selectedProgramId === undefined) {
+      setSelectedProgramId(programs[0].id);
+    }
+  }, [programs, selectedProgramId]);
+
+  const filteredTimeSlots = selectedProgramId
+    ? timeSlots.filter(ts => ts.programId === selectedProgramId)
+    : timeSlots;
+
   // Memoize active semesters
   const activeSemesters = React.useMemo(() => semesters ? semesters.filter(s => s.isActive) : [], [semesters]);
   const [selectedSemesterId, setSelectedSemesterId] = React.useState<number | undefined>(activeSemesters?.[0]?.id);
@@ -177,13 +191,25 @@ const Timetable: React.FC<TimetableProps> = ({
       {activeSemesters.length > 0 && (
       <SemesterTabs semesters={activeSemesters} selectedId={selectedSemesterId} onSelect={setSelectedSemesterId} />
       )}
+      <div className="mb-4">
+        <label className="text-xs font-semibold mb-1">Program</label>
+        <select
+          value={selectedProgramId ?? ''}
+          onChange={e => setSelectedProgramId(e.target.value ? Number(e.target.value) : undefined)}
+          className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 min-w-[120px]"
+        >
+          {programs.map(program => (
+            <option key={program.id} value={program.id}>{program.name}</option>
+          ))}
+        </select>
+      </div>
       <table className="w-full border-collapse bg-white rounded shadow">
       <thead>
         <tr>
         <th className="border p-2 bg-gray-100 text-left whitespace-nowrap" style={{ width: '160px' }}>
           Department
         </th>
-        {timeSlots.map((slot) => (
+        {filteredTimeSlots.map((slot) => (
           <th
           key={slot.id}
           className="border p-2 bg-gray-100 text-center flex-1 min-w-32"
@@ -200,7 +226,7 @@ const Timetable: React.FC<TimetableProps> = ({
           <td className="border p-2 font-semibold bg-gray-50" style={{ width: '160px' }}>
           {dept.name}
           </td>
-          {timeSlots.map((slot) => {
+          {filteredTimeSlots.map((slot) => {
           // Find entries for this department and timeslot, matching subject's departmentId
           const deptEntries = filteredEntries.filter((e) => {
             if (e.timeSlotId !== slot.id || !e.subjectId) return false;
@@ -210,7 +236,7 @@ const Timetable: React.FC<TimetableProps> = ({
           return (
             <td
             key={slot.id}
-            className="border p-2 align-top relative" // <-- add relative for tooltip
+            className="border p-2 align-top relative"
             onDrop={handleDrop(slot.id)}
             onDragOver={handleDragOver}
             >
