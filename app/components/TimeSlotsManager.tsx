@@ -297,15 +297,19 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
         </div>
         
         {/* Slots List */}
-        <div className="space-y-2">
-          {[...slots]
-            .filter(slot => selectedProgramId === undefined || slot.programId === selectedProgramId)
-            .sort((a, b) => a.period - b.period)
-            .map((slot) => {
-              const isEditing = isEditingSlot === String(slot.id);
-              // Removed unused editData/setEditData
-              return (
-                <div key={slot.id} className="bg-white border rounded-lg p-3">
+        <div className="space-y-8">
+        {programs.map(program => (
+          <div key={program.id}>
+            <h3 className="text-lg font-bold text-blue-700 mb-2">{program.name}</h3>
+            <div className="space-y-2">
+              {[...slots]
+                .filter(slot => slot.programId === program.id)
+                .sort((a, b) => a.period - b.period)
+                .map((slot) => {
+                  const isEditing = isEditingSlot === String(slot.id);
+                  // Removed unused editData/setEditData
+                  return (
+                    <div key={slot.id} className="bg-white border rounded-lg p-3">
           {isEditing ? (
             <EditSlotForm
               slot={slot}
@@ -349,6 +353,9 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
             </div>
           );
         })}
+            </div>
+          </div>
+        ))}
         </div>
       </div>
     </div>
