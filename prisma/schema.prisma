@@ -15,6 +15,7 @@ model Degree {
   name      String
   programId Int
   program   Program  @relation(fields: [programId], references: [id])
+  subjects  Subject[]
 }
 
 
@@ -33,7 +34,6 @@ model Department {
   name                   String
   shortName              String
   teachers               Teacher[]
-  subjects               Subject[]
   rooms                  Room[]  
 }
 
@@ -64,10 +64,10 @@ model Subject {
   name              String
   code              String
   creditHours       Int  
-  departmentId      Int  
+  degreeId          Int
   isCore            Boolean           @default(false)
   semesterId        Int?
-  department        Department        @relation(fields: [departmentId], references: [id])
+  degree            Degree            @relation(fields: [degreeId], references: [id])
   semester          Semester?         @relation(fields: [semesterId], references: [id])
   timetableEntries  TimetableEntry[]
   subjectDepartments Int[]
