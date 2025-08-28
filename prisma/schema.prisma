@@ -1,10 +1,23 @@
+
+
 model Program {
   id          Int        @id @default(autoincrement())
   name        String
   description String?
   createdAt   DateTime   @default(now())
   timeSlots   TimeSlot[]
+  
+  degrees     Degree[]
 }
+
+model Degree {
+  id        Int      @id @default(autoincrement())
+  name      String
+  programId Int
+  program   Program  @relation(fields: [programId], references: [id])
+}
+
+
 generator client {
   provider = "prisma-client-js"
   output   = "../lib/generated/prisma"
@@ -19,7 +32,6 @@ model Department {
   id                     Int               @id @default(autoincrement())
   name                   String
   shortName              String
-  offersBSDegree         Boolean
   teachers               Teacher[]
   subjects               Subject[]
   rooms                  Room[]  

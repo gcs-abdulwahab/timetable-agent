@@ -3,6 +3,5 @@ export interface Department {
   name: string;
   shortName: string;
   offersBSDegree: boolean;
-  bsSemesterAvailability?: any;
   institutionId?: number;
 }

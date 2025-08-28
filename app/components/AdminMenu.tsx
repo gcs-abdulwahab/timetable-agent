@@ -66,6 +66,12 @@ const AdminMenu: React.FC = () => {
       >
         Room Management
       </Link>
+      <Link
+        href="/manage-degrees"
+        className="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-700 transition-colors text-sm font-medium inline-block"
+      >
+        Manage Degrees
+      </Link>
     </div>
   );
 };
