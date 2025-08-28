@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         name: body.name,
         code: body.code,
         creditHours: body.creditHours ?? 3,
-        departmentId: body.departmentId, // main department
+        degreeId: body.degreeId,
         semesterId: body.semesterId,
         isCore: body.isCore ?? false,
         subjectDepartments: body.subjectDepartments ?? [], // PostgreSQL int[] array
@@ -46,7 +46,7 @@ export async function GET() {
   try {
     const subjects = await prisma.subject.findMany({
       include: {
-        department: true,
+        degree: true,
         semester: true,
       },
       orderBy: { code: 'asc' }
@@ -89,8 +89,8 @@ export async function DELETE(request: NextRequest) {
 export async function PUT(request: NextRequest) {
   try {
     const body = await request.json();
-    const { id, name, code, creditHours, departmentId, semesterId, isCore, subjectDepartments } = body;
-    if (!id || !name || !code || !departmentId || !semesterId) {
+    const { id, name, code, creditHours, degreeId, semesterId, isCore, subjectDepartments } = body;
+    if (!id || !name || !code || !degreeId || !semesterId) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
     if (subjectDepartments && !Array.isArray(subjectDepartments)) {
@@ -103,7 +103,7 @@ export async function PUT(request: NextRequest) {
         name,
         code,
         creditHours: creditHours ?? 3,
-        departmentId,
+        degreeId,
         semesterId,
         isCore: isCore ?? false,
         subjectDepartments: subjectDepartments ?? [],
@@ -116,4 +116,4 @@ export async function PUT(request: NextRequest) {
   } finally {
     await prisma.$disconnect();
   }
-
+}

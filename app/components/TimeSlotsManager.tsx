@@ -112,11 +112,9 @@ const TimeSlotsManager: React.FC<TimeSlotsManagerProps> = ({ slots, setSlots }) 
         body: JSON.stringify({
           start: slotToAdd.start,
           end: slotToAdd.end,
-
-
           period: nextPeriod,
-          // type: slotToAdd.type,
           duration: timerIncrement,
+          programId: selectedProgramId,
         }),
       });
 
