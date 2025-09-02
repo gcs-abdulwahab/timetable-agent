@@ -2,30 +2,16 @@
 // ...existing code...
 
 import React, { useEffect, useState } from "react";
+import { Subject } from "../types";
 // ...existing code...
 
-const SubjectManagement: React.FC = () => {
-  // Remove degree and semester dropdowns. Get semesterId from URL.
-  const [subjects, setSubjects] = useState<{ id: number; name: string; code: string }[]>([]);
+interface SubjectManagementProps {
+  semesterId?: number;
+}
+
+const SubjectManagement: React.FC<SubjectManagementProps> = ({ semesterId }) => {
+  const [subjects, setSubjects] = useState<Subject[]>([]);
   const [subjectsLoading, setSubjectsLoading] = useState(false);
-
-  // Get semesterId from URL
-  const getSemesterIdFromUrl = (): number | undefined => {
-    if (typeof window === 'undefined') return undefined;
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('semesterId');
-    return id ? Number(id) : undefined;
-  };
-  const [semesterId, setSemesterId] = useState<number | undefined>(getSemesterIdFromUrl());
-
-  useEffect(() => {
-    const handlePopState = () => {
-      setSemesterId(getSemesterIdFromUrl());
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-  // Removed duplicate state declarations
 
   useEffect(() => {
     if (!semesterId) {

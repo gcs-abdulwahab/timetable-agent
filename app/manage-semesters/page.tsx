@@ -10,7 +10,14 @@ const SemesterItem: React.FC<{ semester: Semester }> = ({ semester }) => (
     <span>
       {semester.name} -- {semester.isActive ? 'Active' : 'Inactive'}
     </span>
-    <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors">View Subjects</button>
+    <button
+      className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors"
+      onClick={() => {
+        window.location.href = `/manage-subjects?semesterId=${semester.id}`;
+      }}
+    >
+      View Subjects
+    </button>
     {/* You can add edit/delete buttons here if needed */}
   </div>
 );
