@@ -1,17 +1,64 @@
+
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Semester } from '../types/timetable';
+import { Degree } from '../types/Degree';
+import { Semester } from '../types/Semester';
+
+const SemesterItem: React.FC<{ semester: Semester }> = ({ semester }) => (
+  <div className="border rounded p-4 mb-2 bg-white shadow flex items-center justify-between">
+    <span>
+      {semester.name} -- {semester.isActive ? 'Active' : 'Inactive'}
+    </span>
+    <button className="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600 transition-colors">View Subjects</button>
+    {/* You can add edit/delete buttons here if needed */}
+  </div>
+);
+
+
 
 const ManageSemesters: React.FC = () => {
   const [semesters, setSemesters] = useState<Semester[]>([]);
+  // Collapsible state for degree groups, collapsed by default
+  const [expanded, setExpanded] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    // Collapse all by default on first render
+    const degreeNames = semesters.reduce((acc, semester) => {
+      const degreeName = semester.degree?.name || 'No Degree';
+      if (!acc.includes(degreeName)) acc.push(degreeName);
+      return acc;
+    }, [] as string[]);
+    setExpanded(prev => {
+      const newState = { ...prev };
+      degreeNames.forEach(name => {
+        if (!(name in newState)) newState[name] = false;
+      });
+      return newState;
+    });
+  }, [semesters]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [editingSemester, setEditingSemester] = useState<Semester | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [degrees, setDegrees] = useState<Degree[]>([]);
+
+  const fetchDegrees = async () => {
+    try {
+      const response = await fetch('/api/degrees');
+      if (!response.ok) {
+        throw new Error('Failed to fetch degrees');
+      }
+      const data = await response.json();
+      setDegrees(data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
+  };
 
   useEffect(() => {
     fetchSemesters();
+    fetchDegrees();
   }, []);
 
   const fetchSemesters = async () => {
@@ -24,7 +71,7 @@ const ManageSemesters: React.FC = () => {
       const data = await response.json();
       setSemesters(data);
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : String(err));
     } finally {
       setLoading(false);
     }
@@ -36,7 +83,7 @@ const ManageSemesters: React.FC = () => {
   };
 
   const handleCreate = () => {
-    setEditingSemester({ id: 0, name: '', code: '', year: new Date().getFullYear(), term: '', isActive: false });
+    setEditingSemester({ id: 0, name: '', isActive: false, degreeId: 0 });
     setIsCreating(true);
   };
 
@@ -51,7 +98,7 @@ const ManageSemesters: React.FC = () => {
         }
         fetchSemesters();
       } catch (err) {
-        setError(err.message);
+        setError(err instanceof Error ? err.message : String(err));
       }
     }
   };
@@ -75,7 +122,7 @@ const ManageSemesters: React.FC = () => {
       setIsCreating(false);
       fetchSemesters();
     } catch (err) {
-      setError(err.message);
+      setError(err instanceof Error ? err.message : String(err));
     }
   };
 
@@ -111,32 +158,18 @@ const ManageSemesters: React.FC = () => {
               placeholder="Semester Name"
               className="border p-2 rounded-md"
             />
-            <input
-              type="text"
-              name="code"
-              value={editingSemester.code || ''}
-              onChange={handleInputChange}
-              placeholder="Semester Code"
-              className="border p-2 rounded-md"
-            />
-            <input
-              type="number"
-              name="year"
-              value={editingSemester.year || ''}
-              onChange={handleInputChange}
-              placeholder="Year"
-              className="border p-2 rounded-md"
-            />
-            <select
-              name="term"
-              value={editingSemester.term || ''}
-              onChange={handleInputChange}
-              className="border p-2 rounded-md"
-            >
-              <option value="">Select Term</option>
-              <option value="Spring">Spring</option>
-              <option value="Fall">Fall</option>
-            </select>
+              <select
+                name="degreeId"
+                value={editingSemester.degreeId ?? ""}
+                onChange={handleInputChange}
+                className="border p-2 rounded-md"
+              >
+                <option value="">Select Degree</option>
+                {degrees.map(degree => (
+                  <option key={degree.id} value={degree.id}>{degree.name}</option>
+                ))}
+              </select>
+
             <label className="flex items-center">
               <input
                 type="checkbox"
@@ -159,24 +192,47 @@ const ManageSemesters: React.FC = () => {
         </div>
       )}
 
-      <div className="bg-white shadow-md rounded-lg p-4">
-        <ul className="divide-y divide-gray-200">
-          {semesters.map((semester) => (
-            <li key={semester.id} className="flex items-center justify-between py-2">
-              <span>
-                {semester.name} ({semester.code}) - {semester.year} {semester.term} - {semester.isActive ? 'Active' : 'Inactive'}
+      <div className="bg-white shadow-lg rounded-xl p-6 border border-gray-200">
+        {/* Collapsible groups by degree name */}
+        {Object.entries(
+          semesters.reduce((acc, semester) => {
+            const degreeName = semester.degree?.name || 'No Degree';
+            if (!acc[degreeName]) acc[degreeName] = [];
+            acc[degreeName].push(semester);
+            return acc;
+          }, {} as Record<string, Semester[]>)
+        )
+        .sort(([aName], [bName]) => aName.localeCompare(bName))
+        .map(([degreeName, group]) => (
+          <div key={degreeName} className="mb-8 border-b last:border-b-0 pb-4">
+            <div
+              className="flex items-center justify-between cursor-pointer px-2 py-2 rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={() => setExpanded(e => ({ ...e, [degreeName]: !e[degreeName] }))}
+            >
+              <span className="font-semibold text-xl text-blue-700 flex items-center gap-2">
+                <svg width="22" height="22" viewBox="0 0 20 20" fill="none" className="inline-block mr-2 text-blue-400"><circle cx="10" cy="10" r="10" fill="#60A5FA"/><text x="50%" y="55%" textAnchor="middle" fontSize="10" fill="white" dy=".3em">🎓</text></svg>
+                {degreeName}
               </span>
-              <div>
-                <button onClick={() => handleEdit(semester)} className="bg-yellow-500 text-white px-3 py-1 rounded-md mr-2 hover:bg-yellow-600">
-                  Edit
-                </button>
-                <button onClick={() => handleDelete(semester.id)} className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600">
-                  Delete
-                </button>
+              <span className="ml-2 text-gray-500 text-lg">{expanded[degreeName] ? "▲" : "▼"}</span>
+            </div>
+            {expanded[degreeName] && (
+              <div className="px-2 py-2 animate-fade-in">
+                {group.map((semester) => (
+                  <SemesterItem key={semester.id} semester={semester} />
+                ))}
               </div>
-            </li>
-          ))}
-        </ul>
+            )}
+          </div>
+        ))}
+        <style jsx>{`
+          .animate-fade-in {
+            animation: fadeIn 0.3s ease;
+          }
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+        `}</style>
       </div>
     </div>
   );

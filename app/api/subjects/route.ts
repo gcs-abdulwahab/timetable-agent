@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
         name: body.name,
         code: body.code,
         creditHours: body.creditHours ?? 3,
-        degreeId: body.degreeId,
+       
         semesterId: body.semesterId,
         isCore: body.isCore ?? false,
         subjectDepartments: body.subjectDepartments ?? [], // PostgreSQL int[] array
@@ -46,7 +46,6 @@ export async function GET() {
   try {
     const subjects = await prisma.subject.findMany({
       include: {
-        degree: true,
         semester: true,
       },
       orderBy: { code: 'asc' }

@@ -8,7 +8,8 @@ const prisma = new PrismaClient();
 export async function GET() {
   try {
     const semesters = await prisma.semester.findMany({
-      orderBy: [{ name: 'asc' }] // no year/term ordering now
+      orderBy: [{ name: 'asc' }],
+      include: { degree: true }
     });
     return NextResponse.json(semesters);
   } catch (error) {

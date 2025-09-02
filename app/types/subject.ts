@@ -7,7 +7,6 @@ export interface Subject {
   shortName?: string;
   code: string;
   creditHours: number;
-  degreeId: number; // Degree that offers this subject
   isCore?: boolean;
   semesterId?: number;
   isMajor?: boolean;
@@ -24,7 +23,6 @@ export const SubjectSchema = z.object({
   creditHours: z.coerce.number().int().min(1, "Credit hours must be at least 1").max(10, "Credit hours cannot exceed 10"),
   degreeId: z.coerce.number().int(),
   isCore: z.coerce.boolean().optional(),
-  semesterId: z.coerce.number().int().optional(),
   isMajor: z.coerce.boolean().optional().default(true),
   teachingDepartmentIds: z.array(z.coerce.number().int()).optional().default([])
 });
