@@ -1,10 +1,27 @@
 -- CreateTable
+CREATE TABLE "public"."Program" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "description" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Program_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "public"."Degree" (
+    "id" SERIAL NOT NULL,
+    "name" TEXT NOT NULL,
+    "programId" INTEGER NOT NULL,
+
+    CONSTRAINT "Degree_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "public"."Department" (
     "id" SERIAL NOT NULL,
     "name" TEXT NOT NULL,
     "shortName" TEXT NOT NULL,
-    "offersBSDegree" BOOLEAN NOT NULL,
-    "bsSemesterAvailability" JSONB,
 
     CONSTRAINT "Department_pkey" PRIMARY KEY ("id")
 );
@@ -40,11 +57,10 @@ CREATE TABLE "public"."Subject" (
     "name" TEXT NOT NULL,
     "code" TEXT NOT NULL,
     "creditHours" INTEGER NOT NULL,
-    "color" TEXT NOT NULL,
     "departmentId" INTEGER NOT NULL,
-    "semesterLevel" INTEGER NOT NULL,
     "isCore" BOOLEAN NOT NULL DEFAULT false,
     "semesterId" INTEGER,
+    "subjectDepartments" INTEGER[],
 
     CONSTRAINT "Subject_pkey" PRIMARY KEY ("id")
 );
@@ -60,7 +76,6 @@ CREATE TABLE "public"."Room" (
     "hasProjector" BOOLEAN,
     "hasAC" BOOLEAN,
     "description" TEXT,
-    "programTypes" JSONB NOT NULL,
     "primaryDepartmentId" INTEGER,
     "availableForOtherDepartments" BOOLEAN,
 
@@ -70,9 +85,10 @@ CREATE TABLE "public"."Room" (
 -- CreateTable
 CREATE TABLE "public"."TimeSlot" (
     "id" SERIAL NOT NULL,
-    "start" TIMESTAMP(3) NOT NULL,
-    "end" TIMESTAMP(3) NOT NULL,
+    "start" TEXT NOT NULL,
+    "end" TEXT NOT NULL,
     "period" INTEGER NOT NULL,
+    "programId" INTEGER,
 
     CONSTRAINT "TimeSlot_pkey" PRIMARY KEY ("id")
 );
@@ -84,7 +100,6 @@ CREATE TABLE "public"."Day" (
     "shortName" TEXT NOT NULL,
     "dayCode" INTEGER NOT NULL,
     "isActive" BOOLEAN NOT NULL,
-    "workingHours" TEXT NOT NULL,
 
     CONSTRAINT "Day_pkey" PRIMARY KEY ("id")
 );
@@ -93,18 +108,19 @@ CREATE TABLE "public"."Day" (
 CREATE TABLE "public"."TimetableEntry" (
     "id" SERIAL NOT NULL,
     "subjectId" INTEGER NOT NULL,
-    "teacherId" INTEGER NOT NULL,
+    "teacherId" INTEGER,
     "timeSlotId" INTEGER NOT NULL,
-    "day" TEXT NOT NULL,
-    "room" TEXT NOT NULL,
-    "semesterId" INTEGER NOT NULL,
-    "departmentId" INTEGER NOT NULL,
+    "roomId" INTEGER NOT NULL,
+    "dayIds" INTEGER[],
 
     CONSTRAINT "TimetableEntry_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Day_dayCode_key" ON "public"."Day"("dayCode");
+
+-- AddForeignKey
+ALTER TABLE "public"."Degree" ADD CONSTRAINT "Degree_programId_fkey" FOREIGN KEY ("programId") REFERENCES "public"."Program"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."Teacher" ADD CONSTRAINT "Teacher_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "public"."Department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -119,16 +135,16 @@ ALTER TABLE "public"."Subject" ADD CONSTRAINT "Subject_semesterId_fkey" FOREIGN 
 ALTER TABLE "public"."Room" ADD CONSTRAINT "Room_primaryDepartmentId_fkey" FOREIGN KEY ("primaryDepartmentId") REFERENCES "public"."Department"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "public"."TimeSlot" ADD CONSTRAINT "TimeSlot_programId_fkey" FOREIGN KEY ("programId") REFERENCES "public"."Program"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_subjectId_fkey" FOREIGN KEY ("subjectId") REFERENCES "public"."Subject"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "public"."Teacher"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_teacherId_fkey" FOREIGN KEY ("teacherId") REFERENCES "public"."Teacher"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_timeSlotId_fkey" FOREIGN KEY ("timeSlotId") REFERENCES "public"."TimeSlot"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_semesterId_fkey" FOREIGN KEY ("semesterId") REFERENCES "public"."Semester"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_departmentId_fkey" FOREIGN KEY ("departmentId") REFERENCES "public"."Department"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "public"."TimetableEntry" ADD CONSTRAINT "TimetableEntry_roomId_fkey" FOREIGN KEY ("roomId") REFERENCES "public"."Room"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import type { Department, Room, Teacher, TimetableEntry } from "../types";
-import { Day, Semester, TimeSlot } from '../types';
+import { Day, Semester, TimeSlot ,Degree} from '../types';
 import type { Subject } from "../types/Subject";
 import TimetableNew from './TimetableNew';
 
@@ -39,11 +39,13 @@ const TimetableManager: React.FC = () => {
   // State for fetched data
   const [semesters, setSemesters] = useState<Semester[]>();
   const [departments, setDepartments] = useState<Department[]>([]);
+  const [degrees, setDegrees] = useState<Degree[]>([]);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [days, setDays] = useState<Day[]>([]);
+
 
 
   // Fetch data on mount
@@ -54,6 +56,9 @@ const TimetableManager: React.FC = () => {
     fetch('/api/departments')
       .then(res => res.json())
       .then(setDepartments);
+    fetch('/api/degrees')
+      .then(res => res.json())
+      .then(setDegrees);
     fetch('/api/subjects')
       .then(res => res.json())
       .then(setSubjects);
@@ -68,6 +73,7 @@ const TimetableManager: React.FC = () => {
     fetch('/api/rooms')
       .then(res => res.json())
       .then(setRooms);
+    
     fetch('/api/days')
       .then(res => res.json())
       .then((data) => {
@@ -144,6 +150,7 @@ const TimetableManager: React.FC = () => {
           departments={departments}
           entries={entries}
           rooms={rooms}
+          degrees={degrees}
           teachers={teachers}
           subjects={subjects}
           days={days}

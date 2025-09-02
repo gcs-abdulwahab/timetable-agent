@@ -41,17 +41,19 @@ type TimetableEntryCreateShape = {
 export async function GET() {
   try {
     const entries = await prisma.timetableEntry.findMany({
-      include: { subject: { select: { id: true, semesterId: true, departmentId: true } } },
+      include: { subject: { select: { id: true, semesterId: true, degreeId: true } } },
     });
 
     // Normalize response so consumers can read semesterId/departmentId derived from subject
     const mapped = entries.map((e: Record<string, unknown>) => {
       const subject = (e.subject as Record<string, unknown> | undefined) ?? undefined;
       const semesterId = subject ? (subject['semesterId'] as number | undefined) : (e['semesterId'] as number | undefined);
+      const degreeId = subject ? (subject['degreeId'] as number | undefined) : (e['degreeId'] as number | undefined);
       const departmentId = subject ? (subject['departmentId'] as number | undefined) : (e['departmentId'] as number | undefined);
       return {
         ...e,
         semesterId,
+        degreeId,
         departmentId,
       };
     });

@@ -9,9 +9,10 @@ import {
 } from "@/components/ui/table";
 import { useEffect, useState } from 'react';
 import AddDepartmentComponent from './AddDepartmentComponent';
+import { Department } from "@/app/types";
 
 export function DepartmentTable() {
-  const [departments, setDepartments] = useState<any[]>([])
+  const [departments, setDepartments] = useState<Department[]>([])
   const [name, setName] = useState("")
   const [shortName, setShortName] = useState("")
   const [offersBSDegree, setOffersBSDegree] = useState(true)

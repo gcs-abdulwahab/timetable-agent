@@ -4,17 +4,14 @@ import { z } from 'zod';
 export interface Subject {
   id: number;
   name: string;
-  shortName?: string; // Made optional since it was removed from data
-  code: string; // Course code like CS-101, MATH-201, etc.
+  shortName?: string;
+  code: string;
   creditHours: number;
-  departmentId: number; // Department that offers this subject in their curriculum
-  // semesterLevel removed: not required in model
-  isCore?: boolean; // Core vs Elective (optional; isMajor preferred)
-  semesterId?: number; // Which semester this subject is offered in (numeric id)
-  // Optional fields to preserve existing data shape
-  isMajor?: boolean; // Major (taught by same department) vs Minor (taught by other departments)
-  teachingDepartmentIds?: number[]; // Department(s) that actually teach this subject (numeric ids)
-  subjectDepartments?: number[]; // Departments for non-core subject (from DB)
+  isCore?: boolean;
+  semesterId?: number;
+  isMajor?: boolean;
+  teachingDepartmentIds?: number[];
+  subjectDepartments?: number[];
 }
 
 // Zod schema for Subject with proper coercions
@@ -24,11 +21,8 @@ export const SubjectSchema = z.object({
   shortName: z.string().min(1, "Short name is required"),
   code: z.string().min(1, "Code is required"),
   creditHours: z.coerce.number().int().min(1, "Credit hours must be at least 1").max(10, "Credit hours cannot exceed 10"),
-  departmentId: z.coerce.number().int(),
-  // semesterLevel removed from schema
+  degreeId: z.coerce.number().int(),
   isCore: z.coerce.boolean().optional(),
-  semesterId: z.coerce.number().int().optional(),
-  // Optional fields with default values for backward compatibility
   isMajor: z.coerce.boolean().optional().default(true),
   teachingDepartmentIds: z.array(z.coerce.number().int()).optional().default([])
 });

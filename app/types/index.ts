@@ -6,3 +6,4 @@ export type { TimeSlot } from './TimeSlot';
 export type { TimetableEntry } from './TimetableEntry';
 export type { Subject } from './Subject';
 export type { Semester } from './Semester';
+export type { Degree } from './Degree';

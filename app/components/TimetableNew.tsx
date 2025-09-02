@@ -9,6 +9,7 @@ import type {
   Semester,
   Subject,
   Teacher,
+  Degree,
   TimeSlot,
   TimetableEntry
 } from "../types";
@@ -21,7 +22,8 @@ import EntryBadge from "./EntryBadge";
 type TimetableProps = {
 	departments: Department[];
 	teachers: Teacher[];
-	days: Day[];
+  days: Day[];
+  degrees : Degree[];
 	rooms: Room[];
 	timeSlots: TimeSlot[];
 	semesters: Semester[];
@@ -55,11 +57,13 @@ const Timetable: React.FC<TimetableProps> = ({
   subjects,
   teachers,
   rooms,
+  degrees,
   days,
   teacherSlotConflicts = {},
   roomSlotConflicts = {},
 }) => {
   const { programs } = usePrograms();
+  // Removed useDegrees; using degrees prop from TimetableProps
   const [selectedProgramId, setSelectedProgramId] = React.useState<number | undefined>(undefined);
 
   React.useEffect(() => {
@@ -117,11 +121,11 @@ const Timetable: React.FC<TimetableProps> = ({
   // State for edit modal
   const [showEditModal, setShowEditModal] = React.useState(false);
   const [editEntry, setEditEntry] = React.useState<TimetableEntry | null>(null);
-  const [addEntryModalData, setAddEntryModalData] = React.useState<{ departmentId: number; timeSlotId: number } | null>(null);
+  
   const [addedEntries, setAddedEntries] = React.useState<{ [key: string]: boolean }>({});
   const [selectedDepartmentforAdd, setSelectedDepartmentforAdd] = React.useState<Department | undefined>(undefined);
   const [selectedTimeSlotforAdd, setSelectedTimeSlotforAdd] = React.useState<TimeSlot | undefined>(undefined);
-  const [selectedSubject, setSelectedSubject] = React.useState<Subject | undefined>(undefined);
+  
   const [selectedTeacher, setSelectedTeacher] = React.useState<Teacher | undefined>(undefined);
 
   const [showAddModal, setShowAddModal] = React.useState(false);
@@ -140,18 +144,7 @@ const Timetable: React.FC<TimetableProps> = ({
     setShowAddModal(true);
   };
 
-  const handleEntryAdded = () => {
-    if (selectedDepartmentforAdd && selectedTimeSlotforAdd) {
-      const key = `${selectedDepartmentforAdd.id}_${selectedTimeSlotforAdd.id}`;
-      setAddedEntries(prev => ({ ...prev, [key]: true }));
-    }
-  };
-
-  // Handler for saving edit (close modal)
-  const handleSaveEdit = async () => {
-    // Edit modal removed, no save handler needed
-  };
-
+  
   // Refresh timetable entries
   const refreshTimetable = async () => {
     try {
@@ -168,23 +161,9 @@ const Timetable: React.FC<TimetableProps> = ({
   // Add helper to detect if row is last
   const isLastRow = (rowIdx: number, totalRows: number) => rowIdx === totalRows - 1;
 
-  // Helper: Detect credit hour conflicts
-  const getCreditHourConflicts = (entries: TimetableEntry[], subjects: Subject[]): number[] => {
-    const conflictEntryIds: number[] = [];
-    entries.forEach(entry => {
-      const subject = subjects.find(s => s.id === entry.subjectId);
-      if (subject && subject.creditHours === 3) {
-        if (!entry.dayIds || entry.dayIds.length < 3) {
-          conflictEntryIds.push(entry.id);
-        }
-      }
-    });
-    return conflictEntryIds;
-  };
 
-  // Detect credit hour conflicts for filtered entries
-  const creditHourConflictIds = React.useMemo(() => getCreditHourConflicts(filteredEntries, subjects), [filteredEntries, subjects]);
 
+  
   // Render timetable grid
   return (
     <div className="p-6 bg-white shadow-lg rounded-lg overflow-auto">
@@ -207,7 +186,7 @@ const Timetable: React.FC<TimetableProps> = ({
       <thead>
         <tr>
         <th className="border p-2 bg-gray-100 text-left whitespace-nowrap" style={{ width: '160px' }}>
-          Department
+          Degrees
         </th>
         {filteredTimeSlots.map((slot) => (
           <th
@@ -221,90 +200,90 @@ const Timetable: React.FC<TimetableProps> = ({
         </tr>
       </thead>
       <tbody>
-        {departments.map((dept, deptIdx) => (
-        <tr key={dept.id}>
+        {degrees.map((degree, degreeIdx) => (
+        <tr key={degree.id}>
           <td className="border p-2 font-semibold bg-gray-50" style={{ width: '160px' }}>
-          {dept.name}
+            {degree.name}
           </td>
           {filteredTimeSlots.map((slot) => {
-          // Find entries for this department and timeslot, matching subject's departmentId
-          const deptEntries = filteredEntries.filter((e) => {
-            if (e.timeSlotId !== slot.id || !e.subjectId) return false;
-            const subject = subjects.find(s => s.id === e.subjectId);
-            return subject && subject.departmentId === dept.id;
-          });
-          return (
-            <td
-            key={slot.id}
-            className="border p-2 align-top relative"
-            onDrop={handleDrop(slot.id)}
-            onDragOver={handleDragOver}
-            >
-            <button
-              className="mb-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
-              onClick={() => handleAddEntry(dept.id, slot.id)}
-            >
-              + Add
-            </button>
-            {deptEntries.length > 0 ? (
-              <>
+            // Find entries for this degree and timeslot, matching subject's degreeId
+            const degreeEntries = filteredEntries.filter((e) => {
+              if (e.timeSlotId !== slot.id || !e.subjectId) return false;
+              const subject = subjects.find(s => s.id === e.subjectId);
+              return subject && subject.degreeId === degree.id;
+            });
+            return (
+              <td
+          key={slot.id}
+          className="border p-2 align-top relative"
+          onDrop={handleDrop(slot.id)}
+          onDragOver={handleDragOver}
+              >
+          <button
+            className="mb-2 px-2 py-1 bg-green-500 text-white rounded hover:bg-green-600 text-xs"
+            onClick={() => handleAddEntry(degree.id, slot.id)}
+          >
+            + Add
+          </button>
+          {degreeEntries.length > 0 ? (
+            <>
               <ul>
-                {deptEntries.map((entry, entryIdx) => {
-                const subject = subjects.find((s) => s.id === entry.subjectId);
-                const teacher = teachers.find((t) => t.id === entry.teacherId);
-                const room = rooms.find((r) => r.id === entry.roomId);
+                {degreeEntries.map((entry, entryIdx) => {
+            const subject = subjects.find((s) => s.id === entry.subjectId);
+            const teacher = teachers.find((t) => t.id === entry.teacherId);
+            const room = rooms.find((r) => r.id === entry.roomId);
 
-                // Check teacher conflict with day overlap
-                let hasTeacherConflict = false;
-                for (const ids of Object.values(localTeacherConflicts)) {
-                  if (ids.includes(entry.id)) {
-                    // Find other conflicting entries
-                    const others = deptEntries.filter(e2 => ids.includes(e2.id) && e2.id !== entry.id);
-                    if (others.some(e2 => e2.dayIds.some(day => entry.dayIds.includes(day)))) {
-                      hasTeacherConflict = true;
-                      break;
-                    }
-                  }
+            // Check teacher conflict with day overlap
+            let hasTeacherConflict = false;
+            for (const ids of Object.values(localTeacherConflicts)) {
+              if (ids.includes(entry.id)) {
+                // Find other conflicting entries
+                const others = degreeEntries.filter(e2 => ids.includes(e2.id) && e2.id !== entry.id);
+                if (others.some(e2 => e2.dayIds.some(day => entry.dayIds.includes(day)))) {
+                  hasTeacherConflict = true;
+                  break;
                 }
-                // Check room conflict with day overlap
-                let hasRoomConflict = false;
-                for (const ids of Object.values(localRoomConflicts)) {
-                  if (ids.includes(entry.id)) {
-                    const others = deptEntries.filter(e2 => ids.includes(e2.id) && e2.id !== entry.id);
-                    if (others.some(e2 => e2.dayIds.some(day => entry.dayIds.includes(day)))) {
-                      hasRoomConflict = true;
-                      break;
-                    }
-                  }
+              }
+            }
+            // Check room conflict with day overlap
+            let hasRoomConflict = false;
+            for (const ids of Object.values(localRoomConflicts)) {
+              if (ids.includes(entry.id)) {
+                const others = degreeEntries.filter(e2 => ids.includes(e2.id) && e2.id !== entry.id);
+                if (others.some(e2 => e2.dayIds.some(day => entry.dayIds.includes(day)))) {
+                  hasRoomConflict = true;
+                  break;
                 }
+              }
+            }
 
-                return (
-                  <div
-                    key={entry.id}
-                    draggable
-                    onDragStart={handleDragStart(entry.id)}
-                  >
-                    <EntryBadge
-                      entry={entry}
-                      subjectName={subject ? subject.name : undefined}
-                      teacherName={teacher ? teacher.name : undefined}
-                      roomName={room ? room.name : undefined}
-                      days={days}
-                      onEditEntry={() => handleEditEntry(entry)}
-                      isTooltipUp={isLastRow(deptIdx, departments.length)}
-                      hasTeacherConflict={hasTeacherConflict}
-                      hasRoomConflict={hasRoomConflict}
-                    />
-                  </div>
-                );
+            return (
+              <div
+                key={entry.id}
+                draggable
+                onDragStart={handleDragStart(entry.id)}
+              >
+                <EntryBadge
+                  entry={entry}
+                  subjectName={subject ? subject.name : undefined}
+                  teacherName={teacher ? teacher.name : undefined}
+                  roomName={room ? room.name : undefined}
+                  days={days}
+                  onEditEntry={() => handleEditEntry(entry)}
+                  isTooltipUp={isLastRow(degreeIdx, degrees.length)}
+                  hasTeacherConflict={hasTeacherConflict}
+                  hasRoomConflict={hasRoomConflict}
+                />
+              </div>
+            );
                 })}
               </ul>
-              </>
-            ) : (
-              <span className="text-gray-400">—</span>
-            )}
-            </td>
-          );
+            </>
+          ) : (
+            <span className="text-gray-400">—</span>
+          )}
+              </td>
+            );
           })}
         </tr>
         ))}
@@ -349,7 +328,7 @@ const Timetable: React.FC<TimetableProps> = ({
           editEntry
           ? (() => {
             const subject = subjects.find(s => s.id === editEntry.subjectId);
-            return subject ? subject.departmentId : undefined;
+            return subject ? subject.degreeId : undefined;
             })()
           : undefined
         }

@@ -12,12 +12,7 @@ const AdminMenu: React.FC = () => {
       >
         Home
       </Link>
-      <Link
-        href="/manage-schedule"
-        className="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm font-medium inline-block"
-      >
-        Manage Schedule
-      </Link>
+      
       <Link
         href="/teachers"
         className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm font-medium inline-block"
@@ -65,6 +60,12 @@ const AdminMenu: React.FC = () => {
         className="bg-emerald-600 text-white px-4 py-2 rounded-md hover:bg-emerald-700 transition-colors text-sm font-medium inline-block"
       >
         Room Management
+      </Link>
+      <Link
+        href="/manage-degrees"
+        className="bg-lime-600 text-white px-4 py-2 rounded-md hover:bg-lime-700 transition-colors text-sm font-medium inline-block"
+      >
+        Manage Degrees
       </Link>
     </div>
   );
