@@ -1,5 +1,3 @@
-
-
 model Program {
   id          Int        @id @default(autoincrement())
   name        String
@@ -17,8 +15,15 @@ model Degree {
 
   program   Program  @relation(fields: [programId], references: [id])
   semesters Semester[]
+  sections  Section[]
 }
 
+model Section {
+  id        Int      @id @default(autoincrement())
+  name      String
+  degree    Degree   @relation(fields: [degreeId], references: [id])
+  degreeId  Int
+}
 
 generator client {
   provider = "prisma-client-js"
