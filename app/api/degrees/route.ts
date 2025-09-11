@@ -2,11 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '../../../lib/generated/prisma';
 
 const prisma = new PrismaClient();
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const programId = searchParams.get('programId');
   try {
     const degrees = await prisma.degree.findMany({
+      where: programId ? { programId: Number(programId) } : undefined,
       orderBy: { name: 'asc' },
-          include: { program: true },
+      include: { program: true },
     });
     return NextResponse.json(degrees);
   } catch (error) {
@@ -16,34 +19,3 @@ export async function GET() {
 }
 
 
-export async function POST(req: NextRequest) {
-  const { name, code, programId } = await req.json();
-  if (!name || !programId) {
-    return NextResponse.json({ error: 'Name and programId are required.' }, { status: 400 });
-  }
-  const degree = await prisma.degree.create({
-    data: { name, code, programId },
-  });
-  return NextResponse.json(degree);
-}
-
-export async function PUT(req: NextRequest) {
-  const { id, name, code, programId } = await req.json();
-  if (!id || !name || !programId) {
-    return NextResponse.json({ error: 'id, name, and programId are required.' }, { status: 400 });
-  }
-  const degree = await prisma.degree.update({
-    where: { id },
-    data: { name, code, programId },
-  });
-  return NextResponse.json(degree);
-}
-
-export async function DELETE(req: NextRequest) {
-  const { id } = await req.json();
-  if (!id) {
-    return NextResponse.json({ error: 'id is required.' }, { status: 400 });
-  }
-  await prisma.degree.delete({ where: { id } });
-  return NextResponse.json({ success: true });
-}

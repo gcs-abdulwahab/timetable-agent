@@ -67,6 +67,18 @@ const AdminMenu: React.FC = () => {
       >
         Manage Degrees
       </Link>
+      <Link
+        href="/manage-institutions"
+        className="bg-violet-600 text-white px-4 py-2 rounded-md hover:bg-violet-700 transition-colors text-sm font-medium inline-block"
+      >
+        Manage Institutions
+      </Link>
+      <Link
+        href="/manage-shifts"
+        className="bg-fuchsia-600 text-white px-4 py-2 rounded-md hover:bg-fuchsia-700 transition-colors text-sm font-medium inline-block"
+      >
+        Manage Shifts
+      </Link>
     </div>
   );
 };

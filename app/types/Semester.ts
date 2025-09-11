@@ -1,10 +1,18 @@
+export interface DegreeSemesterSubject {
+  id: number;
+  degreeId: number;
+  semesterId: number;
+  subjectId: number;
+  degree?: any;
+  semester?: any;
+  subject?: any;
+}
 
-
-import { Degree } from '../types/Degree';
 export interface Semester {
   id: number;
   name: string;
-  isActive: boolean;
-  degreeId: number;
-  degree?: Degree;
+  code?: string;
+  isActive?: boolean;
+  degreeSemesterSubjects?: DegreeSemesterSubject[];
+  // ...other fields as needed
 }

@@ -4,11 +4,15 @@ import type { Degree } from '../types/Degree';
 import type { Program } from '../types/Program';
 
 const fetchDegrees = async (): Promise<Degree[]> => {
-  const res = await fetch('/api/degrees');
+  const query = typeof window !== "undefined" && window.location.search ? window.location.search : "";
+  const params = new URLSearchParams(query);
+  const programId = params.get("programId");
+  const url = programId ? `/api/degrees?programId=${programId}` : '/api/degrees';
+  const res = await fetch(url);
   return res.ok ? await res.json() : [];
 };
 
-const fetchPrograms = async (): Promise<Program[]> => {
+const fetchPrograms = async (): Promise<Program[]> => { 
   const res = await fetch('/api/programs');
   return res.ok ? await res.json() : [];
 };
@@ -40,19 +44,6 @@ const ManageDegreesPage = () => {
   return (
     <div>
      
-      <div className="mb-6">
-        <label className="block text-sm font-medium mb-1">Filter by Program</label>
-        <select
-          value={selectedProgramId ?? ''}
-          onChange={e => setSelectedProgramId(e.target.value ? Number(e.target.value) : null)}
-          className="w-full px-3 py-2 border rounded"
-        >
-          <option value="">All Programs</option>
-          {programs.map((p) => (
-            <option key={p.id} value={p.id}>{p.name}</option>
-          ))}
-        </select>
-      </div>
       
   <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 mb-6">
         {degrees
