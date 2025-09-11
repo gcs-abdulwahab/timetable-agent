@@ -2,6 +2,19 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+  // Seed institutions
+  const institutions = [
+    { id: 1, name: 'Science College', code: 'SCI' },
+    { id: 2, name: 'MAO', code: 'MAO' },
+  ];
+  for (const institutionData of institutions) {
+    await prisma.institution.upsert({
+      where: { id: institutionData.id },
+      update: {},
+      create: institutionData,
+    });
+  }
+
   // Create institution GCS
   const institution = await prisma.institution.upsert({
     where: { code: 'GCS' },

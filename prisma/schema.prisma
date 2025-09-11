@@ -1,6 +1,8 @@
-
-
 model Program {
+  semesters Semester[]
+  institutionId Int?
+  institution   Institution? @relation(fields: [institutionId], references: [id])
+  // ...existing code...
   id          Int        @id @default(autoincrement())
   name        String
   description String?
@@ -8,17 +10,28 @@ model Program {
   timeSlots   TimeSlot[]
   
   degrees     Degree[]
+  shiftId     Int?
+  shift       Shift?     @relation(fields: [shiftId], references: [id])
 }
 
 model Degree {
+  subjects Subject[]
+  degreeSemesterSubjects DegreeSemesterSubject[] @relation("DegreeSemesterSubjectDegree")
+  degreeSemesters DegreeSemester[]
   id        Int      @id @default(autoincrement())
   name      String
   programId Int
 
   program   Program  @relation(fields: [programId], references: [id])
-  semesters Semester[]
+  sections  Section[]
 }
 
+model Section {
+  id        Int      @id @default(autoincrement())
+  name      String
+  degree    Degree   @relation(fields: [degreeId], references: [id])
+  degreeId  Int
+}
 
 generator client {
   provider = "prisma-client-js"
@@ -49,26 +62,51 @@ model Teacher {
 }
 
 model Semester {
-  id                Int               @id @default(autoincrement())
-  name              String
-  code              String?
-  isActive          Boolean           @default(false)
-  degreeId          Int
-  degree            Degree            @relation(fields: [degreeId], references: [id])
-  subjects          Subject[]
-  
+  degreeSemesters DegreeSemester[]
+  // ...existing code...
+  id        Int      @id @default(autoincrement())
+  name      String
+  programId Int
+  program   Program  @relation(fields: [programId], references: [id])
+  subjects  Subject[]
+  degreeSemesterSubjects DegreeSemesterSubject[] @relation("DegreeSemesterSubjectSemester")
+}
+
+model DegreeSemester {
+  degree     Degree   @relation(fields: [degreeId], references: [id])
+  degreeId   Int
+  semester   Semester @relation(fields: [semesterId], references: [id])
+  semesterId Int
+
+  @@id([degreeId, semesterId])
 }
 
 model Subject {
-  id                Int               @id @default(autoincrement())
-  name              String
-  code              String
-  creditHours       Int  
-  isCore            Boolean           @default(false)
-  semesterId        Int?
-  semester          Semester?         @relation(fields: [semesterId], references: [id])
-  timetableEntries  TimetableEntry[]
-  subjectDepartments Int[]
+  timetableEntries TimetableEntry[]
+  degreeSemesterSubjects DegreeSemesterSubject[] @relation("DegreeSemesterSubjectSubject")
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String?   // optional, e.g., ENG101
+  credits   Int?      // optional
+
+  degreeId  Int?
+  semesterId Int?
+  degree    Degree?   @relation(fields: [degreeId], references: [id])
+  semester  Semester? @relation(fields: [semesterId], references: [id])
+}
+
+model DegreeSemesterSubject {
+  id          Int       @id @default(autoincrement())
+
+  degreeId    Int
+  semesterId  Int
+  subjectId   Int
+
+  degree      Degree    @relation("DegreeSemesterSubjectDegree", fields: [degreeId], references: [id])
+  semester    Semester  @relation("DegreeSemesterSubjectSemester", fields: [semesterId], references: [id])
+  subject     Subject   @relation("DegreeSemesterSubjectSubject", fields: [subjectId], references: [id])
+
+  @@unique([degreeId, semesterId, subjectId]) // avoid duplicates
 }
 model Room {
   id                          Int               @id @default(autoincrement())
@@ -116,4 +154,20 @@ model TimetableEntry {
   teacher     Teacher?   @relation(fields: [teacherId], references: [id])
   timeSlot    TimeSlot   @relation(fields: [timeSlotId], references: [id])
   room        Room       @relation(fields: [roomId], references: [id])
+}
+
+model Institution {
+  id        Int     @id @default(autoincrement())
+  name      String
+  code      String  @unique
+  shifts    Shift[]
+  programs  Program[]
+}
+
+model Shift {
+  id            Int         @id @default(autoincrement())
+  name          String
+  institution   Institution @relation(fields: [institutionId], references: [id])
+  institutionId Int
+  programs      Program[]
 }
